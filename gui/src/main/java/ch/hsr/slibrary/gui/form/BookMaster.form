@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ch.hsr.slibrary.gui.form.BookMaster">
+  <grid id="27dc6" binding="bookMaster" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="52ec9" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+        <constraints border-constraint="North"/>
+        <properties/>
+      </component>
+      <component id="35628" class="javax.swing.JButton" binding="button1" default-binding="true">
+        <constraints border-constraint="West"/>
+        <properties>
+          <text value="Button"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
