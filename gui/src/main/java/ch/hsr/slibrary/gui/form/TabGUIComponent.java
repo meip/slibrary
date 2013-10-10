@@ -11,9 +11,14 @@ import javax.swing.*;
  */
 public class TabGUIComponent extends GUIComponent{
     private JPanel panel1;
+
+    public JTabbedPane getTabbedPane() {
+        return tabbedPane1;
+    }
+
     private JTabbedPane tabbedPane1;
 
     public TabGUIComponent() {
-
+        this.container = panel1;
     }
 }
