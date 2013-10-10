@@ -53,6 +53,8 @@ object Resolvers {
 }
 
 object Dependencies {
+  val junitinterface = "com.novocode" % "junit-interface" % "0.10" % "test"
+
   val jgoodiescommon = "com.jgoodies" % "jgoodies-common" % "1.6.0"
   val jgoodiesform = "com.jgoodies" % "jgoodies-forms" % "1.7.1"
 }
@@ -68,6 +70,7 @@ object SLibraryBuild extends Build {
   )
 
   val slibrarySPADeps = Seq(
+    junitinterface
   )
 
   val slibraryGUIDeps = Seq(
