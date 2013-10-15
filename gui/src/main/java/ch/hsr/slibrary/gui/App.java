@@ -3,8 +3,7 @@ package ch.hsr.slibrary.gui;
 import ch.hsr.slibrary.gui.controller.BookMasterController;
 import ch.hsr.slibrary.gui.controller.ComponentController;
 import ch.hsr.slibrary.gui.form.BookMaster;
-import ch.hsr.slibrary.gui.form.GUIComponent;
-import ch.hsr.slibrary.gui.form.TabController;
+import ch.hsr.slibrary.gui.controller.TabController;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 
 import javax.swing.*;
