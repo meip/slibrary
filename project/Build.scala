@@ -1,5 +1,7 @@
 import sbt._
 import sbt.Keys._
+import sbtassembly.Plugin._
+import AssemblyKeys._
 
 object BuildSettings {
   val buildOrganization = "ch.hsr.uint.slibrary"
@@ -9,6 +11,7 @@ object BuildSettings {
     organization := buildOrganization,
     version := buildVersion,
     shellPrompt := ShellPrompt.buildShellPrompt,
+    exportJars := true,
     unmanagedBase <<= baseDirectory {
       base => base / "custom_lib"
     }
@@ -79,8 +82,12 @@ object SLibraryBuild extends Build {
   lazy val uintbooks = Project(
     "slibrary",
     file("."),
-    settings = buildSettings
-  ) aggregate(slibraryGUI, slibrarySPA)
+    settings = buildSettings ++ assemblySettings ++ Seq(
+      mainClass in assembly := Some("ch.hsr.slibrary.AppSLibrary"),
+      jarName in assembly := "slibrary.jar",
+      test in assembly := {}
+    )
+  ) aggregate(slibraryGUI, slibrarySPA) dependsOn (slibraryGUI, slibrarySPA)
 
   lazy val slibraryGUI = Project(
     "slibrary-gui",
