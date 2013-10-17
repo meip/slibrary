@@ -31,13 +31,6 @@ public class AppSLibrary {
 
         loadBooksFromXml(library, builder, new File("data/books.xml"));
 
-        /*
-
-        loadCustomersFromXml(library, builder, AppSLibrary.class.getClassLoader().getResourceAsStream("data/customers.xml"));
-
-        loadBooksFromXml(library, builder, AppSLibrary.class.getClassLoader().getResourceAsStream("data/books.xml"));
-         */
-
         // create pseudo random books and loans
         createBooksAndLoans(library);
 
