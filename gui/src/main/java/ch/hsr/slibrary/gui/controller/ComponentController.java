@@ -2,8 +2,6 @@ package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.GUIComponent;
 
-import javax.swing.*;
-
 /**
  * User: p1meier
  * Date: 10.10.13
