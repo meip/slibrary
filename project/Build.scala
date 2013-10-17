@@ -77,6 +77,7 @@ object SLibraryBuild extends Build {
   )
 
   val slibraryGUIDeps = Seq(
+    junitinterface
   )
 
   lazy val uintbooks = Project(
