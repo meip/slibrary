@@ -1,11 +1,14 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.form.GUIComponent;
 import ch.hsr.slibrary.spa.Library;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
@@ -18,7 +21,6 @@ public class BookMasterController extends ComponentController implements Observe
     private Library library;
 
 
-
     public BookMasterController(String title, BookMaster component, Library _library) {
         super(title);
         this.component = component;
@@ -28,6 +30,24 @@ public class BookMasterController extends ComponentController implements Observe
 
         bookMaster.getBooksAmountLabel().setText(new Integer(library.getBooks().size()).toString());
         bookMaster.getCopyAmountLabel().setText(new Integer(library.getCopies().size()).toString());
+
+        bookMaster.getDisplaySelectedButton().setEnabled(false);
+        bookMaster.getDisplaySelectedButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (int index : bookMaster.getBooksList().getSelectedIndices()) {
+                    windowController.presentControllerAsFrame(
+                        new BookDetailController(
+                            library.getBooks().get(index).getName(),
+                            new BookDetail(),
+                            library.getBooks().get(index),
+                            library
+                        )
+                    );
+                }
+            }
+        });
+
 
         bookMaster.getBooksList().setModel(new ListModel() {
             @Override
@@ -52,14 +72,18 @@ public class BookMasterController extends ComponentController implements Observe
 
         });
 
+        bookMaster.getBooksList().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                bookMaster.getDisplaySelectedButton().setEnabled(bookMaster.getBooksList().getSelectedIndices().length > 0);
+            }
+        });
+
     }
-
-
 
 
     @Override
     public void update(Observable o, Object arg) {
-
 
 
     }

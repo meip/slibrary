@@ -24,6 +24,7 @@ public class BookDetailController extends ComponentController implements Observe
         this.book = book;
         this.library = library;
 
+
     }
 
     @Override

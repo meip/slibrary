@@ -1,6 +1,7 @@
 package ch.hsr.slibrary.gui.form;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * User: p1meier
@@ -9,6 +10,16 @@ import javax.swing.*;
 public class BookMaster extends GUIComponent {
     private JPanel bookMaster;
     private JList booksList;
+    private JButton addBookButton;
+    private JLabel booksAmountLabel;
+    private JLabel copyAmountLabel;
+    private JLabel numSelectedLabel;
+    private JButton displaySelectedButton;
+
+
+    public BookMaster() {
+        this.container = bookMaster;
+    }
 
     public JList getBooksList() {
         return booksList;
@@ -34,15 +45,6 @@ public class BookMaster extends GUIComponent {
         return displaySelectedButton;
     }
 
-    private JButton addBookButton;
-    private JLabel booksAmountLabel;
-    private JLabel copyAmountLabel;
-    private JLabel numSelectedLabel;
-    private JButton displaySelectedButton;
-
-    public BookMaster() {
-        this.container = bookMaster;
-    }
 
     public JPanel getBookMaster() {
         return bookMaster;

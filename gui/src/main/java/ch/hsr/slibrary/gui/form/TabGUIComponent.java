@@ -1,6 +1,7 @@
 package ch.hsr.slibrary.gui.form;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,7 +10,7 @@ import javax.swing.*;
  * Time: 16:11
  * To change this template use File | Settings | File Templates.
  */
-public class TabGUIComponent extends GUIComponent{
+public class TabGUIComponent extends GUIComponent {
     private JPanel panel1;
 
     public JTabbedPane getTabbedPane() {
@@ -21,4 +22,5 @@ public class TabGUIComponent extends GUIComponent{
     public TabGUIComponent() {
         this.container = panel1;
     }
+
 }

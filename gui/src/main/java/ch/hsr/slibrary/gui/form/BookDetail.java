@@ -1,6 +1,7 @@
 package ch.hsr.slibrary.gui.form;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * User: p1meier
@@ -101,4 +102,5 @@ public class BookDetail extends GUIComponent {
     public void setBookDetailPanel(JPanel bookDetailPanel) {
         this.bookDetailPanel = bookDetailPanel;
     }
+
 }

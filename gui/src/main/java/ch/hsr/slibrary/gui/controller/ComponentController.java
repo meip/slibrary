@@ -9,6 +9,16 @@ import ch.hsr.slibrary.gui.form.GUIComponent;
 public abstract class ComponentController {
     protected GUIComponent component;
 
+    public WindowController getWindowController() {
+        return windowController;
+    }
+
+    public void setWindowController(WindowController windowController) {
+        this.windowController = windowController;
+    }
+
+    protected WindowController windowController;
+
     public String getTitle() {
         return title;
     }

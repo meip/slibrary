@@ -1,6 +1,7 @@
 package ch.hsr.slibrary;
 
 import ch.hsr.slibrary.gui.controller.BookMasterController;
+import ch.hsr.slibrary.gui.controller.WindowController;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.spa.*;
 import org.w3c.dom.Document;
@@ -28,11 +29,14 @@ public class AppSLibrary {
         Library library = new Library();
         initLibrary(library);
 
-        JFrame frame = new JFrame("BookMasterFrame");
-        frame.setContentPane(new BookMasterController("BookMasterController 1", new BookMaster(), library).getComponent().getContainer());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+        WindowController windowController = new WindowController();
+        BookMasterController bookMasterController = new BookMasterController("BookMasterController 1", new BookMaster(), library);
+
+        windowController.presentControllerAsFrame(bookMasterController);
+
+
+
+
     }
 
     private static void initLibrary(Library library)
