@@ -32,10 +32,7 @@ public class AppSLibrary {
         WindowController windowController = new WindowController();
         BookMasterController bookMasterController = new BookMasterController("BookMasterController 1", new BookMaster(), library);
 
-        windowController.presentControllerAsFrame(bookMasterController);
-
-
-
+        windowController.presentControllerAsFrame(bookMasterController, JFrame.EXIT_ON_CLOSE);
 
     }
 

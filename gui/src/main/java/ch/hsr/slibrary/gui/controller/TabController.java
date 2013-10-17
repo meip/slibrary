@@ -1,6 +1,5 @@
 package ch.hsr.slibrary.gui.controller;
 
-import ch.hsr.slibrary.gui.controller.ComponentController;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 
 import javax.swing.*;
@@ -15,23 +14,23 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class TabController extends ComponentController{
-    private List<ComponentController> components;
+    private List<ComponentController> controllers;
     private JTabbedPane tabbedPane;
 
-    public List<ComponentController> getComponents() {
-        return components;
+    public List<ComponentController> getControllers() {
+        return controllers;
     }
 
-    public void setComponents(List<ComponentController> components) {
-        this.components = components;
+    public void setControllers(List<ComponentController> controllers) {
+        this.controllers = controllers;
         tabbedPane.removeAll();
-        for(ComponentController comp:components) {
+        for(ComponentController comp: controllers) {
             tabbedPane.addTab(comp.getTitle(), comp.getComponent().getContainer());
         }
     }
     public TabController(String title, TabGUIComponent component) {
         super(title);
-        components = new ArrayList<>();
+        controllers = new ArrayList<>();
         this.component = component;
         tabbedPane = component.getTabbedPane();
     }

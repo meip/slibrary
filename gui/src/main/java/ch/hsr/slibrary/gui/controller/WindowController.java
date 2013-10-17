@@ -17,15 +17,20 @@ public class WindowController {
 
     private Map<ComponentController, JFrame> controllerFrames = new HashMap<>();
 
-    public void presentControllerAsFrame(ComponentController controller) {
+    public void presentControllerAsFrame(ComponentController controller, int closeOperation ) {
 
         JFrame frame = new JFrame(controller.getTitle());
         frame.setContentPane(controller.getComponent().getContainer());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(closeOperation);
         frame.pack();
         frame.setVisible(true);
         controller.setWindowController(this);
         controllerFrames.put(controller, frame);
+    }
+
+    public void presentControllerAsFrame(ComponentController controller) {
+
+        presentControllerAsFrame(controller, JFrame.DISPOSE_ON_CLOSE);
     }
 
 }
