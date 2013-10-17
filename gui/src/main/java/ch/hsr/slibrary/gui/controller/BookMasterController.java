@@ -4,6 +4,7 @@ import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.form.GUIComponent;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
+import ch.hsr.slibrary.gui.util.BookUtil;
 import ch.hsr.slibrary.spa.Book;
 import ch.hsr.slibrary.spa.Library;
 
@@ -109,14 +110,14 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void presentBookDetailInFrame(Book book) {
-        windowController.presentControllerAsFrame(new BookDetailController(book.getName(), new BookDetail(),book,library));
+        windowController.presentControllerAsFrame(new BookDetailController(book.getName(), new BookDetail(), book, library));
     }
 
     private  void presentMultipleBookDetailsInTabs(List<Book> books) {
         TabController tabController = new TabController(new TabGUIComponent());
         List<ComponentController> controllers = new ArrayList<>();
         for(Book book : books) {
-            controllers.add(new BookDetailController(book.getName(), new BookDetail(),book,library));
+            controllers.add(new BookDetailController(BookUtil.shortBookName(book.getName()), new BookDetail(), book, library));
         }
         tabController.setControllers(controllers);
         windowController.presentControllerAsFrame(tabController);
