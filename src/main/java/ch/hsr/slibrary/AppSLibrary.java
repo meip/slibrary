@@ -21,6 +21,19 @@ import java.util.GregorianCalendar;
  * Date: 15.10.13
  */
 public class AppSLibrary {
+
+    public static void main(String[] args) throws Exception {
+
+        Library library = new Library();
+        initLibrary(library);
+
+        JFrame frame = new JFrame("BookMasterFrame");
+        frame.setContentPane(new BookMasterController("BookMasterController 1", new BookMaster()).getComponent().getContainer());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
     private static void initLibrary(Library library)
             throws ParserConfigurationException, SAXException, IOException,
             IllegalLoanOperationException {
@@ -30,13 +43,6 @@ public class AppSLibrary {
         loadCustomersFromXml(library, builder, new File("data/customers.xml"));
 
         loadBooksFromXml(library, builder, new File("data/books.xml"));
-
-        /*
-
-        loadCustomersFromXml(library, builder, AppSLibrary.class.getClassLoader().getResourceAsStream("data/customers.xml"));
-
-        loadBooksFromXml(library, builder, AppSLibrary.class.getClassLoader().getResourceAsStream("data/books.xml"));
-         */
 
         // create pseudo random books and loans
         createBooksAndLoans(library);
@@ -152,17 +158,5 @@ public class AppSLibrary {
             }
         }
         return "";
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        Library library = new Library();
-        initLibrary(library);
-
-        JFrame frame = new JFrame("BookMasterFrame");
-        frame.setContentPane(new BookMasterController("BookMasterController 1", new BookMaster()).getComponent().getContainer());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
     }
 }
