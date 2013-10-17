@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class App {
     public static void main(String[] args) {
-        JFrame frame = new JFrame("BookMasterFrame");
+       /* JFrame frame = new JFrame("BookMasterFrame");
 
         List<ComponentController> controllers = new ArrayList<>();
 
@@ -30,6 +30,6 @@ public class App {
         frame.setContentPane(tabController.getComponent().getContainer());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setVisible(true);
+        frame.setVisible(true);      */
     }
 }

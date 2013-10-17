@@ -8,8 +8,37 @@ import javax.swing.*;
  */
 public class BookMaster extends GUIComponent {
     private JPanel bookMaster;
-    private JButton button1;
-    private JTextField textField1;
+    private JList booksList;
+
+    public JList getBooksList() {
+        return booksList;
+    }
+
+    public JButton getAddBookButton() {
+        return addBookButton;
+    }
+
+    public JLabel getBooksAmountLabel() {
+        return booksAmountLabel;
+    }
+
+    public JLabel getCopyAmountLabel() {
+        return copyAmountLabel;
+    }
+
+    public JLabel getNumSelectedLabel() {
+        return numSelectedLabel;
+    }
+
+    public JButton getDisplaySelectedButton() {
+        return displaySelectedButton;
+    }
+
+    private JButton addBookButton;
+    private JLabel booksAmountLabel;
+    private JLabel copyAmountLabel;
+    private JLabel numSelectedLabel;
+    private JButton displaySelectedButton;
 
     public BookMaster() {
         this.container = bookMaster;
@@ -19,11 +48,5 @@ public class BookMaster extends GUIComponent {
         return bookMaster;
     }
 
-    public JButton getButton1() {
-        return button1;
-    }
 
-    public JTextField getTextField1() {
-        return textField1;
-    }
 }

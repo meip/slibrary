@@ -160,7 +160,7 @@ public class AppSLibrary {
         initLibrary(library);
 
         JFrame frame = new JFrame("BookMasterFrame");
-        frame.setContentPane(new BookMasterController("BookMasterController 1", new BookMaster()).getComponent().getContainer());
+        frame.setContentPane(new BookMasterController("BookMasterController 1", new BookMaster(), library).getComponent().getContainer());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
