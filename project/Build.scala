@@ -87,7 +87,7 @@ object SLibraryBuild extends Build {
       jarName in assembly := "slibrary.jar",
       test in assembly := {}
     )
-  ) aggregate(slibraryGUI, slibrarySPA) dependsOn (slibraryGUI, slibrarySPA)
+  ) dependsOn (slibraryGUI, slibrarySPA)
 
   lazy val slibraryGUI = Project(
     "slibrary-gui",
@@ -98,6 +98,7 @@ object SLibraryBuild extends Build {
   lazy val slibrarySPA = Project(
     "slibrary-spa",
     file("spa"),
-    settings = buildSettings ++ Seq(libraryDependencies ++= slibrarySPADeps)
+    settings = buildSettings ++ Seq(libraryDependencies ++= slibrarySPADeps,
+      testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v"))
   )
 }
