@@ -7,6 +7,7 @@ import ch.hsr.slibrary.spa.Shelf;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -35,14 +36,17 @@ public class BookDetailController extends ComponentController implements Observe
 
     private void initializeUI() {
         bookDetail.getShelfComboBox().setModel(new ComboBoxModel() {
+
+            Object selectedItem;
+
             @Override
             public void setSelectedItem(Object anItem) {
-                //To change body of implemented methods use File | Settings | File Templates.
+                selectedItem = anItem;
             }
 
             @Override
             public Object getSelectedItem() {
-                return null;
+                return selectedItem;
             }
 
             @Override
@@ -71,7 +75,7 @@ public class BookDetailController extends ComponentController implements Observe
         bookDetail.getTitleField().setText(book.getName());
         bookDetail.getAuthorField().setText(book.getAuthor());
         bookDetail.getPublisherField().setText(book.getPublisher());
-
+        bookDetail.getShelfComboBox().setSelectedIndex(book.getShelf().ordinal());
     }
 
     @Override

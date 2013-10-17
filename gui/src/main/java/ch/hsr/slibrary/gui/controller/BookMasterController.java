@@ -34,7 +34,6 @@ public class BookMasterController extends ComponentController implements Observe
         initializeButtonListeners();
         initializeBookList();
         updateUI();
-
     }
 
     private void initializeButtonListeners() {
