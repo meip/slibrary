@@ -4,6 +4,7 @@ import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.form.GUIComponent;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
+import ch.hsr.slibrary.spa.Book;
 import ch.hsr.slibrary.spa.Library;
 
 import javax.swing.*;
@@ -28,15 +29,47 @@ public class BookMasterController extends ComponentController implements Observe
         super(title);
         this.component = component;
         bookMaster = component;
-
         this.library = lib;
 
-        bookMaster.getBooksAmountLabel().setText(new Integer(library.getBooks().size()).toString());
-        bookMaster.getCopyAmountLabel().setText(new Integer(library.getCopies().size()).toString());
+        initializeButtonListeners();
+        initializeBookList();
+        updateUI();
 
-        addListenersToButtons();
+    }
 
+    private void initializeButtonListeners() {
+        bookMaster.getDisplaySelectedButton().setEnabled(false);
+        bookMaster.getDisplaySelectedButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
+                if(bookMaster.getBooksList().getSelectedIndices().length == 1) {
+                    presentBookDetailInFrame(library.getBooks().get(bookMaster.getBooksList().getSelectedIndex()));
+                } else if(bookMaster.getBooksList().getSelectedIndices().length > 1) {
+                    List<Book> books = new ArrayList<>();
+                    for (int index : bookMaster.getBooksList().getSelectedIndices()) {
+                        books.add(library.getBooks().get(index));
+                    }
+                    presentMultipleBookDetailsInTabs(books);
+                }
+            }
+        });
+
+        bookMaster.getAddBookButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                windowController.presentControllerAsFrame(
+                        new NewBookDetailController(
+                                "Neues Buch erfassen",
+                                new BookDetail(),
+                                library
+                        )
+                );
+            }
+        });
+
+    }
+    private void initializeBookList() {
         bookMaster.getBooksList().setModel(new ListModel() {
             @Override
             public int getSize() {
@@ -63,55 +96,37 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getBooksList().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                bookMaster.getDisplaySelectedButton().setEnabled(bookMaster.getBooksList().getSelectedIndices().length > 0);
+                updateUI();
             }
         });
 
     }
 
-    private void addListenersToButtons() {
-        bookMaster.getDisplaySelectedButton().setEnabled(false);
-        bookMaster.getDisplaySelectedButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+    private void updateUI() {
+        bookMaster.getBooksAmountLabel().setText(new Integer(library.getBooks().size()).toString());
+        bookMaster.getCopyAmountLabel().setText(new Integer(library.getCopies().size()).toString());
+        bookMaster.getDisplaySelectedButton().setEnabled(bookMaster.getBooksList().getSelectedIndices().length > 0);
+        bookMaster.getBooksList().updateUI();
+    }
 
-                TabController tabController = new TabController(new TabGUIComponent());
-                List<ComponentController> controllers = new ArrayList<>();
-                for (int index : bookMaster.getBooksList().getSelectedIndices()) {
+    private void presentBookDetailInFrame(Book book) {
+        windowController.presentControllerAsFrame(new BookDetailController(book.getName(), new BookDetail(),book,library));
+    }
 
-                    String title = library.getBooks().get(index).getName();
-                    title = title.substring(0, Math.min(title.length(), 10)) + "...";
-                    controllers.add(new BookDetailController(
-                            title,
-                            new BookDetail(),
-                            library.getBooks().get(index),
-                            library
-                    ));
-                }
-
-                tabController.setControllers(controllers);
-                windowController.presentControllerAsFrame(tabController);
-            }
-        });
-
-        bookMaster.getAddBookButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                windowController.presentControllerAsFrame(
-                        new NewBookDetailController(
-                                "Neues Buch erfassen",
-                                new BookDetail(),
-                                library
-                        )
-                );
-            }
-        });
-
+    private  void presentMultipleBookDetailsInTabs(List<Book> books) {
+        TabController tabController = new TabController(new TabGUIComponent());
+        List<ComponentController> controllers = new ArrayList<>();
+        for(Book book : books) {
+            controllers.add(new BookDetailController(book.getName(), new BookDetail(),book,library));
+        }
+        tabController.setControllers(controllers);
+        windowController.presentControllerAsFrame(tabController);
     }
 
 
     @Override
     public void update(Observable o, Object arg) {
+
 
 
     }
