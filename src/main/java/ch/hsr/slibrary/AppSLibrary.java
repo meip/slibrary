@@ -22,18 +22,19 @@ import java.util.GregorianCalendar;
  */
 public class AppSLibrary {
 
+
     public static void main(String[] args) throws Exception {
 
         Library library = new Library();
         initLibrary(library);
 
         JFrame frame = new JFrame("BookMasterFrame");
-        frame.setContentPane(new BookMasterController("BookMasterController 1", new BookMaster()).getComponent().getContainer());
+        frame.setContentPane(new BookMasterController("BookMasterController 1", new BookMaster(), library).getComponent().getContainer());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
     }
-    
+
     private static void initLibrary(Library library)
             throws ParserConfigurationException, SAXException, IOException,
             IllegalLoanOperationException {
