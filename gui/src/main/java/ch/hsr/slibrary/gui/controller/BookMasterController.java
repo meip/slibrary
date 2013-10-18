@@ -14,10 +14,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 public class BookMasterController extends ComponentController implements Observer {
 
@@ -25,6 +22,9 @@ public class BookMasterController extends ComponentController implements Observe
     private BookMaster bookMaster;
     private Library library;
 
+    private ComponentController bookDetailController;
+    private List<Book> booksToPresent = new ArrayList<>();
+    private Map<Book, ComponentController> bookControllerMap = new HashMap<>();
 
     public BookMasterController(String title, BookMaster component, Library lib) {
         super(title);
@@ -43,14 +43,16 @@ public class BookMasterController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if(bookMaster.getBooksList().getSelectedIndices().length == 1) {
-                    presentBookDetailInFrame(library.getBooks().get(bookMaster.getBooksList().getSelectedIndex()));
-                } else if(bookMaster.getBooksList().getSelectedIndices().length > 1) {
-                    List<Book> books = new ArrayList<>();
-                    for (int index : bookMaster.getBooksList().getSelectedIndices()) {
-                        books.add(library.getBooks().get(index));
+                for (int index : bookMaster.getBooksList().getSelectedIndices()) {
+                    Book book = library.getBooks().get(index);
+                    if(!bookControllerMap.containsKey(book)) {
+                        bookControllerMap.put(book, createControllerForBook(book));
                     }
-                    presentMultipleBookDetailsInTabs(books);
+                }
+                presentBooks();
+                if(bookMaster.getBooksList().getSelectedIndices().length == 1) {
+                   Book book = library.getBooks().get(bookMaster.getBooksList().getSelectedIndices()[0]);
+                    windowController.bringToFront(bookControllerMap.get(book));
                 }
             }
         });
@@ -109,8 +111,26 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getBooksList().updateUI();
     }
 
+    private ComponentController createControllerForBook(Book book) {
+        return new BookDetailController(book.getName(), new BookDetail(), book, library);
+    }
+
+    private void presentBooks() {
+       presentBooksInStandalone(bookControllerMap.keySet());
+    }
+
     private void presentBookDetailInFrame(Book book) {
-        windowController.presentControllerAsFrame(new BookDetailController(book.getName(), new BookDetail(), book, library));
+        ComponentController controller = new BookDetailController(book.getName(), new BookDetail(), book, library);
+        windowController.presentControllerAsFrame(controller);
+        bookDetailController = controller;
+    }
+
+    private void presentBooksInStandalone(Collection<Book> books) {
+        for(Book book : books) {
+            if(!windowController.containsController(bookControllerMap.get(book))) {
+                windowController.presentControllerAsFrame(bookControllerMap.get(book));
+            }
+        }
     }
 
     private  void presentMultipleBookDetailsInTabs(List<Book> books) {
@@ -121,6 +141,7 @@ public class BookMasterController extends ComponentController implements Observe
         }
         tabController.setControllers(controllers);
         windowController.presentControllerAsFrame(tabController);
+        bookDetailController = tabController;
     }
 
 

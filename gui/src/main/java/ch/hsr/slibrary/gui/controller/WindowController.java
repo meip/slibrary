@@ -33,4 +33,20 @@ public class WindowController {
         presentControllerAsFrame(controller, JFrame.DISPOSE_ON_CLOSE);
     }
 
+    public void dismissController(ComponentController controller) {
+        JFrame frame = controllerFrames.get(controller);
+        frame.dispose();
+        controllerFrames.remove(controller);
+    }
+
+    public boolean containsController(ComponentController controller) {
+        return controllerFrames.containsKey(controller);
+    }
+
+    public void bringToFront(ComponentController controller) {
+        if(controllerFrames.containsKey(controller)) {
+            controllerFrames.get(controller).toFront();
+        }
+    }
+
 }
