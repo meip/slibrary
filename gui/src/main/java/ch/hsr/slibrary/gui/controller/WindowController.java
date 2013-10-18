@@ -133,10 +133,4 @@ public class WindowController {
             }
         }
     }
-
-
-
-
-
-
 }
