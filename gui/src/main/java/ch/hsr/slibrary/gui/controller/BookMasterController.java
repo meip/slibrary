@@ -2,7 +2,6 @@ package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
-import ch.hsr.slibrary.gui.form.GUIComponent;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.BookUtil;
 import ch.hsr.slibrary.spa.Book;
@@ -19,8 +18,13 @@ import java.util.*;
 public class BookMasterController extends ComponentController implements Observer {
 
 
+    private static final int DETAIL_MODE_TABBED = 0;
+    private static final int DETAIL_MODE_STANDALONE = 1;
+
     private BookMaster bookMaster;
     private Library library;
+
+    private int detailMode = DETAIL_MODE_STANDALONE;
 
     private ComponentController bookDetailController;
     private List<Book> booksToPresent = new ArrayList<>();
@@ -50,10 +54,6 @@ public class BookMasterController extends ComponentController implements Observe
                     }
                 }
                 presentBooks();
-                if(bookMaster.getBooksList().getSelectedIndices().length == 1) {
-                   Book book = library.getBooks().get(bookMaster.getBooksList().getSelectedIndices()[0]);
-                    windowController.bringToFront(bookControllerMap.get(book));
-                }
             }
         });
 
@@ -116,19 +116,18 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void presentBooks() {
-       presentBooksInStandalone(bookControllerMap.keySet());
+        if(detailMode == DETAIL_MODE_STANDALONE) {
+            presentBooksInStandaloneFrames(bookControllerMap.keySet());
+        }
+
     }
 
-    private void presentBookDetailInFrame(Book book) {
-        ComponentController controller = new BookDetailController(book.getName(), new BookDetail(), book, library);
-        windowController.presentControllerAsFrame(controller);
-        bookDetailController = controller;
-    }
-
-    private void presentBooksInStandalone(Collection<Book> books) {
+    private void presentBooksInStandaloneFrames(Collection<Book> books) {
         for(Book book : books) {
             if(!windowController.containsController(bookControllerMap.get(book))) {
                 windowController.presentControllerAsFrame(bookControllerMap.get(book));
+            } else {
+                windowController.bringToFront(bookControllerMap.get(book));
             }
         }
     }

@@ -19,13 +19,18 @@ public class WindowController {
 
     public void presentControllerAsFrame(ComponentController controller, int closeOperation ) {
 
-        JFrame frame = new JFrame(controller.getTitle());
-        frame.setContentPane(controller.getComponent().getContainer());
-        frame.setDefaultCloseOperation(closeOperation);
-        frame.pack();
-        frame.setVisible(true);
-        controller.setWindowController(this);
-        controllerFrames.put(controller, frame);
+
+        if(!controllerFrames.containsKey(controller)) {
+            JFrame frame = new JFrame(controller.getTitle());
+            frame.setContentPane(controller.getComponent().getContainer());
+            frame.setDefaultCloseOperation(closeOperation);
+            frame.pack();
+            frame.setVisible(true);
+            controller.setWindowController(this);
+            controllerFrames.put(controller, frame);
+        } else {
+            controllerFrames.get(controller).toFront();
+        }
     }
 
     public void presentControllerAsFrame(ComponentController controller) {
@@ -47,6 +52,10 @@ public class WindowController {
         if(controllerFrames.containsKey(controller)) {
             controllerFrames.get(controller).toFront();
         }
+    }
+
+    public void arrangeControllerWithPosition(ComponentController controller) {
+
     }
 
 }
