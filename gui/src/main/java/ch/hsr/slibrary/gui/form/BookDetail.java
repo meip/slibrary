@@ -18,9 +18,12 @@ public class BookDetail extends GUIComponent {
     private JLabel copyAmountLabel;
     private JButton removeCopyButton;
     private JPanel bookDetailPanel;
+    private JButton saveButton;
+    private JButton cancelButton;
 
     public BookDetail() {
         this.container = bookDetailPanel;
+
     }
 
     public JTextField getIsbnField() {
@@ -101,6 +104,14 @@ public class BookDetail extends GUIComponent {
 
     public void setBookDetailPanel(JPanel bookDetailPanel) {
         this.bookDetailPanel = bookDetailPanel;
+    }
+
+    public JButton getSaveButton() {
+        return saveButton;
+    }
+
+    public JButton getCancelButton() {
+        return cancelButton;
     }
 
 }

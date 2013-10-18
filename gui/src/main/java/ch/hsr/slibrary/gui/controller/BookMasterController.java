@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class BookMasterController extends ComponentController implements Observer, WindowControllerDelegate {
+public class BookMasterController extends ComponentController implements Observer, WindowControllerDelegate, BookDetailControllerDelegate {
 
 
     private static final int DETAIL_MODE_TABBED = 0;
@@ -37,6 +37,7 @@ public class BookMasterController extends ComponentController implements Observe
         this.library = lib;
     }
 
+    @Override
     public void initialize() {
         initializeButtonListeners();
         initializeBookList();
@@ -45,6 +46,7 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void initializeButtonListeners() {
+        final BookMasterController self = this;
         bookMaster.getDisplaySelectedButton().setEnabled(false);
         bookMaster.getDisplaySelectedButton().addActionListener(new ActionListener() {
             @Override
@@ -53,7 +55,9 @@ public class BookMasterController extends ComponentController implements Observe
                 for (int index : bookMaster.getBooksList().getSelectedIndices()) {
                     Book book = library.getBooks().get(index);
                     if(!bookControllerMap.containsKey(book)) {
-                        bookControllerMap.put(book, createControllerForBook(book));
+                        BookDetailController controller = createControllerForBook(book);
+                        controller.setDelegate(self);
+                        bookControllerMap.put(book, controller);
                     }
                     presentBook(book);
                 }
@@ -114,7 +118,7 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getBooksList().updateUI();
     }
 
-    private ComponentController createControllerForBook(Book book) {
+    private BookDetailController createControllerForBook(Book book) {
         return new BookDetailController(book.getName(), new BookDetail(), book, library);
     }
 
@@ -187,5 +191,10 @@ public class BookMasterController extends ComponentController implements Observe
     @Override
     public void windowDidDeactivateController(WindowController windowController, ComponentController controller) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void detailControllerDidCancel(BookDetailController bookDetailController) {
+        windowController.dismissController(bookDetailController);
     }
 }

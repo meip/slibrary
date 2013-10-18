@@ -8,16 +8,21 @@ import ch.hsr.slibrary.gui.form.GUIComponent;
  */
 public abstract class ComponentController {
     protected GUIComponent component;
+    protected WindowController windowController;
+    private String title = "";
+
 
     public WindowController getWindowController() {
         return windowController;
     }
 
+    public void initialize() {
+
+    }
+
     public void setWindowController(WindowController windowController) {
         this.windowController = windowController;
     }
-
-    protected WindowController windowController;
 
     public String getTitle() {
         return title;
@@ -26,8 +31,6 @@ public abstract class ComponentController {
     public void setTitle(String title) {
         this.title = title;
     }
-
-    private String title = "";
 
     public GUIComponent getComponent() {
         return this.component;

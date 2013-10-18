@@ -24,6 +24,7 @@ public class WindowController {
             frame.setDefaultCloseOperation(closeOperation);
             frame.pack();
             frame.setVisible(true);
+            frame.setMinimumSize(controller.getComponent().getMinimumSize());
             final WindowController self = this;
             frame.addWindowListener(new WindowListener() {
                 @Override

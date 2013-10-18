@@ -7,6 +7,10 @@ import ch.hsr.slibrary.spa.Shelf;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
@@ -20,6 +24,7 @@ public class BookDetailController extends ComponentController implements Observe
     private BookDetail bookDetail;
     private Book book;
     private Library library;
+    private BookDetailControllerDelegate delegate;
 
     public BookDetailController(String title, BookDetail component, Book book, Library library) {
         super(title);
@@ -29,9 +34,21 @@ public class BookDetailController extends ComponentController implements Observe
         this.library = library;
         this.setTitle(title);
 
+        initialize();
+    }
+
+    @Override
+    public void initialize() {
         initializeUI();
         updateUI();
+    }
 
+    public BookDetailControllerDelegate getDelegate() {
+        return delegate;
+    }
+
+    public void setDelegate(BookDetailControllerDelegate delegate) {
+        this.delegate = delegate;
     }
 
     private void initializeUI() {
@@ -66,6 +83,33 @@ public class BookDetailController extends ComponentController implements Observe
 
             @Override
             public void removeListDataListener(ListDataListener l) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
+
+        final BookDetailController self = this;
+        bookDetail.getCancelButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+            }
+        });
+
+        bookDetail.getContainer().addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
                 //To change body of implemented methods use File | Settings | File Templates.
             }
         });
