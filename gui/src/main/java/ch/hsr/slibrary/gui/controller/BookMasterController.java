@@ -4,6 +4,7 @@ import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.BookUtil;
+import ch.hsr.slibrary.gui.util.WindowBounds;
 import ch.hsr.slibrary.spa.Book;
 import ch.hsr.slibrary.spa.Library;
 
@@ -15,7 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class BookMasterController extends ComponentController implements Observer {
+public class BookMasterController extends ComponentController implements Observer, WindowControllerDelegate {
 
 
     private static final int DETAIL_MODE_TABBED = 0;
@@ -27,7 +28,6 @@ public class BookMasterController extends ComponentController implements Observe
     private int detailMode = DETAIL_MODE_STANDALONE;
 
     private ComponentController bookDetailController;
-    private List<Book> booksToPresent = new ArrayList<>();
     private Map<Book, ComponentController> bookControllerMap = new HashMap<>();
 
     public BookMasterController(String title, BookMaster component, Library lib) {
@@ -35,9 +35,12 @@ public class BookMasterController extends ComponentController implements Observe
         this.component = component;
         bookMaster = component;
         this.library = lib;
+    }
 
+    public void initialize() {
         initializeButtonListeners();
         initializeBookList();
+        if(windowController != null) windowController.addDelegate(this);
         updateUI();
     }
 
@@ -52,8 +55,8 @@ public class BookMasterController extends ComponentController implements Observe
                     if(!bookControllerMap.containsKey(book)) {
                         bookControllerMap.put(book, createControllerForBook(book));
                     }
+                    presentBook(book);
                 }
-                presentBooks();
             }
         });
 
@@ -115,21 +118,21 @@ public class BookMasterController extends ComponentController implements Observe
         return new BookDetailController(book.getName(), new BookDetail(), book, library);
     }
 
-    private void presentBooks() {
-        if(detailMode == DETAIL_MODE_STANDALONE) {
-            presentBooksInStandaloneFrames(bookControllerMap.keySet());
-        }
 
+    private void presentBook(Book book) {
+        if(detailMode == DETAIL_MODE_STANDALONE) {
+            presentBookInStandaloneFrame(book);
+        }
     }
 
-    private void presentBooksInStandaloneFrames(Collection<Book> books) {
-        for(Book book : books) {
-            if(!windowController.containsController(bookControllerMap.get(book))) {
-                windowController.presentControllerAsFrame(bookControllerMap.get(book));
-            } else {
-                windowController.bringToFront(bookControllerMap.get(book));
-            }
+
+    private void presentBookInStandaloneFrame(Book book) {
+        if(!windowController.containsController(bookControllerMap.get(book))) {
+            windowController.presentControllerAsFrame(bookControllerMap.get(book));
+        } else {
+            windowController.bringToFront(bookControllerMap.get(book));
         }
+        windowController.arrangeControllerWithPosition(bookControllerMap.get(book), WindowBounds.WINDOW_POSITION_RIGHT_TOP);
     }
 
     private  void presentMultipleBookDetailsInTabs(List<Book> books) {
@@ -149,5 +152,40 @@ public class BookMasterController extends ComponentController implements Observe
 
 
 
+    }
+
+
+    @Override
+    public void windowDidOpenController(WindowController windowController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void windowWillCloseController(WindowController windowController, ComponentController controller) {
+        List<Book> booksToRemove = new LinkedList<>();
+        for (Book book : bookControllerMap.keySet()) {
+            if(bookControllerMap.get(book) == controller) {
+                booksToRemove.add(book);
+            }
+        }
+        for(Book book : booksToRemove) {
+            bookControllerMap.remove(book);
+        }
+
+    }
+
+    @Override
+    public void windowDidCloseController(WindowController windowController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void windowDidActivateController(WindowController windowController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void windowDidDeactivateController(WindowController windowController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

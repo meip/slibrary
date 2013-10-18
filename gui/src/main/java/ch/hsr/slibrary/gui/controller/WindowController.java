@@ -1,23 +1,21 @@
 package ch.hsr.slibrary.gui.controller;
 
 
-import javax.swing.*;
-import java.util.HashMap;
-import java.util.Map;
+import ch.hsr.slibrary.gui.util.WindowBounds;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dominik
- * Date: 17.10.13
- * Time: 14:37
- * To change this template use File | Settings | File Templates.
- */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.*;
+
 public class WindowController {
 
 
+    private Set<WindowControllerDelegate> delegates = new HashSet<>();
     private Map<ComponentController, JFrame> controllerFrames = new HashMap<>();
 
-    public void presentControllerAsFrame(ComponentController controller, int closeOperation ) {
+    public void presentControllerAsFrame(final ComponentController controller, int closeOperation ) {
 
 
         if(!controllerFrames.containsKey(controller)) {
@@ -26,11 +24,68 @@ public class WindowController {
             frame.setDefaultCloseOperation(closeOperation);
             frame.pack();
             frame.setVisible(true);
+            final WindowController self = this;
+            frame.addWindowListener(new WindowListener() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+                    for(WindowControllerDelegate delegate : delegates) {
+                        delegate.windowDidOpenController(self, controller);
+                    }
+                }
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    for(WindowControllerDelegate delegate : delegates) {
+                        delegate.windowWillCloseController(self, controller);
+                    }
+                }
+
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    controllerFrames.remove(controller);
+                    for(WindowControllerDelegate delegate : delegates) {
+                        delegate.windowDidCloseController(self, controller);
+                    }
+                }
+
+                @Override
+                public void windowIconified(WindowEvent e) {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public void windowActivated(WindowEvent e) {
+                    for(WindowControllerDelegate delegate : delegates) {
+                        delegate.windowDidActivateController(self, controller);
+                    }
+                }
+
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+                    for(WindowControllerDelegate delegate : delegates) {
+                        delegate.windowDidDeactivateController(self, controller);
+                    }
+                }
+            });
             controller.setWindowController(this);
             controllerFrames.put(controller, frame);
         } else {
             controllerFrames.get(controller).toFront();
         }
+    }
+
+
+    public void addDelegate(WindowControllerDelegate delegate) {
+        delegates.add(delegate);
+    }
+
+    public void removeDelegate(WindowControllerDelegate delegate) {
+        delegates.remove(delegate);
     }
 
     public void presentControllerAsFrame(ComponentController controller) {
@@ -54,8 +109,34 @@ public class WindowController {
         }
     }
 
-    public void arrangeControllerWithPosition(ComponentController controller) {
+    public void arrangeControllerWithPosition(ComponentController controller, int windowPosition) {
+        JFrame frame = controllerFrames.get(controller);
+        if(frame != null) {
+            Toolkit tk = Toolkit.getDefaultToolkit();
+            Dimension screenSize = tk.getScreenSize();
 
+            switch (windowPosition) {
+                case WindowBounds.WINDOW_POSITION_FILL_LEFT:
+                    frame.setSize((int) screenSize.getWidth() / 2, (int) screenSize.getHeight());
+                    frame.setLocation(0,0);
+                    break;
+
+                case WindowBounds.WINDOW_POSITION_FILL_RIGHT:
+                    frame.setSize((int) screenSize.getWidth() / 2, (int) screenSize.getHeight());
+                    frame.setLocation((int) screenSize.getWidth()/2,0);
+                    break;
+
+                case WindowBounds.WINDOW_POSITION_RIGHT_TOP:
+                    frame.setSize((int) screenSize.getWidth() / 2, frame.getHeight());
+                    frame.setLocation((int) screenSize.getWidth()/2,0);
+                    break;
+            }
+        }
     }
+
+
+
+
+
 
 }
