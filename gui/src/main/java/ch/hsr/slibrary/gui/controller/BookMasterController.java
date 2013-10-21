@@ -41,6 +41,7 @@ public class BookMasterController extends ComponentController implements Observe
     public void initialize() {
         initializeButtonListeners();
         initializeBookList();
+        initializeObserving();
         if(windowController != null) windowController.addDelegate(this);
         updateUI();
     }
@@ -110,12 +111,10 @@ public class BookMasterController extends ComponentController implements Observe
         });
 
     }
-
-    private void updateUI() {
-        bookMaster.getBooksAmountLabel().setText(new Integer(library.getBooks().size()).toString());
-        bookMaster.getCopyAmountLabel().setText(new Integer(library.getCopies().size()).toString());
-        bookMaster.getDisplaySelectedButton().setEnabled(bookMaster.getBooksList().getSelectedIndices().length > 0);
-        bookMaster.getBooksList().updateUI();
+    private void initializeObserving() {
+        for(Book book : library.getBooks()) {
+            book.addObserver(this);
+        }
     }
 
     private BookDetailController createControllerForBook(Book book) {
@@ -207,9 +206,14 @@ public class BookMasterController extends ComponentController implements Observe
 
     @Override
     public void update(Observable o, Object arg) {
+        updateUI();
+    }
 
-
-
+    private void updateUI() {
+        bookMaster.getBooksAmountLabel().setText(new Integer(library.getBooks().size()).toString());
+        bookMaster.getCopyAmountLabel().setText(new Integer(library.getCopies().size()).toString());
+        bookMaster.getDisplaySelectedButton().setEnabled(bookMaster.getBooksList().getSelectedIndices().length > 0);
+        bookMaster.getBooksList().updateUI();
     }
 
 
@@ -240,6 +244,11 @@ public class BookMasterController extends ComponentController implements Observe
 
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
+        dismissBookController(bookDetailController);
+    }
+
+    @Override
+    public void detailControllerDidSave(BookDetailController bookDetailController) {
         dismissBookController(bookDetailController);
     }
 }

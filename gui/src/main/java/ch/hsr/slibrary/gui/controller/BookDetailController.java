@@ -95,6 +95,14 @@ public class BookDetailController extends ComponentController implements Observe
             }
         });
 
+        bookDetail.getSaveButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveChanges();
+                if(getDelegate() != null) getDelegate().detailControllerDidSave(self);
+            }
+        });
+
         bookDetail.getContainer().addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -120,6 +128,13 @@ public class BookDetailController extends ComponentController implements Observe
         bookDetail.getAuthorField().setText(book.getAuthor());
         bookDetail.getPublisherField().setText(book.getPublisher());
         bookDetail.getShelfComboBox().setSelectedIndex(book.getShelf().ordinal());
+    }
+
+    public void saveChanges() {
+        book.setName(bookDetail.getTitleField().getText());
+        book.setAuthor(bookDetail.getAuthorField().getText());
+        book.setPublisher(bookDetail.getPublisherField().getText());
+        book.setShelf((Shelf) bookDetail.getShelfComboBox().getSelectedItem());
     }
 
     @Override
