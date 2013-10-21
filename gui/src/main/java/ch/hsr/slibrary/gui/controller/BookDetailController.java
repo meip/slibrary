@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -108,6 +107,14 @@ public class BookDetailController extends ComponentController implements Observe
         });
 
         bookDetail.getSaveButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveChanges();
+                if(getDelegate() != null) getDelegate().detailControllerDidSave(self);
+            }
+        });
+
+        bookDetail.getSaveAndCloseButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveChanges();

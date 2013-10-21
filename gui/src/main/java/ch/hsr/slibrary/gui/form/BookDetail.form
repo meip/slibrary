@@ -196,13 +196,19 @@
               <component id="969da" class="javax.swing.JButton" binding="cancelButton" default-binding="true">
                 <constraints/>
                 <properties>
-                  <text value="Cancel"/>
+                  <text value="Abbrechen"/>
                 </properties>
               </component>
               <component id="8026e" class="javax.swing.JButton" binding="saveButton" default-binding="true">
                 <constraints/>
                 <properties>
-                  <text value="Save"/>
+                  <text value="Speichern"/>
+                </properties>
+              </component>
+              <component id="3ba77" class="javax.swing.JButton" binding="saveAndCloseButton">
+                <constraints/>
+                <properties>
+                  <text value="Speichern und Schliessen"/>
                 </properties>
               </component>
             </children>

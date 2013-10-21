@@ -53,8 +53,7 @@ public class SingleFrameTabMDController extends MasterDetailController implement
     protected void doRemoveDetailController(ComponentController detailController) {
         getTabController().removeController(detailController);
         if(getTabController().getControllers().size() == 0) {
-            windowController.dismissController(getTabController());
-            splitController.setSecondController(null);
+
         }
     }
 

@@ -2,7 +2,6 @@ package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
-import ch.hsr.slibrary.gui.util.BookUtil;
 import ch.hsr.slibrary.spa.Book;
 import ch.hsr.slibrary.spa.Library;
 
