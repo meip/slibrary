@@ -25,9 +25,9 @@ public class BookMasterController extends ComponentController implements Observe
     private BookMaster bookMaster;
     private Library library;
 
-    private int detailMode = DETAIL_MODE_STANDALONE;
+    private int detailMode = DETAIL_MODE_TABBED;
 
-    private ComponentController bookDetailController;
+    private TabController _tabController;
     private Map<Book, ComponentController> bookControllerMap = new HashMap<>();
 
     public BookMasterController(String title, BookMaster component, Library lib) {
@@ -119,13 +119,25 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private BookDetailController createControllerForBook(Book book) {
-        return new BookDetailController(book.getName(), new BookDetail(), book, library);
+        String title = (detailMode == DETAIL_MODE_TABBED) ? BookUtil.shortBookName(book.getName()) : book.getName();
+        return new BookDetailController(title, new BookDetail(), book, library);
+    }
+
+    private TabController getTabController() {
+        if(_tabController == null) _tabController = new TabController("Detailansicht", new TabGUIComponent());
+        return _tabController;
     }
 
 
     private void presentBook(Book book) {
-        if(detailMode == DETAIL_MODE_STANDALONE) {
-            presentBookInStandaloneFrame(book);
+        switch (detailMode) {
+            case DETAIL_MODE_STANDALONE:
+                presentBookInStandaloneFrame(book);
+                break;
+
+            case DETAIL_MODE_TABBED:
+                presentBookInTabs(book);
+                break;
         }
     }
 
@@ -133,23 +145,65 @@ public class BookMasterController extends ComponentController implements Observe
     private void presentBookInStandaloneFrame(Book book) {
         if(!windowController.containsController(bookControllerMap.get(book))) {
             windowController.presentControllerAsFrame(bookControllerMap.get(book));
+            windowController.arrangeControllerWithPosition(bookControllerMap.get(book), WindowBounds.WINDOW_POSITION_RIGHT_TOP);
         } else {
             windowController.bringToFront(bookControllerMap.get(book));
         }
-        windowController.arrangeControllerWithPosition(bookControllerMap.get(book), WindowBounds.WINDOW_POSITION_RIGHT_TOP);
     }
 
-    private  void presentMultipleBookDetailsInTabs(List<Book> books) {
-        TabController tabController = new TabController(new TabGUIComponent());
-        List<ComponentController> controllers = new ArrayList<>();
-        for(Book book : books) {
-            controllers.add(new BookDetailController(BookUtil.shortBookName(book.getName()), new BookDetail(), book, library));
+    private void presentBookInTabs(Book book) {
+        if(!getTabController().containsController(bookControllerMap.get(book))) {
+            getTabController().addController(bookControllerMap.get(book));
         }
-        tabController.setControllers(controllers);
-        windowController.presentControllerAsFrame(tabController);
-        bookDetailController = tabController;
+        getTabController().showController(bookControllerMap.get(book));
+
+        if(!windowController.containsController(getTabController())) {
+            windowController.presentControllerAsFrame(getTabController());
+            windowController.arrangeControllerWithPosition(getTabController(), WindowBounds.WINDOW_POSITION_FILL_RIGHT);
+        } else {
+            windowController.bringToFront(getTabController());
+        }
+
+
     }
 
+    private  void dismissBook(Book book) {
+        dismissBookController(bookControllerMap.get(book));
+    }
+
+    private void dismissBookController(ComponentController controller) {
+        switch (detailMode) {
+            case DETAIL_MODE_STANDALONE:
+                windowController.dismissController(controller);
+                break;
+
+            case DETAIL_MODE_TABBED:
+                if(controller == getTabController()) {
+                    getTabController().removeAllControllers();
+                    bookControllerMap = new HashMap<>();
+                } else {
+                    getTabController().removeController(controller);
+                    if(getTabController().getControllers().size() == 0) {
+                        windowController.dismissController(getTabController());
+                    }
+                }
+                break;
+        }
+        removeControllerFromMap(controller);
+
+    }
+
+    private void removeControllerFromMap(ComponentController controller) {
+        List<Book> booksToRemove = new LinkedList<>();
+        for (Book book : bookControllerMap.keySet()) {
+            if(bookControllerMap.get(book) == controller) {
+                booksToRemove.add(book);
+            }
+        }
+        for(Book book : booksToRemove) {
+            bookControllerMap.remove(book);
+        }
+    }
 
     @Override
     public void update(Observable o, Object arg) {
@@ -166,16 +220,7 @@ public class BookMasterController extends ComponentController implements Observe
 
     @Override
     public void windowWillCloseController(WindowController windowController, ComponentController controller) {
-        List<Book> booksToRemove = new LinkedList<>();
-        for (Book book : bookControllerMap.keySet()) {
-            if(bookControllerMap.get(book) == controller) {
-                booksToRemove.add(book);
-            }
-        }
-        for(Book book : booksToRemove) {
-            bookControllerMap.remove(book);
-        }
-
+        dismissBookController(controller);
     }
 
     @Override
@@ -195,6 +240,6 @@ public class BookMasterController extends ComponentController implements Observe
 
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
-        windowController.dismissController(bookDetailController);
+        dismissBookController(bookDetailController);
     }
 }

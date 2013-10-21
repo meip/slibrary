@@ -95,9 +95,11 @@ public class WindowController {
     }
 
     public void dismissController(ComponentController controller) {
-        JFrame frame = controllerFrames.get(controller);
-        frame.dispose();
-        controllerFrames.remove(controller);
+        if(controllerFrames.containsKey(controller)) {
+            JFrame frame = controllerFrames.get(controller);
+            frame.dispose();
+            controllerFrames.remove(controller);
+        }
     }
 
     public boolean containsController(ComponentController controller) {
