@@ -1,9 +1,9 @@
 package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
+import ch.hsr.slibrary.gui.util.StringUtil;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class TabController extends ComponentController {
         this.controllers = controllers;
         tabbedPane.removeAll();
         for(ComponentController comp: controllers) {
-            tabbedPane.addTab(comp.getTitle(), comp.getComponent().getContainer());
+            tabbedPane.addTab(StringUtil.trimToWordsWithMaxLength(comp.getTitle(), 5, 25), comp.getComponent().getContainer());
         }
     }
 
@@ -41,8 +41,15 @@ public class TabController extends ComponentController {
             if(controllers.size() == 1) {
                 setControllers(controllers);
             } else {
-                tabbedPane.addTab(controller.getTitle(), controller.getComponent().getContainer());
+                tabbedPane.addTab(StringUtil.trimToWordsWithMaxLength(controller.getTitle(), 5, 25), controller.getComponent().getContainer());
             }
+        }
+    }
+
+    public void insertControllerAt(ComponentController controller, int index) {
+        if(index >= 0 && index < controllers.size()) {
+            controllers.add(index, controller);
+            tabbedPane.insertTab(StringUtil.trimToWordsWithMaxLength(controller.getTitle(), 5, 25), null, controller.getComponent().getContainer(), "", index);
         }
     }
 
@@ -50,6 +57,13 @@ public class TabController extends ComponentController {
         if(controllers.contains(controller)) {
             controllers.remove(controller);
             tabbedPane.remove(controller.getComponent().getContainer());
+        }
+    }
+
+    public void removeControllerAt(int index) {
+        if(index >= 0 && index < controllers.size()) {
+            controllers.remove(index);
+            tabbedPane.remove(index);
         }
     }
 

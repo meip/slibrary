@@ -26,6 +26,9 @@ public class BookDetailController extends ComponentController implements Observe
     private Library library;
     private BookDetailControllerDelegate delegate;
 
+
+    private MasterDetailController masterDetailController;
+
     public BookDetailController(String title, BookDetail component, Book book, Library library) {
         super(title);
         this.component = component;
@@ -35,6 +38,14 @@ public class BookDetailController extends ComponentController implements Observe
         this.setTitle(title);
 
         initialize();
+    }
+
+    public MasterDetailController getMasterDetailController() {
+        return masterDetailController;
+    }
+
+    public void setMasterDetailController(MasterDetailController masterDetailController) {
+        this.masterDetailController = masterDetailController;
     }
 
     @Override
@@ -92,6 +103,7 @@ public class BookDetailController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                if(masterDetailController != null) masterDetailController.removeDetailController(self);
             }
         });
 
@@ -100,6 +112,7 @@ public class BookDetailController extends ComponentController implements Observe
             public void actionPerformed(ActionEvent e) {
                 saveChanges();
                 if(getDelegate() != null) getDelegate().detailControllerDidSave(self);
+                if(masterDetailController != null) masterDetailController.removeDetailController(self);
             }
         });
 

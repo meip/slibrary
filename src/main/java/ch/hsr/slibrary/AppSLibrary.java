@@ -1,6 +1,8 @@
 package ch.hsr.slibrary;
 
 import ch.hsr.slibrary.gui.controller.BookMasterController;
+import ch.hsr.slibrary.gui.controller.JFrameSeparatedWithTabsMasterDetailController;
+import ch.hsr.slibrary.gui.controller.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.WindowController;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.util.WindowBounds;
@@ -32,12 +34,10 @@ public class AppSLibrary {
 
         WindowController windowController = new WindowController();
         BookMasterController bookMasterController = new BookMasterController("BookMasterController 1", new BookMaster(), library);
-        bookMasterController.setWindowController(windowController);
         bookMasterController.initialize();
 
-        windowController.presentControllerAsFrame(bookMasterController, JFrame.EXIT_ON_CLOSE);
-        windowController.arrangeControllerWithPosition(bookMasterController, WindowBounds.WINDOW_POSITION_FILL_LEFT);
-
+        MasterDetailController masterDetailController = new JFrameSeparatedWithTabsMasterDetailController(windowController, bookMasterController);
+        bookMasterController.setMasterDetailController(masterDetailController);
     }
 
     private static void initLibrary(Library library)

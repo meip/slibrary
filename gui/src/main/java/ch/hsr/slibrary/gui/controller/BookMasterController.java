@@ -2,9 +2,7 @@ package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
-import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.BookUtil;
-import ch.hsr.slibrary.gui.util.WindowBounds;
 import ch.hsr.slibrary.spa.Book;
 import ch.hsr.slibrary.spa.Library;
 
@@ -16,18 +14,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class BookMasterController extends ComponentController implements Observer, WindowControllerDelegate, BookDetailControllerDelegate {
+public class BookMasterController extends ComponentController implements Observer, BookDetailControllerDelegate, MasterDetailControllerDelegate {
 
 
-    private static final int DETAIL_MODE_TABBED = 0;
-    private static final int DETAIL_MODE_STANDALONE = 1;
+
+    private MasterDetailController masterDetailController;
 
     private BookMaster bookMaster;
     private Library library;
 
-    private int detailMode = DETAIL_MODE_TABBED;
-
-    private TabController _tabController;
     private Map<Book, ComponentController> bookControllerMap = new HashMap<>();
 
     public BookMasterController(String title, BookMaster component, Library lib) {
@@ -37,17 +32,27 @@ public class BookMasterController extends ComponentController implements Observe
         this.library = lib;
     }
 
+    public MasterDetailController getMasterDetailController() {
+        return masterDetailController;
+    }
+
+    public void setMasterDetailController(MasterDetailController masterDetailController) {
+        this.masterDetailController = masterDetailController;
+        masterDetailController.setDelegate(this);
+    }
+
     @Override
     public void initialize() {
         initializeButtonListeners();
         initializeBookList();
         initializeObserving();
-        if(windowController != null) windowController.addDelegate(this);
         updateUI();
     }
 
     private void initializeButtonListeners() {
+
         final BookMasterController self = this;
+
         bookMaster.getDisplaySelectedButton().setEnabled(false);
         bookMaster.getDisplaySelectedButton().addActionListener(new ActionListener() {
             @Override
@@ -58,6 +63,7 @@ public class BookMasterController extends ComponentController implements Observe
                     if(!bookControllerMap.containsKey(book)) {
                         BookDetailController controller = createControllerForBook(book);
                         controller.setDelegate(self);
+                        controller.setMasterDetailController(self.masterDetailController);
                         bookControllerMap.put(book, controller);
                     }
                     presentBook(book);
@@ -75,6 +81,14 @@ public class BookMasterController extends ComponentController implements Observe
                                 library
                         )
                 );
+            }
+        });
+
+        bookMaster.getBooksList().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                bookMaster.getNumSelectedLabel().setText(new Integer(bookMaster.getBooksList().getSelectedIndices().length).toString());
             }
         });
 
@@ -118,51 +132,19 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private BookDetailController createControllerForBook(Book book) {
-        String title = (detailMode == DETAIL_MODE_TABBED) ? BookUtil.shortBookName(book.getName()) : book.getName();
-        return new BookDetailController(title, new BookDetail(), book, library);
+        return new BookDetailController(book.getName(), new BookDetail(), book, library);
     }
 
-    private TabController getTabController() {
-        if(_tabController == null) _tabController = new TabController("Detailansicht", new TabGUIComponent());
-        return _tabController;
-    }
 
 
     private void presentBook(Book book) {
-        switch (detailMode) {
-            case DETAIL_MODE_STANDALONE:
-                presentBookInStandaloneFrame(book);
-                break;
-
-            case DETAIL_MODE_TABBED:
-                presentBookInTabs(book);
-                break;
+        if(masterDetailController != null) {
+            ComponentController controller = bookControllerMap.get(book);
+            if(!masterDetailController.containsDetailController(controller)) {
+                masterDetailController.addDetailController(controller);
+            }
+            masterDetailController.setSelectedDetailController(controller);
         }
-    }
-
-
-    private void presentBookInStandaloneFrame(Book book) {
-        if(!windowController.containsController(bookControllerMap.get(book))) {
-            windowController.presentControllerAsFrame(bookControllerMap.get(book));
-            windowController.arrangeControllerWithPosition(bookControllerMap.get(book), WindowBounds.WINDOW_POSITION_RIGHT_TOP);
-        } else {
-            windowController.bringToFront(bookControllerMap.get(book));
-        }
-    }
-
-    private void presentBookInTabs(Book book) {
-        if(!getTabController().containsController(bookControllerMap.get(book))) {
-            getTabController().addController(bookControllerMap.get(book));
-        }
-        getTabController().showController(bookControllerMap.get(book));
-
-        if(!windowController.containsController(getTabController())) {
-            windowController.presentControllerAsFrame(getTabController());
-            windowController.arrangeControllerWithPosition(getTabController(), WindowBounds.WINDOW_POSITION_FILL_RIGHT);
-        } else {
-            windowController.bringToFront(getTabController());
-        }
-
 
     }
 
@@ -171,25 +153,7 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void dismissBookController(ComponentController controller) {
-        switch (detailMode) {
-            case DETAIL_MODE_STANDALONE:
-                windowController.dismissController(controller);
-                break;
-
-            case DETAIL_MODE_TABBED:
-                if(controller == getTabController()) {
-                    getTabController().removeAllControllers();
-                    bookControllerMap = new HashMap<>();
-                } else {
-                    getTabController().removeController(controller);
-                    if(getTabController().getControllers().size() == 0) {
-                        windowController.dismissController(getTabController());
-                    }
-                }
-                break;
-        }
         removeControllerFromMap(controller);
-
     }
 
     private void removeControllerFromMap(ComponentController controller) {
@@ -216,32 +180,6 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getBooksList().updateUI();
     }
 
-
-    @Override
-    public void windowDidOpenController(WindowController windowController, ComponentController controller) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void windowWillCloseController(WindowController windowController, ComponentController controller) {
-        dismissBookController(controller);
-    }
-
-    @Override
-    public void windowDidCloseController(WindowController windowController, ComponentController controller) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void windowDidActivateController(WindowController windowController, ComponentController controller) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void windowDidDeactivateController(WindowController windowController, ComponentController controller) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
         dismissBookController(bookDetailController);
@@ -250,5 +188,25 @@ public class BookMasterController extends ComponentController implements Observe
     @Override
     public void detailControllerDidSave(BookDetailController bookDetailController) {
         dismissBookController(bookDetailController);
+    }
+
+    @Override
+    public void willRemoveDetailController(ComponentController detailController) {
+
+    }
+
+    @Override
+    public void didRemoveDetailController(ComponentController detailController) {
+        dismissBookController(detailController);
+    }
+
+    @Override
+    public void willSelectDetailController(ComponentController detailController) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void didSelectDetailController(ComponentController detailController) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
