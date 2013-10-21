@@ -19,10 +19,8 @@ public class BookMasterController extends ComponentController implements Observe
 
 
     private MasterDetailController masterDetailController;
-
     private BookMaster bookMaster;
     private Library library;
-
     private Map<Book, ComponentController> bookControllerMap = new HashMap<>();
 
     public BookMasterController(String title, BookMaster component, Library lib) {
@@ -148,14 +146,6 @@ public class BookMasterController extends ComponentController implements Observe
 
     }
 
-    private  void dismissBook(Book book) {
-        dismissBookController(bookControllerMap.get(book));
-    }
-
-    private void dismissBookController(ComponentController controller) {
-        removeControllerFromMap(controller);
-    }
-
     private void removeControllerFromMap(ComponentController controller) {
         List<Book> booksToRemove = new LinkedList<>();
         for (Book book : bookControllerMap.keySet()) {
@@ -182,12 +172,12 @@ public class BookMasterController extends ComponentController implements Observe
 
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
-        dismissBookController(bookDetailController);
+        removeControllerFromMap(bookDetailController);
     }
 
     @Override
     public void detailControllerDidSave(BookDetailController bookDetailController) {
-        dismissBookController(bookDetailController);
+        removeControllerFromMap(bookDetailController);
     }
 
     @Override
@@ -197,7 +187,7 @@ public class BookMasterController extends ComponentController implements Observe
 
     @Override
     public void didRemoveDetailController(ComponentController detailController) {
-        dismissBookController(detailController);
+        removeControllerFromMap(detailController);
     }
 
     @Override

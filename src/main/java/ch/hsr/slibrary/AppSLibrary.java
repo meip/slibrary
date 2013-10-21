@@ -1,18 +1,13 @@
 package ch.hsr.slibrary;
 
-import ch.hsr.slibrary.gui.controller.BookMasterController;
-import ch.hsr.slibrary.gui.controller.JFrameSeparatedWithTabsMasterDetailController;
-import ch.hsr.slibrary.gui.controller.MasterDetailController;
-import ch.hsr.slibrary.gui.controller.WindowController;
+import ch.hsr.slibrary.gui.controller.*;
 import ch.hsr.slibrary.gui.form.BookMaster;
-import ch.hsr.slibrary.gui.util.WindowBounds;
 import ch.hsr.slibrary.spa.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,10 +28,11 @@ public class AppSLibrary {
         initLibrary(library);
 
         WindowController windowController = new WindowController();
-        BookMasterController bookMasterController = new BookMasterController("BookMasterController 1", new BookMaster(), library);
+
+        BookMasterController bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
 
-        MasterDetailController masterDetailController = new JFrameSeparatedWithTabsMasterDetailController(windowController, bookMasterController);
+        MasterDetailController masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
         bookMasterController.setMasterDetailController(masterDetailController);
     }
 

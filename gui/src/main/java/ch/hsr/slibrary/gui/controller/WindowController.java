@@ -119,6 +119,11 @@ public class WindowController {
             Dimension screenSize = tk.getScreenSize();
 
             switch (windowPosition) {
+                case WindowBounds.WINDOW_POSITION_FILL_SCREEN:
+                    frame.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
+                    frame.setLocation(0,0);
+                    break;
+
                 case WindowBounds.WINDOW_POSITION_FILL_LEFT:
                     frame.setSize((int) screenSize.getWidth() / 2, (int) screenSize.getHeight());
                     frame.setLocation(0,0);

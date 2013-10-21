@@ -2,6 +2,7 @@ package ch.hsr.slibrary.gui.util;
 
 public class WindowBounds {
 
+    public static final int WINDOW_POSITION_FILL_SCREEN = 0;
     public static final int WINDOW_POSITION_FILL_LEFT = 1;
     public static final int WINDOW_POSITION_FILL_RIGHT = 2;
     public static final int WINDOW_POSITION_RIGHT_TOP = 3;
