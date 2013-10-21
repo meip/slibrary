@@ -72,13 +72,11 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getAddBookButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                windowController.presentControllerAsFrame(
-                        new NewBookDetailController(
-                                "Neues Buch erfassen",
-                                new BookDetail(),
-                                library
-                        )
-                );
+                if(masterDetailController != null) {
+                    ComponentController controller = new NewBookDetailController("Neues Buch erfassen",new BookDetail(),library);
+                    masterDetailController.addDetailController(controller);
+                    masterDetailController.setSelectedDetailController(controller);
+                }
             }
         });
 

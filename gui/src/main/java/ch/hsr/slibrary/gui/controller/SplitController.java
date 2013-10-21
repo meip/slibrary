@@ -18,8 +18,9 @@ public class SplitController extends ComponentController {
 
     public SplitController(String title, VerticalSplitComponent splitComponent) {
         super(title);
+        this.component = splitComponent;
         this.splitComponent = splitComponent;
-        splitComponent.getSplitPane().setDividerLocation(0.3);
+        splitComponent.getSplitPane().setDividerLocation(0.5);
     }
 
 
@@ -29,7 +30,7 @@ public class SplitController extends ComponentController {
 
     public void setFirstController(ComponentController firstController) {
         this.firstController = firstController;
-        splitComponent.getSplitPane().setTopComponent(firstController.getComponent().getContainer());
+        splitComponent.getSplitPane().setLeftComponent(firstController.getComponent().getContainer());
     }
 
     public ComponentController getSecondController() {
@@ -38,7 +39,7 @@ public class SplitController extends ComponentController {
 
     public void setSecondController(ComponentController secondController) {
         this.secondController = secondController;
-        splitComponent.getSplitPane().setBottomComponent(firstController.getComponent().getContainer());
+        splitComponent.getSplitPane().setRightComponent(secondController.getComponent().getContainer());
     }
 
 }
