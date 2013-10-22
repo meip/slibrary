@@ -25,6 +25,7 @@ public class SingleFrameTabMDController extends MasterDetailController implement
         this.windowController = windowController;
         splitController = new SplitController(title, new VerticalSplitComponent());
         splitController.setFirstController(masterController);
+        splitController.setSecondController(null);
 
         windowController.presentControllerAsFrame(splitController, JFrame.EXIT_ON_CLOSE);
         windowController.arrangeControllerWithPosition(splitController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
@@ -47,20 +48,23 @@ public class SingleFrameTabMDController extends MasterDetailController implement
     @Override
     protected void doInsertDetailControllerAt(ComponentController detailController, int index) {
         getTabController().insertControllerAt(detailController, index);
+        if(splitController.getSecondController() == null) {
+            splitController.setSecondController(getTabController());
+        }
     }
 
     @Override
     protected void doRemoveDetailController(ComponentController detailController) {
         getTabController().removeController(detailController);
         if(getTabController().getControllers().size() == 0) {
-
+            splitController.setSecondController(null);
         }
     }
 
     @Override
     protected void doRemoveAllDetailControllers() {
         getTabController().removeAllControllers();
-        windowController.dismissController(getTabController());
+        splitController.setSecondController(null);
     }
 
     @Override

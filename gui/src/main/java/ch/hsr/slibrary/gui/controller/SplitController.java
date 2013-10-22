@@ -38,8 +38,16 @@ public class SplitController extends ComponentController {
     }
 
     public void setSecondController(ComponentController secondController) {
+
+        if(secondController == null) {
+            splitComponent.getSplitPane().setDividerLocation(1.0);
+            splitComponent.getSplitPane().remove(splitComponent.getSplitPane().getRightComponent());
+        } else {
+            splitComponent.getSplitPane().setRightComponent(secondController.getComponent().getContainer());
+            splitComponent.getSplitPane().setDividerLocation(0.5);
+        }
         this.secondController = secondController;
-        splitComponent.getSplitPane().setRightComponent(secondController.getComponent().getContainer());
+
     }
 
 }
