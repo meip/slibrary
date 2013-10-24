@@ -15,15 +15,26 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * User: p1meier
  * Date: 15.10.13
  */
-public class AppSLibrary {
+public class AppSLibrary implements MainMenuBarControllerDelegate{
 
 
-    public static void main(String[] args) throws Exception {
+    private WindowController windowController;
+    private MasterDetailController masterDetailController;
+    private MainMenuBarController menuBarController;
+    private BookMasterController bookMasterController;
+    private Library library;
+
+
+    public AppSLibrary(Library library) {
+        this.library = library;
+
         String os = System.getProperty("os.name").toLowerCase();
         boolean isMac = os.startsWith("mac");
         if(isMac) {
@@ -31,26 +42,59 @@ public class AppSLibrary {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Swinging Library");
         }
 
+        initializeControllerMainControllers();
 
+    }
 
-        Library library = new Library();
-        initLibrary(library);
-
-
-
-        WindowController windowController = new WindowController();
-        MainMenuBarController menuBarController = new MainMenuBarController(new JMenuBar(), windowController);
+    private void initializeControllerMainControllers() {
+        windowController = new WindowController();
+        menuBarController = new MainMenuBarController(new JMenuBar(), windowController);
         windowController.setMenuBarForAllControllers(menuBarController);
         windowController.addDelegate(menuBarController);
-
-
-        BookMasterController bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
+        menuBarController.setDelegate(this);
+        bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
 
-        MasterDetailController masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+
+        setTwoWindowsMode();
+
+    }
+
+
+    private void setOneWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_ONE_WINDOW);
+        List<ComponentController> detailControllers = new LinkedList<>();
+
+
+        if(masterDetailController != null) {
+            detailControllers = masterDetailController.getDetailControllers();
+            masterDetailController.dismiss();
+        }
+        masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+        masterDetailController.setDetailControllers(detailControllers);
         bookMasterController.setMasterDetailController(masterDetailController);
 
-       // windowController.setMenuBarForController(menuBarController, masterDetailController.getWindowedController());
+    }
+
+    private void setTwoWindowsMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_TWO_WINDOWS);
+        List<ComponentController> detailControllers = new LinkedList<>();
+
+
+        if(masterDetailController != null) {
+            detailControllers = masterDetailController.getDetailControllers();
+            masterDetailController.dismiss();
+        }
+        masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+        masterDetailController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(masterDetailController);
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        Library library = new Library();
+        initLibrary(library);
+        new AppSLibrary(library);
 
     }
 
@@ -178,5 +222,18 @@ public class AppSLibrary {
             }
         }
         return "";
+    }
+
+    @Override
+    public void didChangeDisplayMode(MainMenuBarController controller) {
+        switch (controller.getSelectedViewItemName()) {
+            case MainMenuBarController.MENU_VIEW_ONE_WINDOW:
+                setOneWindowMode();
+                break;
+
+            case MainMenuBarController.MENU_VIEW_TWO_WINDOWS:
+                setTwoWindowsMode();
+                break;
+        }
     }
 }

@@ -41,9 +41,14 @@ public abstract class MasterDetailController {
 
     public void setDetailControllers(List<ComponentController> detailControllers) {
         this.detailControllers = detailControllers;
+        doRemoveAllDetailControllers();
         for(ComponentController controller : detailControllers) {
             doAddDetailController(controller);
         }
+    }
+
+    public List<ComponentController> getDetailControllers() {
+        return detailControllers;
     }
 
     public void removeDetailController(ComponentController detailController) {
@@ -119,4 +124,5 @@ public abstract class MasterDetailController {
     abstract protected void doRemoveAllDetailControllers();
     abstract protected void doSetSelectedDetailController(ComponentController detailController);
     abstract public ComponentController getWindowedController();
+    abstract public void dismiss();
 }

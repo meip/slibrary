@@ -108,4 +108,9 @@ public class SingleFrameTabMDController extends MasterDetailController implement
     public void didAddWindowController(WindowController windowController, ComponentController controller) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    public void dismiss() {
+       windowController.dismissController(splitController);
+       windowController.removeDelegate(this);
+    }
 }
