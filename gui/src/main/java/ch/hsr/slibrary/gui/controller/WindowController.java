@@ -1,6 +1,7 @@
 package ch.hsr.slibrary.gui.controller;
 
 
+import ch.hsr.slibrary.gui.util.StringUtil;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 
 import javax.swing.*;
@@ -9,13 +10,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.*;
 
-public class WindowController {
+public class WindowController implements ComponentControllerDelegate{
 
 
     private Set<WindowControllerDelegate> delegates = new HashSet<>();
     private Map<ComponentController, JFrame> controllerFrames = new HashMap<>();
     private MenuBarController defaultMenuBarController;
-    private Map<ComponentController, MenuBarController> controllerMenuMapping = new HashMap<>();
 
 
     public void presentControllerAsFrame(ComponentController controller) {
@@ -83,15 +83,16 @@ public class WindowController {
                     }
                 }
             });
-            controller.setWindowController(this);
             if(defaultMenuBarController != null) {
                 frame.setJMenuBar(defaultMenuBarController.getMenuBar());
-                //controllerMenuMapping.put(controller, defaultMenuBarController);
             }
-            controllerFrames.put(controller, frame);
+
             for(WindowControllerDelegate delegate : delegates) {
                 delegate.didAddWindowController(this, controller);
             }
+
+            controllerFrames.put(controller, frame);
+            controller.setDelegate(this);
 
         } else {
             bringToFront(controller);
@@ -110,6 +111,7 @@ public class WindowController {
 
     public void dismissController(ComponentController controller) {
         if(controllerFrames.containsKey(controller)) {
+            controller.setDelegate(this);
             JFrame frame = controllerFrames.get(controller);
             controllerFrames.remove(controller);
             frame.dispose();
@@ -188,20 +190,18 @@ public class WindowController {
         }
     }
 
-    public void setMenuBarForController(MenuBarController menuBarController, ComponentController controller) {
-        if(controllerFrames.containsKey(controller)) {
-            controllerFrames.get(controller).setJMenuBar(menuBarController.getMenuBar());
-            controllerMenuMapping.put(controller, menuBarController);
-        }
-    }
 
     public void setMenuBarForAllControllers(MenuBarController menuBarController) {
         defaultMenuBarController = menuBarController;
         for(JFrame frame : controllerFrames.values()) {
             frame.setJMenuBar(menuBarController.getMenuBar());
         }
-        for(ComponentController controller : controllerFrames.keySet()) {
-            controllerMenuMapping.put(controller, menuBarController);
+    }
+
+    @Override
+    public void controllerDidChangeTitle(ComponentController controller) {
+        if(controllerFrames.containsKey(controller)){
+            controllerFrames.get(controller).setTitle(StringUtil.trimToWordsWithMaxLength(controller.getTitle(), 5, 25));
         }
     }
 }

@@ -200,4 +200,9 @@ public class BookMasterController extends ComponentController implements Observe
     public void didSelectDetailController(ComponentController detailController) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public void controllerDidChangeTitle(ComponentController controller) {
+
+    }
 }

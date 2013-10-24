@@ -108,7 +108,7 @@ public class BookDetailController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveChanges();
-                if(getDelegate() != null) getDelegate().detailControllerDidSave(self, true);
+                if(getDelegate() != null) getDelegate().detailControllerDidSave(self, false);
             }
         });
 
@@ -165,6 +165,7 @@ public class BookDetailController extends ComponentController implements Observe
     }
 
     public void saveChanges() {
+        setTitle(bookDetail.getTitleField().getText());
         book.setName(bookDetail.getTitleField().getText());
         book.setAuthor(bookDetail.getAuthorField().getText());
         book.setPublisher(bookDetail.getPublisherField().getText());

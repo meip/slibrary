@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TabController extends ComponentController {
+public class TabController extends ComponentController implements  ComponentControllerDelegate{
     private List<ComponentController> controllers = new LinkedList<>();
     private JTabbedPane tabbedPane;
 
@@ -32,6 +32,7 @@ public class TabController extends ComponentController {
         tabbedPane.removeAll();
         for(ComponentController comp: controllers) {
             tabbedPane.addTab(StringUtil.trimToWordsWithMaxLength(comp.getTitle(), 5, 25), comp.getComponent().getContainer());
+            comp.setDelegate(this);
         }
     }
 
@@ -39,6 +40,7 @@ public class TabController extends ComponentController {
     public void addController(ComponentController controller) {
         if(!controllers.contains(controller)) {
             controllers.add(controller);
+            controller.setDelegate(this);
             if(controllers.size() == 1) {
                 setControllers(controllers);
             } else {
@@ -50,6 +52,7 @@ public class TabController extends ComponentController {
     public void insertControllerAt(ComponentController controller, int index) {
         if(index >= 0 && index < controllers.size()) {
             controllers.add(index, controller);
+            controller.setDelegate(this);
             tabbedPane.insertTab(StringUtil.trimToWordsWithMaxLength(controller.getTitle(), 5, 25), null, controller.getComponent().getContainer(), "", index);
         }
     }
@@ -58,17 +61,22 @@ public class TabController extends ComponentController {
         if(controllers.contains(controller)) {
             controllers.remove(controller);
             tabbedPane.remove(controller.getComponent().getContainer());
+            controller.setDelegate(null);
         }
     }
 
     public void removeControllerAt(int index) {
         if(index >= 0 && index < controllers.size()) {
+            controllers.get(index).setDelegate(null);
             controllers.remove(index);
             tabbedPane.remove(index);
         }
     }
 
     public void removeAllControllers() {
+        for(ComponentController controller : controllers) {
+            controller.setDelegate(null);
+        }
         setControllers(new LinkedList<ComponentController>());
     }
 
@@ -83,5 +91,8 @@ public class TabController extends ComponentController {
     }
 
 
-
+    @Override
+    public void controllerDidChangeTitle(ComponentController controller) {
+        tabbedPane.setTitleAt(controllers.indexOf(controller), StringUtil.trimToWordsWithMaxLength(controller.getTitle(), 5, 25));
+    }
 }
