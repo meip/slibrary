@@ -1,10 +1,12 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
+import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
+import ch.hsr.slibrary.gui.controller.system.WindowController;
+import ch.hsr.slibrary.gui.controller.system.WindowControllerDelegate;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 
 import javax.swing.*;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,7 +15,7 @@ import java.util.List;
  * Time: 21:40
  * To change this template use File | Settings | File Templates.
  */
-public class MDStandaloneController extends MasterDetailController implements WindowControllerDelegate{
+public class MDStandaloneController extends MasterDetailController implements WindowControllerDelegate {
 
     private WindowController windowController;
 

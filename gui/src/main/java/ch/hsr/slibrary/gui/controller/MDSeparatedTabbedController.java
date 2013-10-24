@@ -1,5 +1,8 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
+import ch.hsr.slibrary.gui.controller.system.WindowController;
+import ch.hsr.slibrary.gui.controller.system.WindowControllerDelegate;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 
 import javax.swing.*;
@@ -12,7 +15,7 @@ import java.awt.*;
  * Time: 18:47
  * To change this template use File | Settings | File Templates.
  */
-public class MDSeparatedTabbedController extends MDTabbedController implements WindowControllerDelegate{
+public class MDSeparatedTabbedController extends MDTabbedController implements WindowControllerDelegate {
 
 
 

@@ -1,13 +1,16 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
+import ch.hsr.slibrary.gui.controller.system.MenuBarController;
+import ch.hsr.slibrary.gui.controller.system.WindowController;
+import ch.hsr.slibrary.gui.controller.system.WindowControllerDelegate;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class MainMenuBarController extends MenuBarController implements WindowControllerDelegate {

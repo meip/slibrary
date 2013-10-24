@@ -1,5 +1,6 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.system.*;
 import ch.hsr.slibrary.gui.form.VerticalSplitComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 
@@ -12,7 +13,7 @@ import javax.swing.*;
  * Time: 18:47
  * To change this template use File | Settings | File Templates.
  */
-public class MDIntegratedTabbedController extends MDTabbedController implements WindowControllerDelegate{
+public class MDIntegratedTabbedController extends MDTabbedController implements WindowControllerDelegate {
 
     private TabController _tabController;
     private SplitController splitController;

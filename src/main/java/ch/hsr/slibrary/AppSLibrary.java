@@ -1,6 +1,9 @@
 package ch.hsr.slibrary;
 
 import ch.hsr.slibrary.gui.controller.*;
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
+import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
+import ch.hsr.slibrary.gui.controller.system.WindowController;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.spa.*;
 import org.w3c.dom.Document;
