@@ -69,8 +69,11 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
         if(masterDetailController != null) {
             detailControllers = masterDetailController.getDetailControllers();
             masterDetailController.dismiss();
+            masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Swinging Library", masterDetailController.getWindowedController());
+        } else {
+            masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Swinging Library");
         }
-        masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+
         masterDetailController.setDetailControllers(detailControllers);
         bookMasterController.setMasterDetailController(masterDetailController);
 
@@ -84,8 +87,11 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
         if(masterDetailController != null) {
             detailControllers = masterDetailController.getDetailControllers();
             masterDetailController.dismiss();
+            masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht", masterDetailController.getWindowedController());
+        } else {
+            masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
         }
-        masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+
         masterDetailController.setDetailControllers(detailControllers);
         bookMasterController.setMasterDetailController(masterDetailController);
     }

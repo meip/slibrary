@@ -20,7 +20,7 @@ public class SplitController extends ComponentController {
         super(title);
         this.component = splitComponent;
         this.splitComponent = splitComponent;
-        splitComponent.getSplitPane().setDividerLocation(0.5);
+        splitComponent.getSplitPane().setResizeWeight(0.5);
     }
 
 
@@ -31,7 +31,6 @@ public class SplitController extends ComponentController {
     public void setFirstController(ComponentController firstController) {
         this.firstController = firstController;
         splitComponent.getSplitPane().setLeftComponent(firstController.getComponent().getContainer());
-        splitComponent.getSplitPane().setDividerLocation(secondController == null ? 1.0 : 0.5);
     }
 
     public ComponentController getSecondController() {
@@ -41,13 +40,12 @@ public class SplitController extends ComponentController {
     public void setSecondController(ComponentController secondController) {
 
         if(secondController == null) {
-            splitComponent.getSplitPane().setDividerLocation(1.0);
             if(splitComponent.getSplitPane().getRightComponent() != null) {
                 splitComponent.getSplitPane().remove(splitComponent.getSplitPane().getRightComponent());
             }
         } else {
+            splitComponent.getSplitPane().setLeftComponent(firstController.getComponent().getContainer());
             splitComponent.getSplitPane().setRightComponent(secondController.getComponent().getContainer());
-            splitComponent.getSplitPane().setDividerLocation(0.5);
         }
         this.secondController = secondController;
 

@@ -20,7 +20,20 @@ public class SingleFrameTabMDController extends MasterDetailController implement
     private TabController _tabController;
     private SplitController splitController;
 
+    public SingleFrameTabMDController(WindowController windowController, ComponentController masterController, String title, ComponentController replaceController) {
+        super(masterController);
+        this.windowController = windowController;
+        splitController = new SplitController(title, new VerticalSplitComponent());
+        splitController.setFirstController(masterController);
+        splitController.setSecondController(null);
+
+        windowController.replaceControllerInFrame(replaceController, splitController);
+        windowController.arrangeControllerWithPosition(splitController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
+        windowController.addDelegate(this);
+    }
+
     public SingleFrameTabMDController(WindowController windowController, ComponentController masterController, String title) {
+
         super(masterController);
         this.windowController = windowController;
         splitController = new SplitController(title, new VerticalSplitComponent());
@@ -31,6 +44,7 @@ public class SingleFrameTabMDController extends MasterDetailController implement
         windowController.arrangeControllerWithPosition(splitController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
         windowController.addDelegate(this);
     }
+
 
     public ComponentController getWindowedController() {
         return splitController;
@@ -110,7 +124,7 @@ public class SingleFrameTabMDController extends MasterDetailController implement
     }
 
     public void dismiss() {
-       windowController.dismissController(splitController);
+       //windowController.dismissController(splitController);
        windowController.removeDelegate(this);
     }
 }

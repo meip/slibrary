@@ -68,9 +68,10 @@ public class WindowController {
 
                 @Override
                 public void windowActivated(WindowEvent e) {
-
+                    if(controllerFrames.containsKey(controller)) {
+                        controllerFrames.get(controller).setJMenuBar(defaultMenuBarController.getMenuBar());
+                    }
                     for(WindowControllerDelegate delegate : delegates) {
-                        controllerFrames.get(controller).setJMenuBar(controllerMenuMapping.get(controller).getMenuBar());
                         delegate.windowDidActivateController(self, controller);
                     }
                 }
@@ -85,7 +86,7 @@ public class WindowController {
             controller.setWindowController(this);
             if(defaultMenuBarController != null) {
                 frame.setJMenuBar(defaultMenuBarController.getMenuBar());
-                controllerMenuMapping.put(controller, defaultMenuBarController);
+                //controllerMenuMapping.put(controller, defaultMenuBarController);
             }
             controllerFrames.put(controller, frame);
             for(WindowControllerDelegate delegate : delegates) {
@@ -110,8 +111,8 @@ public class WindowController {
     public void dismissController(ComponentController controller) {
         if(controllerFrames.containsKey(controller)) {
             JFrame frame = controllerFrames.get(controller);
-            frame.dispose();
             controllerFrames.remove(controller);
+            frame.dispose();
         }
     }
 
@@ -122,12 +123,9 @@ public class WindowController {
     public void bringToFront(ComponentController controller) {
         if(controllerFrames.containsKey(controller)) {
             controllerFrames.get(controller).toFront();
-            for(WindowControllerDelegate delegate : delegates) {
-                delegate.windowDidActivateController(this, controller);
-                controllerFrames.get(controller).setJMenuBar(controllerMenuMapping.get(controller).getMenuBar());
-            }
         }
     }
+
 
     public void arrangeControllerWithPosition(ComponentController controller, int windowPosition) {
         JFrame frame = controllerFrames.get(controller);
@@ -156,6 +154,18 @@ public class WindowController {
                     frame.setLocation((int) screenSize.getWidth()/2,0);
                     break;
             }
+        }
+    }
+
+
+    public void replaceControllerInFrame(ComponentController oldController, ComponentController newController) {
+        if(controllerFrames.containsKey(oldController)) {
+            JFrame frame = controllerFrames.get(oldController);
+            frame.setTitle(newController.getTitle());
+            frame.setContentPane(newController.getComponent().getContainer());
+            frame.setJMenuBar(defaultMenuBarController.getMenuBar());
+            controllerFrames.remove(oldController);
+            controllerFrames.put(newController, frame);
         }
     }
 

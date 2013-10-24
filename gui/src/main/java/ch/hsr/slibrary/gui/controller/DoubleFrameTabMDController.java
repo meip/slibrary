@@ -28,6 +28,15 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
         windowController.addDelegate(this);
     }
 
+    public DoubleFrameTabMDController(WindowController windowController, ComponentController masterController, String tabFrameTitle, ComponentController replaceController) {
+        super(masterController);
+        this.windowController = windowController;
+        this.tabFrameTitle = tabFrameTitle != null ? tabFrameTitle : "Detail";
+        windowController.replaceControllerInFrame(replaceController, masterController);
+        windowController.arrangeControllerWithPosition(masterController, WindowBounds.WINDOW_POSITION_FILL_LEFT);
+        windowController.addDelegate(this);
+    }
+
     private TabController getTabController() {
         if(_tabController == null) _tabController = new TabController(tabFrameTitle, new TabGUIComponent());
         return _tabController;
@@ -104,7 +113,8 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
     }
 
     public void dismiss() {
+        windowController.removeDelegate(this);
         windowController.dismissController(getTabController());
-        windowController.dismissController(masterController);
+        //windowController.dismissController(masterController);
     }
 }
