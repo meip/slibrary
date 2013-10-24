@@ -25,7 +25,7 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
         this.windowController = windowController;
         this.tabFrameTitle = tabFrameTitle != null ? tabFrameTitle : "Detail";
 
-        windowController.presentControllerAsFrame(masterController, JFrame.EXIT_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_LEFT));
+        windowController.presentControllerAsFrame(masterController, JFrame.DISPOSE_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_LEFT));
         windowController.addDelegate(this);
     }
 

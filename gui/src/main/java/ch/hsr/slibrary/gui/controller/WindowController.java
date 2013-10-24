@@ -116,6 +116,19 @@ public class WindowController {
         }
     }
 
+    public void dismissCurrentController() {
+        ComponentController controllerToDismiss = null;
+        for(ComponentController controller : controllerFrames.keySet()) {
+            if(controllerFrames.get(controller).isActive()) {
+                controllerToDismiss = controller;
+                break;
+            }
+        }
+        if(controllerToDismiss != null) {
+            dismissController(controllerToDismiss);
+        }
+    }
+
     public boolean containsController(ComponentController controller) {
         return controllerFrames.containsKey(controller);
     }

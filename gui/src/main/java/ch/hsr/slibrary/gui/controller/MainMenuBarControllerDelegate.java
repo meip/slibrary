@@ -1,5 +1,7 @@
 package ch.hsr.slibrary.gui.controller;
 
+import javax.swing.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: dominik

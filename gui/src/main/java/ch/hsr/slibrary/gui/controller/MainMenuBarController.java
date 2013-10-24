@@ -1,8 +1,10 @@
 package ch.hsr.slibrary.gui.controller;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
 
     private JMenu viewMenu;
     private JMenu windowMenu;
+    private JMenu fileMenu;
     private List<ComponentController> windows = new LinkedList<>();
     private List<JMenuItem> windowItems = new LinkedList<>();
     private ButtonGroup windowButtonGroup;
@@ -33,6 +36,21 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
     private void initialize() {
 
         final  MainMenuBarController self = this;
+
+
+        fileMenu = new JMenu("Ablage");
+        getMenuBar().add(fileMenu);
+        JMenuItem fileItem = new JRadioButtonMenuItem("Fenster schliessen");
+        fileItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                windowController.dismissCurrentController();
+            }
+        });
+        fileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        fileMenu.add(fileItem);
+
+
         viewMenu = new JMenu("Darstellung");
         getMenuBar().add(viewMenu);
 
@@ -45,16 +63,18 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
             }
         };
 
-        JRadioButtonMenuItem viewItem = new JRadioButtonMenuItem("Als ein Fenster");
+        JRadioButtonMenuItem viewItem = new JRadioButtonMenuItem("Integriert");
         toggleViewGroup.add(viewItem);
         viewItem.addActionListener(viewChangedActionListener);
         viewItem.setName(MENU_VIEW_ONE_WINDOW);
+        viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         viewMenu.add(viewItem);
 
-        viewItem = new JRadioButtonMenuItem("Als zwei Fenster");
+        viewItem = new JRadioButtonMenuItem("Getrennt");
         toggleViewGroup.add(viewItem);
         viewItem.addActionListener(viewChangedActionListener);
         viewItem.setName(MENU_VIEW_TWO_WINDOWS);
+        viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         viewMenu.add(viewItem);
 
 
@@ -159,4 +179,5 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
         windows.add(controller);
         addWindowItem(controller);
     }
+
 }

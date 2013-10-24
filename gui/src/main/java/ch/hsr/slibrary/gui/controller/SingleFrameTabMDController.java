@@ -40,7 +40,7 @@ public class SingleFrameTabMDController extends MasterDetailController implement
         splitController.setFirstController(masterController);
         splitController.setSecondController(null);
 
-        windowController.presentControllerAsFrame(splitController, JFrame.EXIT_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_SCREEN));
+        windowController.presentControllerAsFrame(splitController, JFrame.DISPOSE_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_SCREEN));
         windowController.arrangeControllerWithPosition(splitController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
         windowController.addDelegate(this);
     }
