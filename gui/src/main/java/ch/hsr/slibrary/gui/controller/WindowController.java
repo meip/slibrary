@@ -19,19 +19,19 @@ public class WindowController {
 
 
     public void presentControllerAsFrame(ComponentController controller) {
-        presentControllerAsFrame(controller, JFrame.DISPOSE_ON_CLOSE);
+        presentControllerAsFrame(controller, JFrame.DISPOSE_ON_CLOSE, null);
     }
 
-    public void presentControllerAsFrame(final ComponentController controller, int closeOperation ) {
+    public void presentControllerAsFrame(final ComponentController controller, int closeOperation, Rectangle windowBounds ) {
 
 
         if(!controllerFrames.containsKey(controller)) {
             JFrame frame = new JFrame(controller.getTitle());
             frame.setContentPane(controller.getComponent().getContainer());
             frame.setDefaultCloseOperation(closeOperation);
-            frame.pack();
-            frame.setVisible(true);
             frame.setMinimumSize(controller.getComponent().getMinimumSize());
+            frame.setBounds(windowBounds != null ? windowBounds : new Rectangle(getScreenBounds().x, getScreenBounds().y, frame.getMinimumSize().width, frame.getMinimumSize().height));
+            frame.setVisible(true);
             final WindowController self = this;
             frame.addWindowListener(new WindowListener() {
                 @Override
@@ -130,31 +130,37 @@ public class WindowController {
     public void arrangeControllerWithPosition(ComponentController controller, int windowPosition) {
         JFrame frame = controllerFrames.get(controller);
         if(frame != null) {
-            Toolkit tk = Toolkit.getDefaultToolkit();
-            Dimension screenSize = tk.getScreenSize();
-
-            switch (windowPosition) {
-                case WindowBounds.WINDOW_POSITION_FILL_SCREEN:
-                    frame.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
-                    frame.setLocation(0,0);
-                    break;
-
-                case WindowBounds.WINDOW_POSITION_FILL_LEFT:
-                    frame.setSize((int) screenSize.getWidth() / 2, (int) screenSize.getHeight());
-                    frame.setLocation(0,0);
-                    break;
-
-                case WindowBounds.WINDOW_POSITION_FILL_RIGHT:
-                    frame.setSize((int) screenSize.getWidth() / 2, (int) screenSize.getHeight());
-                    frame.setLocation((int) screenSize.getWidth()/2,0);
-                    break;
-
-                case WindowBounds.WINDOW_POSITION_RIGHT_TOP:
-                    frame.setSize((int) screenSize.getWidth() / 2, frame.getHeight());
-                    frame.setLocation((int) screenSize.getWidth()/2,0);
-                    break;
-            }
+            frame.setBounds(getBoundsForWindowPosition(windowPosition));
         }
+    }
+
+    public static Rectangle getScreenBounds() {
+       return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+    }
+
+    public static Rectangle getBoundsForWindowPosition(int position) {
+        Rectangle bounds = getScreenBounds();
+        switch (position) {
+            case WindowBounds.WINDOW_POSITION_FILL_SCREEN:
+                bounds = getScreenBounds();
+                break;
+
+            case WindowBounds.WINDOW_POSITION_FILL_LEFT:
+                bounds.setSize((int)getScreenBounds().getWidth() / 2, (int) getScreenBounds().getHeight());
+                bounds.setLocation(getScreenBounds().getLocation().x, getScreenBounds().getLocation().y);
+                break;
+
+            case WindowBounds.WINDOW_POSITION_FILL_RIGHT:
+                bounds.setSize((int)getScreenBounds().getWidth() / 2, (int) getScreenBounds().getHeight());
+                bounds.setLocation(getScreenBounds().getLocation().x + (int)getScreenBounds().getWidth() / 2, getScreenBounds().getLocation().y);
+                break;
+
+            case WindowBounds.WINDOW_POSITION_RIGHT_TOP:
+                bounds.setSize((int)getScreenBounds().getWidth() / 2, (int) getScreenBounds().getHeight() / 2);
+                bounds.setLocation(getScreenBounds().getLocation().x + (int)getScreenBounds().getWidth() / 2, getScreenBounds().getLocation().y);
+                break;
+        }
+        return bounds;
     }
 
 

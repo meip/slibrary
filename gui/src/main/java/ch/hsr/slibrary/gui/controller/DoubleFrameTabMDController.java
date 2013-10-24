@@ -4,6 +4,7 @@ import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,8 +24,8 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
         super(masterController);
         this.windowController = windowController;
         this.tabFrameTitle = tabFrameTitle != null ? tabFrameTitle : "Detail";
-        windowController.presentControllerAsFrame(masterController, JFrame.EXIT_ON_CLOSE);
-        windowController.arrangeControllerWithPosition(masterController, WindowBounds.WINDOW_POSITION_FILL_LEFT);
+
+        windowController.presentControllerAsFrame(masterController, JFrame.EXIT_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_LEFT));
         windowController.addDelegate(this);
     }
 
@@ -46,7 +47,9 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
     protected void doAddDetailController(ComponentController detailController) {
         getTabController().addController(detailController);
         if(!windowController.containsController(getTabController())) {
-            windowController.presentControllerAsFrame(getTabController());
+            Rectangle bounds = WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_RIGHT);
+            bounds.setLocation(bounds.getSize().width / 2, bounds.getLocation().y);
+            windowController.presentControllerAsFrame(getTabController(), JFrame.DISPOSE_ON_CLOSE, bounds);
             windowController.arrangeControllerWithPosition(getTabController(), WindowBounds.WINDOW_POSITION_FILL_RIGHT);
         }
     }
