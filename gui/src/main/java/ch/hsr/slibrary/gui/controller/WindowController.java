@@ -7,7 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class WindowController {
 
@@ -15,10 +18,10 @@ public class WindowController {
     private Set<WindowControllerDelegate> delegates = new HashSet<>();
     private Map<ComponentController, JFrame> controllerFrames = new HashMap<>();
 
-    public void presentControllerAsFrame(final ComponentController controller, int closeOperation ) {
+    public void presentControllerAsFrame(final ComponentController controller, int closeOperation) {
 
 
-        if(!controllerFrames.containsKey(controller)) {
+        if (!controllerFrames.containsKey(controller)) {
             JFrame frame = new JFrame(controller.getTitle());
             frame.setContentPane(controller.getComponent().getContainer());
             frame.setDefaultCloseOperation(closeOperation);
@@ -29,14 +32,14 @@ public class WindowController {
             frame.addWindowListener(new WindowListener() {
                 @Override
                 public void windowOpened(WindowEvent e) {
-                    for(WindowControllerDelegate delegate : delegates) {
+                    for (WindowControllerDelegate delegate : delegates) {
                         delegate.windowDidOpenController(self, controller);
                     }
                 }
 
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    for(WindowControllerDelegate delegate : delegates) {
+                    for (WindowControllerDelegate delegate : delegates) {
                         delegate.windowWillCloseController(self, controller);
                     }
                 }
@@ -44,7 +47,7 @@ public class WindowController {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     controllerFrames.remove(controller);
-                    for(WindowControllerDelegate delegate : delegates) {
+                    for (WindowControllerDelegate delegate : delegates) {
                         delegate.windowDidCloseController(self, controller);
                     }
                 }
@@ -61,14 +64,14 @@ public class WindowController {
 
                 @Override
                 public void windowActivated(WindowEvent e) {
-                    for(WindowControllerDelegate delegate : delegates) {
+                    for (WindowControllerDelegate delegate : delegates) {
                         delegate.windowDidActivateController(self, controller);
                     }
                 }
 
                 @Override
                 public void windowDeactivated(WindowEvent e) {
-                    for(WindowControllerDelegate delegate : delegates) {
+                    for (WindowControllerDelegate delegate : delegates) {
                         delegate.windowDidDeactivateController(self, controller);
                     }
                 }
@@ -95,7 +98,7 @@ public class WindowController {
     }
 
     public void dismissController(ComponentController controller) {
-        if(controllerFrames.containsKey(controller)) {
+        if (controllerFrames.containsKey(controller)) {
             JFrame frame = controllerFrames.get(controller);
             frame.dispose();
             controllerFrames.remove(controller);
@@ -107,36 +110,36 @@ public class WindowController {
     }
 
     public void bringToFront(ComponentController controller) {
-        if(controllerFrames.containsKey(controller)) {
+        if (controllerFrames.containsKey(controller)) {
             controllerFrames.get(controller).toFront();
         }
     }
 
     public void arrangeControllerWithPosition(ComponentController controller, int windowPosition) {
         JFrame frame = controllerFrames.get(controller);
-        if(frame != null) {
-            Toolkit tk = Toolkit.getDefaultToolkit();
-            Dimension screenSize = tk.getScreenSize();
-
+        if (frame != null) {
+            Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+            double boundsWidth = bounds.getWidth();
+            double boundsHeight = bounds.getHeight();
             switch (windowPosition) {
                 case WindowBounds.WINDOW_POSITION_FILL_SCREEN:
-                    frame.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
-                    frame.setLocation(0,0);
+                    frame.setLocation(0, 0);
+                    frame.setExtendedState(frame.getExtendedState() | frame.MAXIMIZED_BOTH);
                     break;
 
                 case WindowBounds.WINDOW_POSITION_FILL_LEFT:
-                    frame.setSize((int) screenSize.getWidth() / 2, (int) screenSize.getHeight());
-                    frame.setLocation(0,0);
+                    frame.setSize((int) boundsWidth / 2, (int) boundsHeight);
+                    frame.setLocation(0, 0);
                     break;
 
                 case WindowBounds.WINDOW_POSITION_FILL_RIGHT:
-                    frame.setSize((int) screenSize.getWidth() / 2, (int) screenSize.getHeight());
-                    frame.setLocation((int) screenSize.getWidth()/2,0);
+                    frame.setSize((int) boundsWidth / 2, (int) boundsHeight);
+                    frame.setLocation((int) boundsWidth / 2, 0);
                     break;
 
                 case WindowBounds.WINDOW_POSITION_RIGHT_TOP:
-                    frame.setSize((int) screenSize.getWidth() / 2, frame.getHeight());
-                    frame.setLocation((int) screenSize.getWidth()/2,0);
+                    frame.setSize((int) boundsWidth / 2, frame.getHeight());
+                    frame.setLocation((int) boundsWidth / 2, 0);
                     break;
             }
         }
