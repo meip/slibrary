@@ -15,4 +15,5 @@ public interface WindowControllerDelegate {
     public void windowDidActivateController(WindowController windowController, ComponentController controller);
     public void windowDidDeactivateController(WindowController windowController, ComponentController controller);
     public void didAddWindowController(WindowController windowController, ComponentController controller);
+    public void windowDidReplaceController(ComponentController oldController, ComponentController newController);
 }

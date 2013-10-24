@@ -1,86 +1,76 @@
 package ch.hsr.slibrary.gui.controller;
 
-import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 
 import javax.swing.*;
-import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
  * User: dominik
- * Date: 21.10.13
- * Time: 18:47
+ * Date: 24.10.13
+ * Time: 21:40
  * To change this template use File | Settings | File Templates.
  */
-public class DoubleFrameTabMDController extends MasterDetailController implements WindowControllerDelegate{
-
+public class MDStandaloneController extends MasterDetailController implements WindowControllerDelegate{
 
     private WindowController windowController;
-    private TabController _tabController;
-    private String tabFrameTitle;
 
-    public DoubleFrameTabMDController(WindowController windowController, ComponentController masterController, String tabFrameTitle) {
-        super(masterController);
+    public MDStandaloneController(WindowController windowController, ComponentController masterController, String title) {
+        super(masterController, title);
         this.windowController = windowController;
-        this.tabFrameTitle = tabFrameTitle != null ? tabFrameTitle : "Detail";
 
         windowController.presentControllerAsFrame(masterController, JFrame.DISPOSE_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_LEFT));
         windowController.addDelegate(this);
     }
 
-    public DoubleFrameTabMDController(WindowController windowController, ComponentController masterController, String tabFrameTitle, ComponentController replaceController) {
-        super(masterController);
+    public MDStandaloneController(WindowController windowController, ComponentController masterController, String title, ComponentController replaceController) {
+        super(masterController, title);
         this.windowController = windowController;
-        this.tabFrameTitle = tabFrameTitle != null ? tabFrameTitle : "Detail";
+
         windowController.replaceControllerInFrame(replaceController, masterController);
         windowController.arrangeControllerWithPosition(masterController, WindowBounds.WINDOW_POSITION_FILL_LEFT);
         windowController.addDelegate(this);
     }
 
-    private TabController getTabController() {
-        if(_tabController == null) _tabController = new TabController(tabFrameTitle, new TabGUIComponent());
-        return _tabController;
+    @Override
+    protected void doAddDetailController(ComponentController detailController) {
+        windowController.presentControllerAsFrame(detailController);
+        windowController.arrangeControllerWithPosition(detailController, WindowBounds.WINDOW_POSITION_FILL_RIGHT);
     }
 
     @Override
-    protected void doAddDetailController(ComponentController detailController) {
-        getTabController().addController(detailController);
-        if(!windowController.containsController(getTabController())) {
-            Rectangle bounds = WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_RIGHT);
-            bounds.setLocation(bounds.getSize().width / 2, bounds.getLocation().y);
-            windowController.presentControllerAsFrame(getTabController(), JFrame.DISPOSE_ON_CLOSE, bounds);
-            windowController.arrangeControllerWithPosition(getTabController(), WindowBounds.WINDOW_POSITION_FILL_RIGHT);
+    protected void doInsertDetailControllerAt(ComponentController detailController, int index) {
+        windowController.presentControllerAsFrame(detailController);
+    }
+
+    @Override
+    protected void doRemoveDetailController(ComponentController detailController) {
+        windowController.dismissController(detailController);
+    }
+
+    @Override
+    protected void doRemoveAllDetailControllers() {
+        for(ComponentController detailController:getDetailControllers()) {
+            windowController.dismissController(detailController);
         }
     }
 
+    @Override
+    protected void doSetSelectedDetailController(ComponentController detailController) {
+        windowController.bringToFront(detailController);
+    }
+
+    @Override
     public ComponentController getWindowedController() {
         return masterController;
     }
 
     @Override
-    protected void doInsertDetailControllerAt(ComponentController detailController, int index) {
-        getTabController().insertControllerAt(detailController, index);
-    }
-
-    @Override
-    protected void doRemoveDetailController(ComponentController detailController) {
-        getTabController().removeController(detailController);
-        if(getTabController().getControllers().size() == 0) {
-            windowController.dismissController(getTabController());
-        }
-    }
-
-    @Override
-    protected void doRemoveAllDetailControllers() {
-        getTabController().removeAllControllers();
-        windowController.dismissController(getTabController());
-    }
-
-    @Override
-    protected void doSetSelectedDetailController(ComponentController detailController) {
-        getTabController().showController(detailController);
-        windowController.bringToFront(getTabController());
+    public void dismiss() {
+        windowController.removeDelegate(this);
+        removeAllDetailControllers();
     }
 
     @Override
@@ -90,14 +80,12 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
 
     @Override
     public void windowWillCloseController(WindowController windowController, ComponentController controller) {
-
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void windowDidCloseController(WindowController windowController, ComponentController controller) {
-        if(controller == getTabController()) {
-            removeAllDetailControllers();
-        }
+        removeDetailController(controller);
     }
 
     @Override
@@ -115,9 +103,9 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void dismiss() {
-        windowController.removeDelegate(this);
-        windowController.dismissController(getTabController());
-        //windowController.dismissController(masterController);
+    @Override
+    public void windowDidReplaceController(ComponentController oldController, ComponentController newController) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
+
 }

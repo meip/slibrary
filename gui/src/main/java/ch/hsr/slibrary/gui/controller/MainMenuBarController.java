@@ -5,21 +5,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class MainMenuBarController extends MenuBarController implements WindowControllerDelegate {
 
 
-    public static final String MENU_VIEW_ONE_WINDOW = "menuViewOneWindow";
-    public static final String MENU_VIEW_TWO_WINDOWS = "menuViewTwoWindows";
+    public static final String MENU_VIEW_INTEGRATED_WINDOW = "menuViewIntegratedWindow";
+    public static final String MENU_VIEW_SEPARATED_WINDOWS = "menuViewSeparatedWindows";
+    public static final String MENU_VIEW_STANDALONE_WINDOWS = "menuViewStandaloneWindows";
 
     private JMenu viewMenu;
     private JMenu windowMenu;
     private JMenu fileMenu;
-    private List<ComponentController> windows = new LinkedList<>();
-    private List<JMenuItem> windowItems = new LinkedList<>();
     private ButtonGroup windowButtonGroup;
+    private Map<ComponentController, JMenuItem> controllerItems = new HashMap<>();
+    private JMenuItem currentViewItem;
 
     private WindowController windowController;
     private MainMenuBarControllerDelegate delegate;
@@ -59,22 +62,35 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
         ActionListener viewChangedActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(delegate != null) delegate.didChangeDisplayMode(self);
+                if(e.getSource() != currentViewItem) {
+                    currentViewItem = (JMenuItem) e.getSource();
+                    if(delegate != null) delegate.didChangeDisplayMode(self);
+                } else {
+                    currentViewItem.setSelected(true);
+                }
+
             }
         };
 
-        JRadioButtonMenuItem viewItem = new JRadioButtonMenuItem("Integriert");
+        JRadioButtonMenuItem viewItem = new JRadioButtonMenuItem("Alle Fenster zusammenfassen");
         toggleViewGroup.add(viewItem);
         viewItem.addActionListener(viewChangedActionListener);
-        viewItem.setName(MENU_VIEW_ONE_WINDOW);
+        viewItem.setName(MENU_VIEW_INTEGRATED_WINDOW);
         viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         viewMenu.add(viewItem);
 
-        viewItem = new JRadioButtonMenuItem("Getrennt");
+        viewItem = new JRadioButtonMenuItem("Details zusammenfassen");
         toggleViewGroup.add(viewItem);
         viewItem.addActionListener(viewChangedActionListener);
-        viewItem.setName(MENU_VIEW_TWO_WINDOWS);
+        viewItem.setName(MENU_VIEW_SEPARATED_WINDOWS);
         viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        viewMenu.add(viewItem);
+
+        viewItem = new JRadioButtonMenuItem("Einzelne Fenster");
+        toggleViewGroup.add(viewItem);
+        viewItem.addActionListener(viewChangedActionListener);
+        viewItem.setName(MENU_VIEW_STANDALONE_WINDOWS);
+        viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         viewMenu.add(viewItem);
 
 
@@ -108,6 +124,7 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
             JMenuItem item = viewMenu.getItem(i);
             if(item.getName().equals(name)) {
                 item.setSelected(true);
+                currentViewItem = item;
                 break;
             }
         }
@@ -118,31 +135,34 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
         JRadioButtonMenuItem item = new JRadioButtonMenuItem(controller.getTitle());
         windowButtonGroup.add(item);
         windowMenu.add(item);
+        controllerItems.put(controller, item);
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 windowController.presentControllerAsFrame(controller);
             }
         });
+
     }
 
     private void removeWindowItem(ComponentController controller) {
-       for(int i = 0; i < windowMenu.getItemCount(); ++i) {
-           JMenuItem item = windowMenu.getItem(i);
-           if(item.getText().equals(controller.getTitle())) {
-               windowMenu.remove(item);
-               break;
-           }
-       }
+        if(controllerItems.containsKey(controller)) {
+            windowMenu.remove(controllerItems.get(controller));
+            windowButtonGroup.remove(controllerItems.get(controller));
+            controllerItems.remove(controller);
+        }
     }
 
     private void selectWindowItem(ComponentController controller) {
-        for(int i = 0; i < windowMenu.getItemCount(); ++i) {
+       /* for(int i = 0; i < windowMenu.getItemCount(); ++i) {
             JMenuItem item = windowMenu.getItem(i);
             if(item.getText().equals(controller.getTitle())) {
                 item.setSelected(true);
                 break;
             }
+        }*/
+        if(controllerItems.containsKey(controller)) {
+            controllerItems.get(controller).setSelected(true);
         }
     }
 
@@ -158,10 +178,7 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
 
     @Override
     public void windowDidCloseController(WindowController windowController, ComponentController controller) {
-        if(windows.contains(controller)) {
-            windows.remove(controller);
-            removeWindowItem(controller);
-        }
+        removeWindowItem(controller);
     }
 
     @Override
@@ -176,8 +193,13 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
 
     @Override
     public void didAddWindowController(WindowController windowController, ComponentController controller) {
-        windows.add(controller);
         addWindowItem(controller);
+    }
+
+    @Override
+    public void windowDidReplaceController(ComponentController oldController, ComponentController newController) {
+        removeWindowItem(oldController);
+        addWindowItem(newController);
     }
 
 }

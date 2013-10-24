@@ -30,59 +30,12 @@ public class WindowController implements ComponentControllerDelegate{
             frame.setContentPane(controller.getComponent().getContainer());
             frame.setDefaultCloseOperation(closeOperation);
             frame.setMinimumSize(controller.getComponent().getMinimumSize());
-            frame.setBounds(windowBounds != null ? windowBounds : new Rectangle(getScreenBounds().x, getScreenBounds().y, frame.getMinimumSize().width, frame.getMinimumSize().height));
+            if(windowBounds != null) {
+                frame.setBounds(windowBounds);
+            }
             frame.setVisible(true);
-            final WindowController self = this;
-            frame.addWindowListener(new WindowListener() {
-                @Override
-                public void windowOpened(WindowEvent e) {
-                    for(WindowControllerDelegate delegate : delegates) {
-                        delegate.windowDidOpenController(self, controller);
-                    }
-                }
+            addWindowListenersToFrame(frame, controller);
 
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    for(WindowControllerDelegate delegate : delegates) {
-                        delegate.windowWillCloseController(self, controller);
-                    }
-                }
-
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    controllerFrames.remove(controller);
-                    for(WindowControllerDelegate delegate : delegates) {
-                        delegate.windowDidCloseController(self, controller);
-                    }
-                }
-
-                @Override
-                public void windowIconified(WindowEvent e) {
-                    //To change body of implemented methods use File | Settings | File Templates.
-                }
-
-                @Override
-                public void windowDeiconified(WindowEvent e) {
-                    //To change body of implemented methods use File | Settings | File Templates.
-                }
-
-                @Override
-                public void windowActivated(WindowEvent e) {
-                    if(controllerFrames.containsKey(controller)) {
-                        controllerFrames.get(controller).setJMenuBar(defaultMenuBarController.getMenuBar());
-                    }
-                    for(WindowControllerDelegate delegate : delegates) {
-                        delegate.windowDidActivateController(self, controller);
-                    }
-                }
-
-                @Override
-                public void windowDeactivated(WindowEvent e) {
-                    for(WindowControllerDelegate delegate : delegates) {
-                        delegate.windowDidDeactivateController(self, controller);
-                    }
-                }
-            });
             if(defaultMenuBarController != null) {
                 frame.setJMenuBar(defaultMenuBarController.getMenuBar());
             }
@@ -97,6 +50,60 @@ public class WindowController implements ComponentControllerDelegate{
         } else {
             bringToFront(controller);
         }
+    }
+
+    private void addWindowListenersToFrame(JFrame frame, final ComponentController controller) {
+        final WindowController self = this;
+        frame.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                for(WindowControllerDelegate delegate : delegates) {
+                    delegate.windowDidOpenController(self, controller);
+                }
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                for(WindowControllerDelegate delegate : delegates) {
+                    delegate.windowWillCloseController(self, controller);
+                }
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                controllerFrames.remove(controller);
+                for(WindowControllerDelegate delegate : delegates) {
+                    delegate.windowDidCloseController(self, controller);
+                }
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+                if(controllerFrames.containsKey(controller)) {
+                    controllerFrames.get(controller).setJMenuBar(defaultMenuBarController.getMenuBar());
+                }
+                for(WindowControllerDelegate delegate : delegates) {
+                    delegate.windowDidActivateController(self, controller);
+                }
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+                for(WindowControllerDelegate delegate : delegates) {
+                    delegate.windowDidDeactivateController(self, controller);
+                }
+            }
+        });
     }
 
 
@@ -138,6 +145,7 @@ public class WindowController implements ComponentControllerDelegate{
     public void bringToFront(ComponentController controller) {
         if(controllerFrames.containsKey(controller)) {
             controllerFrames.get(controller).toFront();
+            controllerFrames.get(controller).setJMenuBar(defaultMenuBarController.getMenuBar());
         }
     }
 
@@ -185,8 +193,12 @@ public class WindowController implements ComponentControllerDelegate{
             frame.setTitle(newController.getTitle());
             frame.setContentPane(newController.getComponent().getContainer());
             frame.setJMenuBar(defaultMenuBarController.getMenuBar());
+            addWindowListenersToFrame(frame, newController);
             controllerFrames.remove(oldController);
             controllerFrames.put(newController, frame);
+            for(WindowControllerDelegate delegate : delegates) {
+                delegate.windowDidReplaceController(oldController, newController);
+            }
         }
     }
 

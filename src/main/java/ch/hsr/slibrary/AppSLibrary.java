@@ -56,22 +56,22 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
         bookMasterController.initialize();
 
 
-        setTwoWindowsMode();
+        setIntegratedTabbedWindowMode();
 
     }
 
 
-    private void setOneWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_ONE_WINDOW);
+    private void setStandaloneWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS);
         List<ComponentController> detailControllers = new LinkedList<>();
 
 
         if(masterDetailController != null) {
             detailControllers = masterDetailController.getDetailControllers();
             masterDetailController.dismiss();
-            masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Swinging Library", masterDetailController.getWindowedController());
+            masterDetailController = new MDStandaloneController(windowController, bookMasterController, "Swinging Library", masterDetailController.getWindowedController());
         } else {
-            masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Swinging Library");
+            masterDetailController = new MDStandaloneController(windowController, bookMasterController, "Swinging Library");
         }
 
         masterDetailController.setDetailControllers(detailControllers);
@@ -79,17 +79,35 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
 
     }
 
-    private void setTwoWindowsMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_TWO_WINDOWS);
+    private void setIntegratedTabbedWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW);
         List<ComponentController> detailControllers = new LinkedList<>();
 
 
         if(masterDetailController != null) {
             detailControllers = masterDetailController.getDetailControllers();
             masterDetailController.dismiss();
-            masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht", masterDetailController.getWindowedController());
+            masterDetailController = new MDIntegratedTabbedController(windowController, bookMasterController, "Swinging Library", masterDetailController.getWindowedController());
         } else {
-            masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+            masterDetailController = new MDIntegratedTabbedController(windowController, bookMasterController, "Swinging Library");
+        }
+
+        masterDetailController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(masterDetailController);
+
+    }
+
+    private void setSeparatedTabbedWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS);
+        List<ComponentController> detailControllers = new LinkedList<>();
+
+
+        if(masterDetailController != null) {
+            detailControllers = masterDetailController.getDetailControllers();
+            masterDetailController.dismiss();
+            masterDetailController = new MDSeparatedTabbedController(windowController, bookMasterController, "Detailansicht", masterDetailController.getWindowedController());
+        } else {
+            masterDetailController = new MDSeparatedTabbedController(windowController, bookMasterController, "Detailansicht");
         }
 
         masterDetailController.setDetailControllers(detailControllers);
@@ -233,12 +251,16 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
     @Override
     public void didChangeDisplayMode(MainMenuBarController controller) {
         switch (controller.getSelectedViewItemName()) {
-            case MainMenuBarController.MENU_VIEW_ONE_WINDOW:
-                setOneWindowMode();
+            case MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW:
+                setIntegratedTabbedWindowMode();
                 break;
 
-            case MainMenuBarController.MENU_VIEW_TWO_WINDOWS:
-                setTwoWindowsMode();
+            case MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS:
+                setSeparatedTabbedWindowMode();
+                break;
+
+            case MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS:
+                setStandaloneWindowMode();
                 break;
         }
     }

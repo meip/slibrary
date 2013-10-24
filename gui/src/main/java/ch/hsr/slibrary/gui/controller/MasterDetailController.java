@@ -10,7 +10,7 @@ import java.util.List;
  * Time: 18:18
  * To change this template use File | Settings | File Templates.
  */
-public abstract class MasterDetailController {
+public abstract class MasterDetailController extends ComponentController{
 
 
     private MasterDetailControllerDelegate delegate;
@@ -18,8 +18,9 @@ public abstract class MasterDetailController {
     private ComponentController selectedController;
     protected ComponentController masterController;
 
-    public MasterDetailController(ComponentController masterController) {
-    this.masterController = masterController;
+    public MasterDetailController(ComponentController masterController, String title) {
+        super(title);
+        this.masterController = masterController;
     }
 
     public void addDetailController(ComponentController detailController){
