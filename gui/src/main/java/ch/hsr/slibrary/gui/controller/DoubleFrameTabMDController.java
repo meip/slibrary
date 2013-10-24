@@ -97,4 +97,9 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
     public void windowDidDeactivateController(WindowController windowController, ComponentController controller) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public void didAddWindowController(WindowController windowController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

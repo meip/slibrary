@@ -39,16 +39,18 @@ public class AppSLibrary {
 
 
         WindowController windowController = new WindowController();
-        MenuBarController menuBarController = new MainMenuBarController(new JMenuBar());
+        MainMenuBarController menuBarController = new MainMenuBarController(new JMenuBar(), windowController);
+        windowController.setMenuBarForAllControllers(menuBarController);
+        windowController.addDelegate(menuBarController);
 
 
         BookMasterController bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
 
-        MasterDetailController masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+        MasterDetailController masterDetailController = new DoubleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
         bookMasterController.setMasterDetailController(masterDetailController);
 
-        windowController.setMenuBarForController(menuBarController, masterDetailController.getWindowedController());
+       // windowController.setMenuBarForController(menuBarController, masterDetailController.getWindowedController());
 
     }
 
