@@ -42,6 +42,10 @@ public class DoubleFrameTabMDController extends MasterDetailController implement
         }
     }
 
+    public ComponentController getWindowedController() {
+        return masterController;
+    }
+
     @Override
     protected void doInsertDetailControllerAt(ComponentController detailController, int index) {
         getTabController().insertControllerAt(detailController, index);

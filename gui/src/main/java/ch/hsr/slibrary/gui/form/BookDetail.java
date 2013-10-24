@@ -21,7 +21,6 @@ public class BookDetail extends GUIComponent {
     private JButton saveButton;
     private JButton cancelButton;
 
-    private JButton saveAndCloseButton;
 
     public BookDetail() {
         this.container = bookDetailPanel;
@@ -117,8 +116,5 @@ public class BookDetail extends GUIComponent {
     }
 
 
-    public JButton getSaveAndCloseButton() {
-        return saveAndCloseButton;
-    }
 
 }

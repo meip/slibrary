@@ -14,6 +14,8 @@ public class Toolbar extends GUIComponent{
     private JButton doubleButton;
     private JButton splitButton;
     private JPanel panel;
+    private JButton embeddedButton;
+    private JButton separatedButton;
 
     public Toolbar() {
         this.container = panel;
