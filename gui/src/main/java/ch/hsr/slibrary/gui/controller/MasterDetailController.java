@@ -16,7 +16,7 @@ public abstract class MasterDetailController {
     private MasterDetailControllerDelegate delegate;
     private List<ComponentController> detailControllers = new LinkedList<>();
     private ComponentController selectedController;
-    private ComponentController masterController;
+    protected ComponentController masterController;
 
     public MasterDetailController(ComponentController masterController) {
     this.masterController = masterController;
@@ -118,4 +118,5 @@ public abstract class MasterDetailController {
     abstract protected void doRemoveDetailController(ComponentController detailController);
     abstract protected void doRemoveAllDetailControllers();
     abstract protected void doSetSelectedDetailController(ComponentController detailController);
+    abstract public ComponentController getWindowedController();
 }

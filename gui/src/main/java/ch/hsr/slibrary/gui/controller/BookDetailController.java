@@ -1,9 +1,7 @@
 package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.BookDetail;
-import ch.hsr.slibrary.spa.Book;
-import ch.hsr.slibrary.spa.Library;
-import ch.hsr.slibrary.spa.Shelf;
+import ch.hsr.slibrary.spa.*;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -11,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -102,7 +101,6 @@ public class BookDetailController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
-                if(masterDetailController != null) masterDetailController.removeDetailController(self);
             }
         });
 
@@ -110,16 +108,7 @@ public class BookDetailController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveChanges();
-                if(getDelegate() != null) getDelegate().detailControllerDidSave(self);
-            }
-        });
-
-        bookDetail.getSaveAndCloseButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveChanges();
-                if(getDelegate() != null) getDelegate().detailControllerDidSave(self);
-                if(masterDetailController != null) masterDetailController.removeDetailController(self);
+                if(getDelegate() != null) getDelegate().detailControllerDidSave(self, true);
             }
         });
 
@@ -138,6 +127,31 @@ public class BookDetailController extends ComponentController implements Observe
 
             @Override
             public void keyReleased(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
+
+        bookDetail.getCopyList().setModel(new ListModel() {
+            @Override
+            public int getSize() {
+                return library.getCopiesOfBook(book).size();
+            }
+
+            @Override
+            public Object getElementAt(int index) {
+                Copy copy = library.getCopiesOfBook(book).get(index);
+
+
+                return "#"+copy.getInventoryNumber();
+            }
+
+            @Override
+            public void addListDataListener(ListDataListener l) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void removeListDataListener(ListDataListener l) {
                 //To change body of implemented methods use File | Settings | File Templates.
             }
         });

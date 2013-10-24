@@ -32,6 +32,10 @@ public class SingleFrameTabMDController extends MasterDetailController implement
         windowController.addDelegate(this);
     }
 
+    public ComponentController getWindowedController() {
+        return splitController;
+    }
+
     private TabController getTabController() {
         if(_tabController == null) _tabController = new TabController(new TabGUIComponent());
         return _tabController;

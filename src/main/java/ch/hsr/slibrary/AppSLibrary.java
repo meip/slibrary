@@ -8,6 +8,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,17 +24,32 @@ public class AppSLibrary {
 
 
     public static void main(String[] args) throws Exception {
+        String os = System.getProperty("os.name").toLowerCase();
+        boolean isMac = os.startsWith("mac");
+        if(isMac) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Swinging Library");
+        }
+
+
 
         Library library = new Library();
         initLibrary(library);
 
+
+
         WindowController windowController = new WindowController();
+        MenuBarController menuBarController = new MainMenuBarController(new JMenuBar());
+
 
         BookMasterController bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
 
         MasterDetailController masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
         bookMasterController.setMasterDetailController(masterDetailController);
+
+        windowController.setMenuBarForController(menuBarController, masterDetailController.getWindowedController());
+
     }
 
     private static void initLibrary(Library library)

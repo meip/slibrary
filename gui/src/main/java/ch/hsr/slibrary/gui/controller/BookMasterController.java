@@ -170,11 +170,15 @@ public class BookMasterController extends ComponentController implements Observe
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
         removeControllerFromMap(bookDetailController);
+        if(masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
     }
 
     @Override
-    public void detailControllerDidSave(BookDetailController bookDetailController) {
-        removeControllerFromMap(bookDetailController);
+    public void detailControllerDidSave(BookDetailController bookDetailController, boolean shouldClose) {
+        if(shouldClose) {
+            removeControllerFromMap(bookDetailController);
+            if(masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
+        }
     }
 
     @Override

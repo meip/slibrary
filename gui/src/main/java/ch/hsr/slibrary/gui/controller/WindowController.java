@@ -144,4 +144,10 @@ public class WindowController {
             }
         }
     }
+
+    public void setMenuBarForController(MenuBarController menuBarController, ComponentController controller) {
+        if(controllerFrames.containsKey(controller)) {
+            controllerFrames.get(controller).setJMenuBar(menuBarController.getMenuBar());
+        }
+    }
 }
