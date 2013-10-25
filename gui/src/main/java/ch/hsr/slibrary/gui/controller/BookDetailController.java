@@ -1,7 +1,12 @@
 package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.BookDetail;
-import ch.hsr.slibrary.spa.*;
+import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
+import ch.hsr.slibrary.gui.validation.ValidationRule;
+import ch.hsr.slibrary.spa.Book;
+import ch.hsr.slibrary.spa.Copy;
+import ch.hsr.slibrary.spa.Library;
+import ch.hsr.slibrary.spa.Shelf;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -9,21 +14,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * User: p1meier
- * Date: 10.10.13
- */
-public class BookDetailController extends ComponentController implements Observer {
+public class BookDetailController extends ValidatableComponentController implements Observer {
 
     private BookDetail bookDetail;
     private Book book;
     private Library library;
     private BookDetailControllerDelegate delegate;
-
 
     private MasterDetailController masterDetailController;
 
@@ -49,6 +48,7 @@ public class BookDetailController extends ComponentController implements Observe
     @Override
     public void initialize() {
         initializeUI();
+        setValidations();
         updateUI();
     }
 
@@ -100,15 +100,17 @@ public class BookDetailController extends ComponentController implements Observe
         bookDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
             }
         });
 
         bookDetail.getSaveButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveChanges();
-                if(getDelegate() != null) getDelegate().detailControllerDidSave(self, true);
+                if (isValid()) {
+                    saveChanges();
+                    if (getDelegate() != null) getDelegate().detailControllerDidSave(self, true);
+                }
             }
         });
 
@@ -120,8 +122,8 @@ public class BookDetailController extends ComponentController implements Observe
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
                 }
             }
 
@@ -142,7 +144,7 @@ public class BookDetailController extends ComponentController implements Observe
                 Copy copy = library.getCopiesOfBook(book).get(index);
 
 
-                return "#"+copy.getInventoryNumber();
+                return "#" + copy.getInventoryNumber();
             }
 
             @Override
@@ -174,5 +176,12 @@ public class BookDetailController extends ComponentController implements Observe
     @Override
     public void update(Observable o, Object arg) {
 
+    }
+
+    @Override
+    public void setValidations() {
+        validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getTitleField(), "Titel")));
+        validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getAuthorField(), "Author")));
+        validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getPublisherField(), "Publisher")));
     }
 }
