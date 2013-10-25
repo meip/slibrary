@@ -1,7 +1,12 @@
 package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.form.BookDetail;
-import ch.hsr.slibrary.spa.*;
+import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
+import ch.hsr.slibrary.gui.validation.ValidationRule;
+import ch.hsr.slibrary.spa.Book;
+import ch.hsr.slibrary.spa.Copy;
+import ch.hsr.slibrary.spa.Library;
+import ch.hsr.slibrary.spa.Shelf;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -9,14 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * User: p1meier
- * Date: 10.10.13
- */
 public class BookDetailController extends ValidatableComponentController implements Observer {
 
     private BookDetail bookDetail;
@@ -180,23 +180,8 @@ public class BookDetailController extends ValidatableComponentController impleme
 
     @Override
     public void setValidations() {
-        validations.put(this.bookDetail.getTitleField(), new Validation() {
-            @Override
-            public boolean validate() {
-                return bookDetail.getTitleField().getText().length() > 0;
-            }
-        });
-        validations.put(this.bookDetail.getAuthorField(), new Validation() {
-            @Override
-            public boolean validate() {
-                return bookDetail.getAuthorField().getText().length() > 0;
-            }
-        });
-        validations.put(this.bookDetail.getPublisherField(), new Validation() {
-            @Override
-            public boolean validate() {
-                return bookDetail.getPublisherField().getText().length() > 0;
-            }
-        });
+        validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getTitleField(), "Titel")));
+        validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getAuthorField(), "Author")));
+        validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getPublisherField(), "Publisher")));
     }
 }
