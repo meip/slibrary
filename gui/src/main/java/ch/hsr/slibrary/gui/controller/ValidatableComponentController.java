@@ -1,5 +1,6 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
 
 import java.util.LinkedList;

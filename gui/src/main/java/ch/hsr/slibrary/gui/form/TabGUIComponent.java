@@ -1,7 +1,6 @@
 package ch.hsr.slibrary.gui.form;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created with IntelliJ IDEA.
