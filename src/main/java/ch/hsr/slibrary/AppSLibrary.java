@@ -1,6 +1,9 @@
 package ch.hsr.slibrary;
 
 import ch.hsr.slibrary.gui.controller.*;
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
+import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
+import ch.hsr.slibrary.gui.controller.system.WindowController;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.spa.*;
 import org.w3c.dom.Document;
@@ -15,15 +18,26 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * User: p1meier
  * Date: 15.10.13
  */
-public class AppSLibrary {
+public class AppSLibrary implements MainMenuBarControllerDelegate{
 
 
-    public static void main(String[] args) throws Exception {
+    private WindowController windowController;
+    private MasterDetailController masterDetailController;
+    private MainMenuBarController menuBarController;
+    private BookMasterController bookMasterController;
+    private Library library;
+
+
+    public AppSLibrary(Library library) {
+        this.library = library;
+
         String os = System.getProperty("os.name").toLowerCase();
         boolean isMac = os.startsWith("mac");
         if(isMac) {
@@ -31,24 +45,83 @@ public class AppSLibrary {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Swinging Library");
         }
 
+        initializeControllerMainControllers();
 
+    }
 
-        Library library = new Library();
-        initLibrary(library);
-
-
-
-        WindowController windowController = new WindowController();
-        MenuBarController menuBarController = new MainMenuBarController(new JMenuBar());
-
-
-        BookMasterController bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
+    private void initializeControllerMainControllers() {
+        windowController = new WindowController();
+        menuBarController = new MainMenuBarController(new JMenuBar(), windowController);
+        windowController.setMenuBarForAllControllers(menuBarController);
+        windowController.addDelegate(menuBarController);
+        menuBarController.setDelegate(this);
+        bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
 
-        MasterDetailController masterDetailController = new SingleFrameTabMDController(windowController, bookMasterController, "Detailansicht");
+
+        setIntegratedTabbedWindowMode();
+
+    }
+
+
+    private void setStandaloneWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS);
+        List<ComponentController> detailControllers = new LinkedList<>();
+
+
+        if(masterDetailController != null) {
+            detailControllers = masterDetailController.getDetailControllers();
+            masterDetailController.dismiss();
+            masterDetailController = new MDStandaloneController(windowController, bookMasterController, "Swinging Library", masterDetailController.getWindowedController());
+        } else {
+            masterDetailController = new MDStandaloneController(windowController, bookMasterController, "Swinging Library");
+        }
+
+        masterDetailController.setDetailControllers(detailControllers);
         bookMasterController.setMasterDetailController(masterDetailController);
 
-        windowController.setMenuBarForController(menuBarController, masterDetailController.getWindowedController());
+    }
+
+    private void setIntegratedTabbedWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW);
+        List<ComponentController> detailControllers = new LinkedList<>();
+
+
+        if(masterDetailController != null) {
+            detailControllers = masterDetailController.getDetailControllers();
+            masterDetailController.dismiss();
+            masterDetailController = new MDIntegratedTabbedController(windowController, bookMasterController, "Swinging Library", masterDetailController.getWindowedController());
+        } else {
+            masterDetailController = new MDIntegratedTabbedController(windowController, bookMasterController, "Swinging Library");
+        }
+
+        masterDetailController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(masterDetailController);
+
+    }
+
+    private void setSeparatedTabbedWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS);
+        List<ComponentController> detailControllers = new LinkedList<>();
+
+
+        if(masterDetailController != null) {
+            detailControllers = masterDetailController.getDetailControllers();
+            masterDetailController.dismiss();
+            masterDetailController = new MDSeparatedTabbedController(windowController, bookMasterController, "Detailansicht", masterDetailController.getWindowedController());
+        } else {
+            masterDetailController = new MDSeparatedTabbedController(windowController, bookMasterController, "Detailansicht");
+        }
+
+        masterDetailController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(masterDetailController);
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        Library library = new Library();
+        initLibrary(library);
+        new AppSLibrary(library);
 
     }
 
@@ -176,5 +249,22 @@ public class AppSLibrary {
             }
         }
         return "";
+    }
+
+    @Override
+    public void didChangeDisplayMode(MainMenuBarController controller) {
+        switch (controller.getSelectedViewItemName()) {
+            case MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW:
+                setIntegratedTabbedWindowMode();
+                break;
+
+            case MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS:
+                setSeparatedTabbedWindowMode();
+                break;
+
+            case MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS:
+                setStandaloneWindowMode();
+                break;
+        }
     }
 }

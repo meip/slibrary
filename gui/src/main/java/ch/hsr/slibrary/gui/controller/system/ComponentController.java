@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.system;
 
 import ch.hsr.slibrary.gui.form.GUIComponent;
 
@@ -8,20 +8,15 @@ import ch.hsr.slibrary.gui.form.GUIComponent;
  */
 public abstract class ComponentController {
     protected GUIComponent component;
-    protected WindowController windowController;
+    private ComponentControllerDelegate delegate;
     private String title = "";
 
-
-    public WindowController getWindowController() {
-        return windowController;
+    public ComponentController(String title) {
+        setTitle(title);
     }
 
     public void initialize() {
 
-    }
-
-    public void setWindowController(WindowController windowController) {
-        this.windowController = windowController;
     }
 
     public String getTitle() {
@@ -30,13 +25,19 @@ public abstract class ComponentController {
 
     public void setTitle(String title) {
         this.title = title;
+        if(delegate != null) delegate.controllerDidChangeTitle(this);
     }
 
     public GUIComponent getComponent() {
         return this.component;
     }
 
-    public ComponentController(String title) {
-        setTitle(title);
+    public ComponentControllerDelegate getDelegate() {
+        return delegate;
     }
+
+    public void setDelegate(ComponentControllerDelegate delegate) {
+        this.delegate = delegate;
+    }
+
 }

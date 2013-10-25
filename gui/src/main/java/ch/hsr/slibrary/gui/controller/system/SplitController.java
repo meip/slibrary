@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.system;
 
 import ch.hsr.slibrary.gui.form.VerticalSplitComponent;
 
@@ -20,7 +20,7 @@ public class SplitController extends ComponentController {
         super(title);
         this.component = splitComponent;
         this.splitComponent = splitComponent;
-        splitComponent.getSplitPane().setDividerLocation(0.5);
+        splitComponent.getSplitPane().setResizeWeight(0.5);
     }
 
 
@@ -40,11 +40,12 @@ public class SplitController extends ComponentController {
     public void setSecondController(ComponentController secondController) {
 
         if(secondController == null) {
-            splitComponent.getSplitPane().setDividerLocation(1.0);
-            splitComponent.getSplitPane().remove(splitComponent.getSplitPane().getRightComponent());
+            if(splitComponent.getSplitPane().getRightComponent() != null) {
+                splitComponent.getSplitPane().remove(splitComponent.getSplitPane().getRightComponent());
+            }
         } else {
+            splitComponent.getSplitPane().setLeftComponent(firstController.getComponent().getContainer());
             splitComponent.getSplitPane().setRightComponent(secondController.getComponent().getContainer());
-            splitComponent.getSplitPane().setDividerLocation(0.5);
         }
         this.secondController = secondController;
 

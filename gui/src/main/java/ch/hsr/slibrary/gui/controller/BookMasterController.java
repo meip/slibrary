@@ -1,5 +1,8 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
+import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
+import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.spa.Book;
@@ -199,5 +202,10 @@ public class BookMasterController extends ComponentController implements Observe
     @Override
     public void didSelectDetailController(ComponentController detailController) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void controllerDidChangeTitle(ComponentController controller) {
+
     }
 }

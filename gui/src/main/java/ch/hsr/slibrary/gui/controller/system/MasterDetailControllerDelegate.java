@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.system;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,7 +7,7 @@ package ch.hsr.slibrary.gui.controller;
  * Time: 18:33
  * To change this template use File | Settings | File Templates.
  */
-public interface MasterDetailControllerDelegate {
+public interface MasterDetailControllerDelegate extends ComponentControllerDelegate {
 
     public void willRemoveDetailController(ComponentController detailController);
     public void didRemoveDetailController(ComponentController detailController);

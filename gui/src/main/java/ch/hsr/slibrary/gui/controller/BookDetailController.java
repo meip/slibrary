@@ -1,5 +1,7 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.system.ComponentController;
+import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
@@ -100,16 +102,17 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
             }
         });
 
         bookDetail.getSaveButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                saveChanges();
                 if (isValid()) {
                     saveChanges();
-                    if (getDelegate() != null) getDelegate().detailControllerDidSave(self, true);
+                    if(getDelegate() != null) getDelegate().detailControllerDidSave(self, false);
                 }
             }
         });
@@ -122,8 +125,8 @@ public class BookDetailController extends ValidatableComponentController impleme
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
                 }
             }
 
@@ -142,9 +145,7 @@ public class BookDetailController extends ValidatableComponentController impleme
             @Override
             public Object getElementAt(int index) {
                 Copy copy = library.getCopiesOfBook(book).get(index);
-
-
-                return "#" + copy.getInventoryNumber();
+                return "#"+copy.getInventoryNumber();
             }
 
             @Override
@@ -167,6 +168,7 @@ public class BookDetailController extends ValidatableComponentController impleme
     }
 
     public void saveChanges() {
+        setTitle(bookDetail.getTitleField().getText());
         book.setName(bookDetail.getTitleField().getText());
         book.setAuthor(bookDetail.getAuthorField().getText());
         book.setPublisher(bookDetail.getPublisherField().getText());

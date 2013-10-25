@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.system;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,5 +14,6 @@ public interface WindowControllerDelegate {
     public void windowDidCloseController(WindowController windowController, ComponentController controller);
     public void windowDidActivateController(WindowController windowController, ComponentController controller);
     public void windowDidDeactivateController(WindowController windowController, ComponentController controller);
-
+    public void didAddWindowController(WindowController windowController, ComponentController controller);
+    public void windowDidReplaceController(ComponentController oldController, ComponentController newController);
 }

@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.system;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * Time: 18:18
  * To change this template use File | Settings | File Templates.
  */
-public abstract class MasterDetailController {
+public abstract class MasterDetailController extends ComponentController{
 
 
     private MasterDetailControllerDelegate delegate;
@@ -18,8 +18,9 @@ public abstract class MasterDetailController {
     private ComponentController selectedController;
     protected ComponentController masterController;
 
-    public MasterDetailController(ComponentController masterController) {
-    this.masterController = masterController;
+    public MasterDetailController(ComponentController masterController, String title) {
+        super(title);
+        this.masterController = masterController;
     }
 
     public void addDetailController(ComponentController detailController){
@@ -41,9 +42,14 @@ public abstract class MasterDetailController {
 
     public void setDetailControllers(List<ComponentController> detailControllers) {
         this.detailControllers = detailControllers;
+        doRemoveAllDetailControllers();
         for(ComponentController controller : detailControllers) {
             doAddDetailController(controller);
         }
+    }
+
+    public List<ComponentController> getDetailControllers() {
+        return detailControllers;
     }
 
     public void removeDetailController(ComponentController detailController) {
@@ -119,4 +125,5 @@ public abstract class MasterDetailController {
     abstract protected void doRemoveAllDetailControllers();
     abstract protected void doSetSelectedDetailController(ComponentController detailController);
     abstract public ComponentController getWindowedController();
+    abstract public void dismiss();
 }
