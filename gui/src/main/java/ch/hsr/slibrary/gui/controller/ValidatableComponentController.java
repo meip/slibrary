@@ -1,12 +1,12 @@
 package ch.hsr.slibrary.gui.controller;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import ch.hsr.slibrary.gui.validation.ValidationRule;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class ValidatableComponentController extends ComponentController {
-    protected Map<JComponent, Validation> validations = new HashMap<>();
+    protected List<ValidationRule> validationRules = new LinkedList<>();
 
     protected ValidatableComponentController(String title) {
         super(title);
@@ -15,17 +15,12 @@ public abstract class ValidatableComponentController extends ComponentController
     public abstract void setValidations();
 
     public boolean isValid() {
-        UIDefaults uidefs = UIManager.getLookAndFeelDefaults();
-        boolean hasValidationErrors = true;
-        for (Map.Entry<JComponent, Validation> jcve : validations.entrySet()) {
-            if(!jcve.getValue().validate()) {
-                hasValidationErrors = false;
-                jcve.getKey().setBorder(BorderFactory.createLineBorder(Color.red));
-            } else {
-                jcve.getKey().setBorder(uidefs.getBorder("TextFieldUI"));
-                jcve.getKey().updateUI();
+        boolean isValid = true;
+        for (ValidationRule vr : validationRules) {
+            if (!vr.validate()) {
+                isValid = false;
             }
         }
-        return hasValidationErrors;
+        return isValid;
     }
 }
