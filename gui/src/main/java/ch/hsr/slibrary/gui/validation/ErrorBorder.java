@@ -33,7 +33,7 @@ public class ErrorBorder extends AbstractBorder {
 
             outer = new Rectangle2D.Float(x, y, width, height);
             inner = new Rectangle2D.Float(x + offs, y + offs, width - size, height - size);
-            this.errorIcon.paintIcon(c, g, 0, height - this.errorIcon.getIconHeight());
+            this.errorIcon.paintIcon(c, g, width - this.errorIcon.getIconWidth(), height - this.errorIcon.getIconHeight());
 
             Path2D path = new Path2D.Float(Path2D.WIND_EVEN_ODD);
             path.append(outer, false);

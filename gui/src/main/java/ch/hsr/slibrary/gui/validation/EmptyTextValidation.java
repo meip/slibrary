@@ -25,7 +25,6 @@ public class EmptyTextValidation implements Validation {
     @Override
     public void onError() {
         jTextComponent.setBorder(new ErrorBorder(Color.RED, 2, new ImageIcon(getClass().getClassLoader().getResource("error_10x10.png"))));
-        jTextComponent.setBackground(Color.ORANGE);
     }
 
     @Override
