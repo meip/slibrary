@@ -13,9 +13,14 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class BookMasterController extends ComponentController implements Observer, BookDetailControllerDelegate, MasterDetailControllerDelegate {
 
@@ -48,6 +53,7 @@ public class BookMasterController extends ComponentController implements Observe
         initializeButtonListeners();
         initializeTable();
         initializeObserving();
+        initializeSearchField();
         updateUI();
     }
 
@@ -137,10 +143,36 @@ public class BookMasterController extends ComponentController implements Observe
         }
     }
 
+    private void initializeSearchField() {
+        bookMaster.getSearchField().addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                filterTable();
+            }
+        });
+    }
+
     private BookDetailController createControllerForBook(Book book) {
         return new BookDetailController(book.getName(), new BookDetail(), book, library);
     }
 
+
+    private void filterTable() {
+        TableModel tableModel = bookMaster.getTable().getModel();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
+        bookMaster.getTable().setRowSorter(sorter);
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)"+bookMaster.getSearchField().getText()));
+    }
 
 
     private void presentBook(Book book) {

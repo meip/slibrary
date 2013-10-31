@@ -14,6 +14,7 @@ public class BookMaster extends GUIComponent {
     private JLabel numSelectedLabel;
     private JButton displaySelectedButton;
     private JTable table;
+    private JTextField searchField;
 
 
     public BookMaster() {
@@ -22,6 +23,10 @@ public class BookMaster extends GUIComponent {
 
     public JTable getTable() {
         return table;
+    }
+
+    public JTextField getSearchField() {
+        return searchField;
     }
 
     public JButton getAddBookButton() {
