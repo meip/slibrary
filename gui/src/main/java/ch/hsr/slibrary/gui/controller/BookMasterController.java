@@ -67,6 +67,7 @@ public class BookMasterController extends ComponentController implements Observe
             public void actionPerformed(ActionEvent e) {
 
                 for (int index : bookMaster.getTable().getSelectedRows()) {
+                    index = bookMaster.getTable().convertRowIndexToModel(index);
                     Book book = library.getBooks().get(index);
                     if(!bookControllerMap.containsKey(book)) {
                         BookDetailController controller = createControllerForBook(book);
