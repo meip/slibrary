@@ -12,9 +12,15 @@ import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class BookMasterController extends ComponentController implements Observer, BookDetailControllerDelegate, MasterDetailControllerDelegate {
 
@@ -24,6 +30,7 @@ public class BookMasterController extends ComponentController implements Observe
     private BookMaster bookMaster;
     private Library library;
     private Map<Book, ComponentController> bookControllerMap = new HashMap<>();
+    private ListSelectionModel listSelectionModel;
 
     public BookMasterController(String title, BookMaster component, Library lib) {
         super(title);
@@ -44,8 +51,9 @@ public class BookMasterController extends ComponentController implements Observe
     @Override
     public void initialize() {
         initializeButtonListeners();
-        initializeBookList();
+        initializeTable();
         initializeObserving();
+        initializeSearchField();
         updateUI();
     }
 
@@ -58,7 +66,7 @@ public class BookMasterController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                for (int index : bookMaster.getBooksList().getSelectedIndices()) {
+                for (int index : bookMaster.getTable().getSelectedRows()) {
                     Book book = library.getBooks().get(index);
                     if(!bookControllerMap.containsKey(book)) {
                         BookDetailController controller = createControllerForBook(book);
@@ -82,57 +90,89 @@ public class BookMasterController extends ComponentController implements Observe
             }
         });
 
-        bookMaster.getBooksList().addListSelectionListener(new ListSelectionListener() {
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                bookMaster.getNumSelectedLabel().setText(new Integer(bookMaster.getBooksList().getSelectedIndices().length).toString());
-            }
-        });
 
     }
-    private void initializeBookList() {
-        bookMaster.getBooksList().setModel(new ListModel() {
+    private void initializeTable() {
+        bookMaster.getTable().setModel(new AbstractTableModel() {
+
+            private String[] columnNames = {"Titel", "Autor", "Publisher"};
             @Override
-            public int getSize() {
+            public int getRowCount() {
                 return library.getBooks().size();
             }
 
             @Override
-            public Object getElementAt(int index) {
-                return library.getBooks().get(index).toString();
+            public int getColumnCount() {
+                return columnNames.length;
             }
 
             @Override
-            public void addListDataListener(ListDataListener l) {
-                //To change body of implemented methods use File | Settings | File Templates.
+            public String getColumnName(int columnIndex) {
+                return columnNames[columnIndex];
             }
 
             @Override
-            public void removeListDataListener(ListDataListener l) {
-                //To change body of implemented methods use File | Settings | File Templates.
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Book book = library.getBooks().get(rowIndex);
+                switch (columnIndex) {
+                    case 0:
+                        return book.getName();
+                    case 1:
+                        return book.getAuthor();
+                    case 2:
+                        return book.getPublisher();
+                    default:
+                        return "";
+                }
             }
-
         });
-
-        bookMaster.getBooksList().addListSelectionListener(new ListSelectionListener() {
+        listSelectionModel = bookMaster.getTable().getSelectionModel();
+        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                updateUI();
+                updateLabels();
+                updateButtons();
             }
         });
-
     }
+
     private void initializeObserving() {
         for(Book book : library.getBooks()) {
             book.addObserver(this);
         }
     }
 
+    private void initializeSearchField() {
+        bookMaster.getSearchField().addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                filterTable();
+            }
+        });
+    }
+
     private BookDetailController createControllerForBook(Book book) {
         return new BookDetailController(book.getName(), new BookDetail(), book, library);
     }
 
+
+    private void filterTable() {
+        TableModel tableModel = bookMaster.getTable().getModel();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
+        bookMaster.getTable().setRowSorter(sorter);
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)"+bookMaster.getSearchField().getText()));
+    }
 
 
     private void presentBook(Book book) {
@@ -164,10 +204,23 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void updateUI() {
+        updateLabels();
+        updateButtons();
+        updateTable();
+    }
+
+    private void updateLabels() {
         bookMaster.getBooksAmountLabel().setText(new Integer(library.getBooks().size()).toString());
         bookMaster.getCopyAmountLabel().setText(new Integer(library.getCopies().size()).toString());
-        bookMaster.getDisplaySelectedButton().setEnabled(bookMaster.getBooksList().getSelectedIndices().length > 0);
-        bookMaster.getBooksList().updateUI();
+        bookMaster.getNumSelectedLabel().setText(new Integer(bookMaster.getTable().getSelectedRowCount()).toString());
+    }
+
+    private void updateButtons() {
+        bookMaster.getDisplaySelectedButton().setEnabled(bookMaster.getTable().getSelectedRowCount() > 0);
+    }
+
+    private void updateTable() {
+        bookMaster.getTable().updateUI();
     }
 
     @Override
