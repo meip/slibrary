@@ -109,7 +109,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="9c82a" class="javax.swing.JList" binding="booksList">
+                  <component id="2f92a" class="javax.swing.JTable" binding="table">
                     <constraints/>
                     <properties/>
                   </component>

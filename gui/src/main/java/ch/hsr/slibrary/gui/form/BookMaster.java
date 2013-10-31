@@ -8,20 +8,20 @@ import javax.swing.*;
  */
 public class BookMaster extends GUIComponent {
     private JPanel bookMaster;
-    private JList booksList;
     private JButton addBookButton;
     private JLabel booksAmountLabel;
     private JLabel copyAmountLabel;
     private JLabel numSelectedLabel;
     private JButton displaySelectedButton;
+    private JTable table;
 
 
     public BookMaster() {
         this.container = bookMaster;
     }
 
-    public JList getBooksList() {
-        return booksList;
+    public JTable getTable() {
+        return table;
     }
 
     public JButton getAddBookButton() {
