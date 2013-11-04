@@ -53,7 +53,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         updateUI();
     }
 
-    public BookDetailControllerDelegate getDelegate() {
+    public BookDetailControllerDelegate getTabDelegate() {
         return delegate;
     }
 
@@ -101,7 +101,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                if(getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
             }
         });
 
@@ -111,7 +111,7 @@ public class BookDetailController extends ValidatableComponentController impleme
                 saveChanges();
                 if (isValid()) {
                     saveChanges();
-                    if(getDelegate() != null) getDelegate().detailControllerDidSave(self, false);
+                    if(getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, false);
                 }
             }
         });
@@ -125,7 +125,7 @@ public class BookDetailController extends ValidatableComponentController impleme
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                    if(getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
                 }
             }
 

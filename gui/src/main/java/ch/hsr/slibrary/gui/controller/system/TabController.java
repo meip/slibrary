@@ -4,12 +4,15 @@ import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.StringUtil;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 
 public class TabController extends ComponentController implements  ComponentControllerDelegate{
     private List<ComponentController> controllers = new LinkedList<>();
     private JTabbedPane tabbedPane;
+    private TabControllerDelegate tabDelegate;
 
     public TabController(String title, TabGUIComponent component) {
         super(title);
@@ -93,5 +96,24 @@ public class TabController extends ComponentController implements  ComponentCont
     @Override
     public void controllerDidChangeTitle(ComponentController controller) {
         tabbedPane.setTitleAt(controllers.indexOf(controller), StringUtil.trimToWordsWithMaxLength(controller.getTitle(), 5, 25));
+    }
+
+    public TabControllerDelegate getTabDelegate() {
+        return tabDelegate;
+    }
+
+    public void setTabDelegate(TabControllerDelegate tabDelegate) {
+        this.tabDelegate = tabDelegate;
+    }
+
+    public ComponentController getSelectedController() {
+        for(ComponentController controller:controllers ) {
+            for(int i = 0; i < tabbedPane.getTabCount(); ++i ) {
+                if(controller.getComponent().getContainer() == tabbedPane.getTabComponentAt(i)) {
+                    return controller;
+                }
+            }
+        }
+        return null;
     }
 }

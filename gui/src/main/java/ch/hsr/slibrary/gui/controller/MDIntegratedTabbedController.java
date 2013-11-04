@@ -1,6 +1,8 @@
 package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.controller.system.*;
+import ch.hsr.slibrary.gui.form.GUIComponent;
+import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.form.VerticalSplitComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 
@@ -13,27 +15,18 @@ import javax.swing.*;
  * Time: 18:47
  * To change this template use File | Settings | File Templates.
  */
-public class MDIntegratedTabbedController extends MDTabbedController implements WindowControllerDelegate {
+public class MDIntegratedTabbedController extends MasterDetailController{
 
     private TabController _tabController;
     private SplitController splitController;
 
-    public MDIntegratedTabbedController(WindowController windowController, ComponentController masterController, String title, ComponentController replaceController) {
-        super(masterController, title, windowController);
+
+
+
+    public MDIntegratedTabbedController(ComponentController masterController, String title) {
+
+        super(masterController, title);
         initializeSplitController();
-
-        windowController.replaceControllerInFrame(replaceController, splitController);
-        windowController.arrangeControllerWithPosition(splitController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
-        windowController.addDelegate(this);
-    }
-
-    public MDIntegratedTabbedController(WindowController windowController, ComponentController masterController, String title) {
-
-        super(masterController, title, windowController);
-        initializeSplitController();
-
-        windowController.presentControllerAsFrame(splitController, JFrame.DISPOSE_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_SCREEN));
-        windowController.addDelegate(this);
     }
 
     private void initializeSplitController() {
@@ -42,9 +35,18 @@ public class MDIntegratedTabbedController extends MDTabbedController implements 
         splitController.setSecondController(null);
     }
 
+    protected TabController getTabController() {
+        if(_tabController == null) _tabController = new TabController("Details", new TabGUIComponent());
+        return _tabController;
+    }
 
     public ComponentController getWindowedController() {
         return splitController;
+    }
+
+    @Override
+    public GUIComponent getComponent() {
+        return splitController.getComponent();
     }
 
     @Override
@@ -78,13 +80,13 @@ public class MDIntegratedTabbedController extends MDTabbedController implements 
     }
 
     @Override
-    public void windowDidCloseController(WindowController windowController, ComponentController controller) {
-        if(controller == getTabController()) {
-            removeAllDetailControllers();
-        }
+    protected void doSetSelectedDetailController(ComponentController detailController) {
+        getTabController().showController(detailController);
     }
 
     public void dismiss() {
-       windowController.removeDelegate(this);
+
     }
+
+
 }

@@ -111,7 +111,7 @@ public abstract class MasterDetailController extends ComponentController{
         return detailControllers.contains(detailController);
     }
 
-    public MasterDetailControllerDelegate getDelegate() {
+    public MasterDetailControllerDelegate getTabDelegate() {
         return delegate;
     }
 
