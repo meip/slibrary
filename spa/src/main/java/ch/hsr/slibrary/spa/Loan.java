@@ -3,8 +3,9 @@ package ch.hsr.slibrary.spa;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.Observable;
 
-public class Loan {
+public class Loan extends Observable {
 
 	private Copy copy;
 	private Customer customer;
@@ -87,28 +88,30 @@ public class Loan {
 					/ 1000 / 60 / 60 / 24;
 		return -1;
 	}
-	
+
 	public int getDaysOverdue() {
 		if ( !isOverdue() )
 			return 0;
-		
+
 		GregorianCalendar dueDate = (GregorianCalendar) pickupDate.clone();
 		dueDate.add(GregorianCalendar.DAY_OF_YEAR, DAYS_TO_RETURN_BOOK);
-		
-		return (int) (new GregorianCalendar().getTimeInMillis() - 
+
+		return (int) (new GregorianCalendar().getTimeInMillis() -
 				dueDate.getTimeInMillis())/ 1000 /60 /60 /24;
 	}
-	
+
 	public boolean isOverdue() {
 		if ( !isLent() )
 			return false;
-		
-		GregorianCalendar dueDate = (GregorianCalendar) pickupDate.clone();
-		dueDate.add(GregorianCalendar.DAY_OF_YEAR, DAYS_TO_RETURN_BOOK);
-		dueDate.add(GregorianCalendar.HOUR_OF_DAY, 23);
-		dueDate.add(GregorianCalendar.MINUTE, 59);
-		dueDate.add(GregorianCalendar.SECOND, 59);
-		
-		return ( new GregorianCalendar().after(dueDate) );
+		return ( new GregorianCalendar().after(getDueDate()));
 	}
+
+    public GregorianCalendar getDueDate() {
+        GregorianCalendar dueDate = (GregorianCalendar) pickupDate.clone();
+        dueDate.add(GregorianCalendar.DAY_OF_YEAR, DAYS_TO_RETURN_BOOK);
+        dueDate.add(GregorianCalendar.HOUR_OF_DAY, 23);
+        dueDate.add(GregorianCalendar.MINUTE, 59);
+        dueDate.add(GregorianCalendar.SECOND, 59);
+        return dueDate;
+    }
 }
