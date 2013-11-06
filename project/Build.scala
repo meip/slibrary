@@ -18,33 +18,6 @@ object BuildSettings {
   )
 }
 
-// Shell prompt which show the current project,
-// git branch and build version
-object ShellPrompt {
-
-  object devnull extends ProcessLogger {
-    def info(s: => String) {}
-
-    def error(s: => String) {}
-
-    def buffer[T](f: => T): T = f
-  }
-
-  def currBranch = (
-    ("git status -sb" lines_! devnull headOption)
-      getOrElse "-" stripPrefix "## "
-    )
-
-  val buildShellPrompt = {
-    (state: State) => {
-      val currProject = Project.extract(state).currentProject.id
-      "%s:%s:%s> ".format(
-        currProject, currBranch, BuildSettings.buildVersion
-      )
-    }
-  }
-}
-
 object Resolvers {
   val sunrepo = "Sun Maven2 Repo" at "http://download.java.net/maven/2"
   val sunrepoGF = "Sun GF Maven2 Repo" at "http://download.java.net/maven/glassfish"
