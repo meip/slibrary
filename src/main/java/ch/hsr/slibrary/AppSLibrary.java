@@ -26,7 +26,7 @@ import java.util.List;
  * User: p1meier
  * Date: 15.10.13
  */
-public class AppSLibrary implements MainMenuBarControllerDelegate, TabControllerDelegate{
+public class AppSLibrary implements TabControllerDelegate{
 
     private WindowController windowController;
     private MasterDetailController bookMDController;
@@ -58,125 +58,25 @@ public class AppSLibrary implements MainMenuBarControllerDelegate, TabController
         menuBarController = new MainMenuBarController(new JMenuBar(), windowController);
         windowController.setMenuBarForAllControllers(menuBarController);
         windowController.addDelegate(menuBarController);
-        menuBarController.setDelegate(this);
+
         bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
-        mainTabController = new TabController("Swinging Library", new TabGUIComponent());
+        bookMDController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
+        bookMasterController.setMasterDetailController(bookMDController);
+
         loanMasterController = new LoanMasterController("Ausleihen", new LoanMaster(), library);
         loanMasterController.initialize();
-
-        mainTabController.addController(bookMasterController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.setTabDelegate(this);
-        setIntegratedTabbedWindowMode();
-
-    }
-
-    private void setIntegratedTabbedWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW);
-        List<ComponentController> detailControllers = new LinkedList<>();
-
-
-
-
-
-        if (bookMDController != null) {
-            detailControllers = bookMDController.getDetailControllers();
-            bookMDController.dismiss();
-        }
-        bookMDController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
-
-        mainTabController.setTabDelegate(null);
-        mainTabController.removeAllControllers();
-        mainTabController.addController(bookMDController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.showControllerAt(selectedMainTabIndex);
-        mainTabController.setTabDelegate(this);
-
-
-
-        bookMDController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(bookMDController);
+        loanMDController = new MDIntegratedTabbedController(loanMasterController, "Ausleihen");
         loanMasterController.setMasterDetailController(loanMDController);
+
+        mainTabController = new TabController("Swinging Library", new TabGUIComponent());
+        mainTabController.addController(bookMDController);
+        mainTabController.addController(loanMDController);
+        mainTabController.setTabDelegate(this);
 
         windowController.presentControllerAsFrame(mainTabController);
         windowController.arrangeControllerWithPosition(mainTabController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
 
-    }
-
-
-
-    private void setStandaloneWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS);
-        List<ComponentController> detailControllers = new LinkedList<>();
-
-
-        mainTabController.setTabDelegate(null);
-        mainTabController.removeAllControllers();
-        mainTabController.addController(bookMasterController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.showControllerAt(selectedMainTabIndex);
-        mainTabController.setTabDelegate(this);
-
-
-        if(bookMDController != null) {
-
-            detailControllers = bookMDController.getDetailControllers();
-            bookMDController.dismiss();
-            bookMDController = new MDStandaloneController(windowController, mainTabController, "Swinging Library", bookMDController.getWindowedController());
-        } else {
-            bookMDController = new MDStandaloneController(windowController, mainTabController, "Swinging Library");
-        }
-
-        bookMDController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(bookMDController);
-        loanMasterController.setMasterDetailController(loanMDController);
-
-    }
-
-
-    private void setSeparatedTabbedWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS);
-        List<ComponentController> detailControllers = new LinkedList<>();
-
-
-        mainTabController.setTabDelegate(null);
-        mainTabController.removeAllControllers();
-        mainTabController.addController(bookMasterController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.showControllerAt(selectedMainTabIndex);
-        mainTabController.setTabDelegate(this);
-
-
-        if (bookMDController != null) {
-            detailControllers = bookMDController.getDetailControllers();
-            bookMDController.dismiss();
-            bookMDController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht", bookMDController.getWindowedController());
-        } else {
-            bookMDController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht");
-        }
-
-        bookMDController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(bookMDController);
-        loanMasterController.setMasterDetailController(loanMDController);
-    }
-
-
-    @Override
-    public void didChangeDisplayMode(MainMenuBarController controller) {
-       /* switch (controller.getSelectedViewItemName()) {
-            case MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW:
-                setIntegratedTabbedWindowMode();
-                break;
-
-            case MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS:
-                setSeparatedTabbedWindowMode();
-                break;
-
-            case MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS:
-                setStandaloneWindowMode();
-                break;
-        }*/
     }
 
     @Override
