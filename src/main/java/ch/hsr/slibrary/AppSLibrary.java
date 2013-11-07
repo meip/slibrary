@@ -35,7 +35,6 @@ public class AppSLibrary implements TabControllerDelegate{
     private BookMasterController bookMasterController;
     private LoanMasterController loanMasterController;
     private TabController mainTabController;
-    private int selectedMainTabIndex;
     private Library library;
 
 
@@ -74,8 +73,7 @@ public class AppSLibrary implements TabControllerDelegate{
         mainTabController.addController(loanMDController);
         mainTabController.setTabDelegate(this);
 
-        windowController.presentControllerAsFrame(mainTabController);
-        windowController.arrangeControllerWithPosition(mainTabController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
+        windowController.presentControllerAsFrame(mainTabController, JFrame.EXIT_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_SCREEN));
 
     }
 
@@ -91,10 +89,7 @@ public class AppSLibrary implements TabControllerDelegate{
 
     @Override
     public void tabControllerDidSelectController(TabController tabController, ComponentController controller) {
-        if(controller != null) {
-            selectedMainTabIndex = tabController.indexOfController(controller);
-            System.out.println(selectedMainTabIndex);
-        }
+
     }
 
 
@@ -127,8 +122,8 @@ public class AppSLibrary implements TabControllerDelegate{
         System.out.println("Percent copies on loan: " + lentBooksPercentage + "%");
         System.out.println("Copies currently overdue: " + library.getOverdueLoans().size());
 
-        for (Loan l : library.getOverdueLoans())
-            System.out.println(l.getDaysOverdue());
+        //for (Loan l : library.getOverdueLoans())
+            //System.out.println(l.getDaysOverdue());
     }
 
     private static void createBooksAndLoans(Library library)
