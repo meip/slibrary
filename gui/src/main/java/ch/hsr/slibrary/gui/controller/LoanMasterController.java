@@ -1,5 +1,6 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.listener.LoanTableListener;
 import ch.hsr.slibrary.gui.controller.system.ComponentController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
@@ -48,6 +49,7 @@ public class LoanMasterController extends ComponentController implements Observe
     public void initialize() {
         initializeButtonListeners();
         initializeTable();
+        initializeOnlyLentFilter();
         initializeOverdueFilter();
         initializeObserving();
         initializeSearchField();
@@ -82,6 +84,9 @@ public class LoanMasterController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (masterDetailController != null) {
+                    ComponentController controller = new NewLoanDetailController("Neue Ausleihe erfassen", new LoanDetail(), library);
+                    masterDetailController.addDetailController(controller);
+                    masterDetailController.setSelectedDetailController(controller);
                 }
             }
         });
@@ -96,7 +101,7 @@ public class LoanMasterController extends ComponentController implements Observe
 
             @Override
             public int getRowCount() {
-                return library.getLoans().size();
+                return library.getBooks().size();
             }
 
             @Override
@@ -153,28 +158,11 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void initializeOverdueFilter() {
-        loanMaster.getOnlyOverdueCheckbox().addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (loanMaster.getOnlyOverdueCheckbox().isSelected()) {
-                    TableModel tableModel = loanMaster.getLoanTable().getModel();
-                    TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
-                    loanMaster.getLoanTable().setRowSorter(sorter);
+        loanMaster.getOnlyOverdueCheckbox().addItemListener(new LoanTableListener(library, loanMaster.getOnlyOverdueCheckbox(), loanMaster.getOnlyLentCheckbox(), loanMaster.getLoanTable()));
+    }
 
-                    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
-                        public boolean include(Entry entry) {
-                            String daysOverdueStatus = (String) entry.getValue(0);
-                            return !daysOverdueStatus.equals(LoanUtil.LOAN_IS_VALID);
-                        }
-                    };
-                    sorter.setRowFilter(filter);
-                } else {
-                    TableModel tableModel = loanMaster.getLoanTable().getModel();
-                    TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
-                    loanMaster.getLoanTable().setRowSorter(sorter);
-                }
-            }
-        });
+    private void initializeOnlyLentFilter() {
+        loanMaster.getOnlyLentCheckbox().addItemListener(new LoanTableListener(library, loanMaster.getOnlyOverdueCheckbox(), loanMaster.getOnlyLentCheckbox(), loanMaster.getLoanTable()));
     }
 
     private void initializeSearchField() {
@@ -217,7 +205,6 @@ public class LoanMasterController extends ComponentController implements Observe
             }
             masterDetailController.setSelectedDetailController(controller);
         }
-
     }
 
     private void removeControllerFromMap(ComponentController controller) {
