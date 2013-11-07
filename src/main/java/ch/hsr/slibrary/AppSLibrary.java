@@ -1,10 +1,7 @@
 package ch.hsr.slibrary;
 
 import ch.hsr.slibrary.gui.controller.*;
-import ch.hsr.slibrary.gui.controller.system.ComponentController;
-import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
-import ch.hsr.slibrary.gui.controller.system.TabController;
-import ch.hsr.slibrary.gui.controller.system.WindowController;
+import ch.hsr.slibrary.gui.controller.system.*;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
@@ -28,7 +25,7 @@ import java.util.List;
  * User: p1meier
  * Date: 15.10.13
  */
-public class AppSLibrary implements MainMenuBarControllerDelegate{
+public class AppSLibrary implements MainMenuBarControllerDelegate, TabControllerDelegate{
 
 
     private WindowController windowController;
@@ -37,6 +34,7 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
     private BookMasterController bookMasterController;
     private ComponentController loanMasterController;
     private TabController mainTabController;
+    private int selectedMainTabIndex;
     private Library library;
 
 
@@ -67,10 +65,39 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
 
         mainTabController.addController(bookMasterController);
         mainTabController.addController(loanMasterController);
-
+        mainTabController.setTabDelegate(this);
         setIntegratedTabbedWindowMode();
 
     }
+
+    private void setIntegratedTabbedWindowMode() {
+        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW);
+        List<ComponentController> detailControllers = new LinkedList<>();
+
+
+
+        if(masterDetailController != null) {
+            detailControllers = masterDetailController.getDetailControllers();
+            masterDetailController.dismiss();
+        }
+        masterDetailController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
+
+
+        mainTabController.setTabDelegate(null);
+        mainTabController.removeAllControllers();
+        mainTabController.addController(masterDetailController);
+        mainTabController.addController(loanMasterController);
+        mainTabController.showControllerAt(selectedMainTabIndex);
+        mainTabController.setTabDelegate(this);
+
+        masterDetailController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(masterDetailController);
+
+        windowController.presentControllerAsFrame(mainTabController);
+        windowController.arrangeControllerWithPosition(mainTabController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
+
+    }
+
 
 
     private void setStandaloneWindowMode() {
@@ -78,13 +105,12 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
         List<ComponentController> detailControllers = new LinkedList<>();
 
 
-
-        ComponentController selectedController = mainTabController.getSelectedController();
-        System.out.println("selected controller " + selectedController);
+        mainTabController.setTabDelegate(null);
         mainTabController.removeAllControllers();
         mainTabController.addController(bookMasterController);
         mainTabController.addController(loanMasterController);
-        mainTabController.showController(selectedController);
+        mainTabController.showControllerAt(selectedMainTabIndex);
+        mainTabController.setTabDelegate(this);
 
 
         if(masterDetailController != null) {
@@ -100,44 +126,18 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
 
     }
 
-    private void setIntegratedTabbedWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW);
-        List<ComponentController> detailControllers = new LinkedList<>();
-
-
-
-        if(masterDetailController != null) {
-            detailControllers = masterDetailController.getDetailControllers();
-            masterDetailController.dismiss();
-            masterDetailController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
-        } else {
-            masterDetailController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
-        }
-
-        ComponentController selectedController = mainTabController.getSelectedController();
-        mainTabController.removeAllControllers();
-        mainTabController.addController(masterDetailController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.showController(selectedController);
-
-        masterDetailController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(masterDetailController);
-
-        windowController.presentControllerAsFrame(mainTabController);
-        windowController.arrangeControllerWithPosition(mainTabController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
-
-    }
 
     private void setSeparatedTabbedWindowMode() {
         menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS);
         List<ComponentController> detailControllers = new LinkedList<>();
 
 
-        ComponentController selectedController = mainTabController.getSelectedController();
+        mainTabController.setTabDelegate(null);
         mainTabController.removeAllControllers();
         mainTabController.addController(bookMasterController);
         mainTabController.addController(loanMasterController);
-        mainTabController.showController(selectedController);
+        mainTabController.showControllerAt(selectedMainTabIndex);
+        mainTabController.setTabDelegate(this);
 
 
         if(masterDetailController != null) {
@@ -150,6 +150,42 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
 
         masterDetailController.setDetailControllers(detailControllers);
         bookMasterController.setMasterDetailController(masterDetailController);
+    }
+
+
+    @Override
+    public void didChangeDisplayMode(MainMenuBarController controller) {
+       /* switch (controller.getSelectedViewItemName()) {
+            case MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW:
+                setIntegratedTabbedWindowMode();
+                break;
+
+            case MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS:
+                setSeparatedTabbedWindowMode();
+                break;
+
+            case MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS:
+                setStandaloneWindowMode();
+                break;
+        }*/
+    }
+
+    @Override
+    public void tabControllerDidAddController(TabController tabController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void tabControllerDidRemoveController(TabController tabController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void tabControllerDidSelectController(TabController tabController, ComponentController controller) {
+        if(controller != null) {
+            selectedMainTabIndex = tabController.indexOfController(controller);
+            System.out.println(selectedMainTabIndex);
+        }
     }
 
 
@@ -286,20 +322,5 @@ public class AppSLibrary implements MainMenuBarControllerDelegate{
         return "";
     }
 
-    @Override
-    public void didChangeDisplayMode(MainMenuBarController controller) {
-        switch (controller.getSelectedViewItemName()) {
-            case MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW:
-                setIntegratedTabbedWindowMode();
-                break;
 
-            case MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS:
-                setSeparatedTabbedWindowMode();
-                break;
-
-            case MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS:
-                setStandaloneWindowMode();
-                break;
-        }
-    }
 }

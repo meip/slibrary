@@ -8,7 +8,7 @@ package ch.hsr.slibrary.gui.controller.system;
  * To change this template use File | Settings | File Templates.
  */
 public interface TabControllerDelegate {
-    void tabControllerDidAddController(ComponentController controller);
-    void tabControllerDidRemoveController(ComponentController controller);
-    void tabControllerDidSelectController(ComponentController controller);
+    void tabControllerDidAddController(TabController tabController, ComponentController controller);
+    void tabControllerDidRemoveController(TabController tabController, ComponentController controller);
+    void tabControllerDidSelectController(TabController tabController, ComponentController controller);
 }
