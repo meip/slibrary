@@ -3,6 +3,7 @@ package ch.hsr.slibrary;
 import ch.hsr.slibrary.gui.controller.*;
 import ch.hsr.slibrary.gui.controller.system.*;
 import ch.hsr.slibrary.gui.form.BookMaster;
+import ch.hsr.slibrary.gui.form.LoanMaster;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 import ch.hsr.slibrary.spa.*;
@@ -27,12 +28,12 @@ import java.util.List;
  */
 public class AppSLibrary implements MainMenuBarControllerDelegate, TabControllerDelegate{
 
-
     private WindowController windowController;
-    private MasterDetailController masterDetailController;
+    private MasterDetailController bookMDController;
+    private MasterDetailController loanMDController;
     private MainMenuBarController menuBarController;
     private BookMasterController bookMasterController;
-    private ComponentController loanMasterController;
+    private LoanMasterController loanMasterController;
     private TabController mainTabController;
     private int selectedMainTabIndex;
     private Library library;
@@ -43,7 +44,7 @@ public class AppSLibrary implements MainMenuBarControllerDelegate, TabController
 
         String os = System.getProperty("os.name").toLowerCase();
         boolean isMac = os.startsWith("mac");
-        if(isMac) {
+        if (isMac) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Swinging Library");
         }
@@ -61,7 +62,8 @@ public class AppSLibrary implements MainMenuBarControllerDelegate, TabController
         bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
         mainTabController = new TabController("Swinging Library", new TabGUIComponent());
-        loanMasterController = new BookMasterController("TEST", new BookMaster(), library);
+        loanMasterController = new LoanMasterController("Ausleihen", new LoanMaster(), library);
+        loanMasterController.initialize();
 
         mainTabController.addController(bookMasterController);
         mainTabController.addController(loanMasterController);
@@ -76,22 +78,26 @@ public class AppSLibrary implements MainMenuBarControllerDelegate, TabController
 
 
 
-        if(masterDetailController != null) {
-            detailControllers = masterDetailController.getDetailControllers();
-            masterDetailController.dismiss();
-        }
-        masterDetailController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
 
+
+        if (bookMDController != null) {
+            detailControllers = bookMDController.getDetailControllers();
+            bookMDController.dismiss();
+        }
+        bookMDController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
 
         mainTabController.setTabDelegate(null);
         mainTabController.removeAllControllers();
-        mainTabController.addController(masterDetailController);
+        mainTabController.addController(bookMDController);
         mainTabController.addController(loanMasterController);
         mainTabController.showControllerAt(selectedMainTabIndex);
         mainTabController.setTabDelegate(this);
 
-        masterDetailController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(masterDetailController);
+
+
+        bookMDController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(bookMDController);
+        loanMasterController.setMasterDetailController(loanMDController);
 
         windowController.presentControllerAsFrame(mainTabController);
         windowController.arrangeControllerWithPosition(mainTabController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
@@ -113,16 +119,18 @@ public class AppSLibrary implements MainMenuBarControllerDelegate, TabController
         mainTabController.setTabDelegate(this);
 
 
-        if(masterDetailController != null) {
-            detailControllers = masterDetailController.getDetailControllers();
-            masterDetailController.dismiss();
-            masterDetailController = new MDStandaloneController(windowController, mainTabController, "Swinging Library", masterDetailController.getWindowedController());
+        if(bookMDController != null) {
+
+            detailControllers = bookMDController.getDetailControllers();
+            bookMDController.dismiss();
+            bookMDController = new MDStandaloneController(windowController, mainTabController, "Swinging Library", bookMDController.getWindowedController());
         } else {
-            masterDetailController = new MDStandaloneController(windowController, mainTabController, "Swinging Library");
+            bookMDController = new MDStandaloneController(windowController, mainTabController, "Swinging Library");
         }
 
-        masterDetailController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(masterDetailController);
+        bookMDController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(bookMDController);
+        loanMasterController.setMasterDetailController(loanMDController);
 
     }
 
@@ -140,16 +148,17 @@ public class AppSLibrary implements MainMenuBarControllerDelegate, TabController
         mainTabController.setTabDelegate(this);
 
 
-        if(masterDetailController != null) {
-            detailControllers = masterDetailController.getDetailControllers();
-            masterDetailController.dismiss();
-            masterDetailController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht", masterDetailController.getWindowedController());
+        if (bookMDController != null) {
+            detailControllers = bookMDController.getDetailControllers();
+            bookMDController.dismiss();
+            bookMDController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht", bookMDController.getWindowedController());
         } else {
-            masterDetailController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht");
+            bookMDController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht");
         }
 
-        masterDetailController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(masterDetailController);
+        bookMDController.setDetailControllers(detailControllers);
+        bookMasterController.setMasterDetailController(bookMDController);
+        loanMasterController.setMasterDetailController(loanMDController);
     }
 
 

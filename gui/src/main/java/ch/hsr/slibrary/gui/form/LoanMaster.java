@@ -12,6 +12,7 @@ public class LoanMaster extends GUIComponent {
     private JCheckBox onlyOverdueCheckbox;
     private JButton showSelctionButton;
     private JButton newLoanButton;
+    private JCheckBox onlyLentCheckbox;
 
     public LoanMaster() {
         this.container = loanMasterPanel;
@@ -87,5 +88,13 @@ public class LoanMaster extends GUIComponent {
 
     public void setNewLoanButton(JButton newLoanButton) {
         this.newLoanButton = newLoanButton;
+    }
+
+    public JCheckBox getOnlyLentCheckbox() {
+        return onlyLentCheckbox;
+    }
+
+    public void setOnlyLentCheckbox(JCheckBox onlyLentCheckbox) {
+        this.onlyLentCheckbox = onlyLentCheckbox;
     }
 }

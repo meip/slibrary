@@ -7,11 +7,14 @@ public class LoanDetail extends GUIComponent {
     private JComboBox customerSelect;
     private JTextField returnDateField;
     private JLabel amountLabel;
-    private JTable exemplarTable;
-    private JTextField exemplarIdField;
+    private JTable copyTable;
+    private JTextField copyIdField;
     private JButton addLoanButton;
-    private JLabel exemplarIdValidationLabel;
+    private JLabel copyIdValidationLabel;
     private JPanel loanDetailPanel;
+    private JButton cancelButton;
+    private JButton saveButton;
+
 
     public LoanDetail() {
         this.container = loanDetailPanel;
@@ -49,20 +52,20 @@ public class LoanDetail extends GUIComponent {
         this.amountLabel = amountLabel;
     }
 
-    public JTable getExemplarTable() {
-        return exemplarTable;
+    public JTable getCopyTable() {
+        return copyTable;
     }
 
-    public void setExemplarTable(JTable exemplarTable) {
-        this.exemplarTable = exemplarTable;
+    public void setCopyTable(JTable copyTable) {
+        this.copyTable = copyTable;
     }
 
-    public JTextField getExemplarIdField() {
-        return exemplarIdField;
+    public JTextField getCopyIdField() {
+        return copyIdField;
     }
 
-    public void setExemplarIdField(JTextField exemplarIdField) {
-        this.exemplarIdField = exemplarIdField;
+    public void setCopyIdField(JTextField copyIdField) {
+        this.copyIdField = copyIdField;
     }
 
     public JButton getAddLoanButton() {
@@ -73,12 +76,12 @@ public class LoanDetail extends GUIComponent {
         this.addLoanButton = addLoanButton;
     }
 
-    public JLabel getExemplarIdValidationLabel() {
-        return exemplarIdValidationLabel;
+    public JLabel getCopyIdValidationLabel() {
+        return copyIdValidationLabel;
     }
 
-    public void setExemplarIdValidationLabel(JLabel exemplarIdValidationLabel) {
-        this.exemplarIdValidationLabel = exemplarIdValidationLabel;
+    public void setCopyIdValidationLabel(JLabel copyIdValidationLabel) {
+        this.copyIdValidationLabel = copyIdValidationLabel;
     }
 
     public JPanel getLoanDetailPanel() {
@@ -87,5 +90,21 @@ public class LoanDetail extends GUIComponent {
 
     public void setLoanDetailPanel(JPanel loanDetailPanel) {
         this.loanDetailPanel = loanDetailPanel;
+    }
+
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+
+    public void setCancelButton(JButton cancelButton) {
+        this.cancelButton = cancelButton;
+    }
+
+    public JButton getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(JButton saveButton) {
+        this.saveButton = saveButton;
     }
 }
