@@ -84,9 +84,9 @@ public class LoanMasterController extends ComponentController implements Observe
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (masterDetailController != null) {
-                    ComponentController controller = new NewLoanDetailController("Neue Ausleihe erfassen", new LoanDetail(), library);
-                    masterDetailController.addDetailController(controller);
-                    masterDetailController.setSelectedDetailController(controller);
+                    //ComponentController controller = new NewLoanDetailController("Neue Ausleihe erfassen", new LoanDetail(), library);
+                    //masterDetailController.addDetailController(controller);
+                    //masterDetailController.setSelectedDetailController(controller);
                 }
             }
         });

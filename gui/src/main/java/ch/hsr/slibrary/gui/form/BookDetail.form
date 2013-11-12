@@ -202,7 +202,7 @@
               <component id="8026e" class="javax.swing.JButton" binding="saveButton" default-binding="true">
                 <constraints/>
                 <properties>
-                  <text value="Speichern"/>
+                  <text value="Fertig"/>
                 </properties>
               </component>
             </children>

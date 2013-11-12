@@ -1,10 +1,7 @@
 package ch.hsr.slibrary;
 
 import ch.hsr.slibrary.gui.controller.*;
-import ch.hsr.slibrary.gui.controller.system.ComponentController;
-import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
-import ch.hsr.slibrary.gui.controller.system.TabController;
-import ch.hsr.slibrary.gui.controller.system.WindowController;
+import ch.hsr.slibrary.gui.controller.system.*;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.form.LoanMaster;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
@@ -29,11 +26,11 @@ import java.util.List;
  * User: p1meier
  * Date: 15.10.13
  */
-public class AppSLibrary implements MainMenuBarControllerDelegate {
-
+public class AppSLibrary implements TabControllerDelegate{
 
     private WindowController windowController;
-    private MasterDetailController masterDetailController;
+    private MasterDetailController bookMDController;
+    private MasterDetailController loanMDController;
     private MainMenuBarController menuBarController;
     private BookMasterController bookMasterController;
     private LoanMasterController loanMasterController;
@@ -60,99 +57,39 @@ public class AppSLibrary implements MainMenuBarControllerDelegate {
         menuBarController = new MainMenuBarController(new JMenuBar(), windowController);
         windowController.setMenuBarForAllControllers(menuBarController);
         windowController.addDelegate(menuBarController);
-        menuBarController.setDelegate(this);
+
         bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
         bookMasterController.initialize();
-        mainTabController = new TabController("Swinging Library", new TabGUIComponent());
+        bookMDController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
+        bookMasterController.setMasterDetailController(bookMDController);
+
         loanMasterController = new LoanMasterController("Ausleihen", new LoanMaster(), library);
         loanMasterController.initialize();
+        loanMDController = new MDIntegratedTabbedController(loanMasterController, "Ausleihen");
+        loanMasterController.setMasterDetailController(loanMDController);
 
-        mainTabController.addController(bookMasterController);
-        mainTabController.addController(loanMasterController);
+        mainTabController = new TabController("Swinging Library", new TabGUIComponent());
+        mainTabController.addController(bookMDController);
+        mainTabController.addController(loanMDController);
+        mainTabController.setTabDelegate(this);
 
-        setIntegratedTabbedWindowMode();
-
-    }
-
-
-    private void setStandaloneWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS);
-        List<ComponentController> detailControllers = new LinkedList<>();
-
-
-        ComponentController selectedController = mainTabController.getSelectedController();
-        System.out.println("selected controller " + selectedController);
-        mainTabController.removeAllControllers();
-        mainTabController.addController(bookMasterController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.showController(selectedController);
-
-
-        if (masterDetailController != null) {
-            detailControllers = masterDetailController.getDetailControllers();
-            masterDetailController.dismiss();
-            masterDetailController = new MDStandaloneController(windowController, mainTabController, "Swinging Library", masterDetailController.getWindowedController());
-        } else {
-            masterDetailController = new MDStandaloneController(windowController, mainTabController, "Swinging Library");
-        }
-
-        masterDetailController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(masterDetailController);
-        loanMasterController.setMasterDetailController(masterDetailController);
+        windowController.presentControllerAsFrame(mainTabController, JFrame.EXIT_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_SCREEN));
 
     }
 
-    private void setIntegratedTabbedWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW);
-        List<ComponentController> detailControllers = new LinkedList<>();
-
-
-        if (masterDetailController != null) {
-            detailControllers = masterDetailController.getDetailControllers();
-            masterDetailController.dismiss();
-            masterDetailController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
-        } else {
-            masterDetailController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
-        }
-
-        ComponentController selectedController = mainTabController.getSelectedController();
-        mainTabController.removeAllControllers();
-        mainTabController.addController(masterDetailController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.showController(selectedController);
-
-        masterDetailController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(masterDetailController);
-        loanMasterController.setMasterDetailController(masterDetailController);
-
-        windowController.presentControllerAsFrame(mainTabController);
-        windowController.arrangeControllerWithPosition(mainTabController, WindowBounds.WINDOW_POSITION_FILL_SCREEN);
-
+    @Override
+    public void tabControllerDidAddController(TabController tabController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private void setSeparatedTabbedWindowMode() {
-        menuBarController.setSelectedViewItemName(MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS);
-        List<ComponentController> detailControllers = new LinkedList<>();
+    @Override
+    public void tabControllerDidRemoveController(TabController tabController, ComponentController controller) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
+    @Override
+    public void tabControllerDidSelectController(TabController tabController, ComponentController controller) {
 
-        ComponentController selectedController = mainTabController.getSelectedController();
-        mainTabController.removeAllControllers();
-        mainTabController.addController(bookMasterController);
-        mainTabController.addController(loanMasterController);
-        mainTabController.showController(selectedController);
-
-
-        if (masterDetailController != null) {
-            detailControllers = masterDetailController.getDetailControllers();
-            masterDetailController.dismiss();
-            masterDetailController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht", masterDetailController.getWindowedController());
-        } else {
-            masterDetailController = new MDSeparatedTabbedController(windowController, mainTabController, "Detailansicht");
-        }
-
-        masterDetailController.setDetailControllers(detailControllers);
-        bookMasterController.setMasterDetailController(masterDetailController);
-        loanMasterController.setMasterDetailController(masterDetailController);
     }
 
 
@@ -185,8 +122,8 @@ public class AppSLibrary implements MainMenuBarControllerDelegate {
         System.out.println("Percent copies on loan: " + lentBooksPercentage + "%");
         System.out.println("Copies currently overdue: " + library.getOverdueLoans().size());
 
-        for (Loan l : library.getOverdueLoans())
-            System.out.println(l.getDaysOverdue());
+        //for (Loan l : library.getOverdueLoans())
+            //System.out.println(l.getDaysOverdue());
     }
 
     private static void createBooksAndLoans(Library library)
@@ -289,20 +226,5 @@ public class AppSLibrary implements MainMenuBarControllerDelegate {
         return "";
     }
 
-    @Override
-    public void didChangeDisplayMode(MainMenuBarController controller) {
-        switch (controller.getSelectedViewItemName()) {
-            case MainMenuBarController.MENU_VIEW_INTEGRATED_WINDOW:
-                setIntegratedTabbedWindowMode();
-                break;
 
-            case MainMenuBarController.MENU_VIEW_SEPARATED_WINDOWS:
-                setSeparatedTabbedWindowMode();
-                break;
-
-            case MainMenuBarController.MENU_VIEW_STANDALONE_WINDOWS:
-                setStandaloneWindowMode();
-                break;
-        }
-    }
 }

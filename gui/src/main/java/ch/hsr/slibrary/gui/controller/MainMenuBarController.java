@@ -16,11 +16,6 @@ import java.util.Map;
 public class MainMenuBarController extends MenuBarController implements WindowControllerDelegate {
 
 
-    public static final String MENU_VIEW_INTEGRATED_WINDOW = "menuViewIntegratedWindow";
-    public static final String MENU_VIEW_SEPARATED_WINDOWS = "menuViewSeparatedWindows";
-    public static final String MENU_VIEW_STANDALONE_WINDOWS = "menuViewStandaloneWindows";
-
-    private JMenu viewMenu;
     private JMenu windowMenu;
     private JMenu fileMenu;
     private ButtonGroup windowButtonGroup;
@@ -57,46 +52,6 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
         fileMenu.add(fileItem);
 
 
-        viewMenu = new JMenu("Darstellung");
-        getMenuBar().add(viewMenu);
-
-        ButtonGroup toggleViewGroup = new ButtonGroup();
-
-        ActionListener viewChangedActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(e.getSource() != currentViewItem) {
-                    currentViewItem = (JMenuItem) e.getSource();
-                    if(delegate != null) delegate.didChangeDisplayMode(self);
-                } else {
-                    currentViewItem.setSelected(true);
-                }
-
-            }
-        };
-
-        JRadioButtonMenuItem viewItem = new JRadioButtonMenuItem("Alle Fenster zusammenfassen");
-        toggleViewGroup.add(viewItem);
-        viewItem.addActionListener(viewChangedActionListener);
-        viewItem.setName(MENU_VIEW_INTEGRATED_WINDOW);
-        viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        viewMenu.add(viewItem);
-
-        viewItem = new JRadioButtonMenuItem("Details zusammenfassen");
-        toggleViewGroup.add(viewItem);
-        viewItem.addActionListener(viewChangedActionListener);
-        viewItem.setName(MENU_VIEW_SEPARATED_WINDOWS);
-        viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        viewMenu.add(viewItem);
-
-        viewItem = new JRadioButtonMenuItem("Einzelne Fenster");
-        toggleViewGroup.add(viewItem);
-        viewItem.addActionListener(viewChangedActionListener);
-        viewItem.setName(MENU_VIEW_STANDALONE_WINDOWS);
-        viewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        viewMenu.add(viewItem);
-
-
         windowMenu = new JMenu("Fenster");
         getMenuBar().add(windowMenu);
         windowButtonGroup = new ButtonGroup();
@@ -112,26 +67,6 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
         this.delegate = delegate;
     }
 
-
-    public String getSelectedViewItemName() {
-        for(int i = 0; i < viewMenu.getItemCount(); ++i) {
-            if(viewMenu.getItem(i).isSelected()) {
-                return viewMenu.getItem(i).getName();
-            }
-        }
-        return null;
-    }
-
-    public void setSelectedViewItemName(String name) {
-        for(int i = 0; i < viewMenu.getItemCount(); ++i) {
-            JMenuItem item = viewMenu.getItem(i);
-            if(item.getName().equals(name)) {
-                item.setSelected(true);
-                currentViewItem = item;
-                break;
-            }
-        }
-    }
 
 
     private void addWindowItem(final ComponentController controller) {
@@ -157,13 +92,6 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
     }
 
     private void selectWindowItem(ComponentController controller) {
-       /* for(int i = 0; i < windowMenu.getItemCount(); ++i) {
-            JMenuItem item = windowMenu.getItem(i);
-            if(item.getText().equals(controller.getTitle())) {
-                item.setSelected(true);
-                break;
-            }
-        }*/
         if(controllerItems.containsKey(controller)) {
             controllerItems.get(controller).setSelected(true);
         }

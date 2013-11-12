@@ -111,7 +111,7 @@ public class BookDetailController extends ValidatableComponentController impleme
                 saveChanges();
                 if (isValid()) {
                     saveChanges();
-                    if(getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, false);
+                    if(getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, true);
                 }
             }
         });
