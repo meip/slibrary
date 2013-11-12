@@ -5,11 +5,13 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
+import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.spa.Book;
+import ch.hsr.slibrary.spa.Copy;
 import ch.hsr.slibrary.spa.Library;
+import ch.hsr.slibrary.spa.Loan;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -19,11 +21,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class BookMasterController extends ComponentController implements Observer, BookDetailControllerDelegate, MasterDetailControllerDelegate {
-
 
 
     private MasterDetailController masterDetailController;
@@ -69,7 +70,7 @@ public class BookMasterController extends ComponentController implements Observe
                 for (int index : bookMaster.getTable().getSelectedRows()) {
                     index = bookMaster.getTable().convertRowIndexToModel(index);
                     Book book = library.getBooks().get(index);
-                    if(!bookControllerMap.containsKey(book)) {
+                    if (!bookControllerMap.containsKey(book)) {
                         BookDetailController controller = createControllerForBook(book);
                         controller.setDelegate(self);
                         controller.setMasterDetailController(self.masterDetailController);
@@ -83,8 +84,8 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getAddBookButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(masterDetailController != null) {
-                    ComponentController controller = new NewBookDetailController("Neues Buch erfassen",new BookDetail(),library);
+                if (masterDetailController != null) {
+                    ComponentController controller = new NewBookDetailController("Neues Buch erfassen", new BookDetail(), library);
                     masterDetailController.addDetailController(controller);
                     masterDetailController.setSelectedDetailController(controller);
                 }
@@ -92,12 +93,13 @@ public class BookMasterController extends ComponentController implements Observe
         });
 
 
-
     }
+
     private void initializeTable() {
         bookMaster.getTable().setModel(new AbstractTableModel() {
 
-            private String[] columnNames = {"Titel", "Autor", "Publisher"};
+            private String[] columnNames = {"Verfügbar", "Titel", "Autor", "Publisher"};
+
             @Override
             public int getRowCount() {
                 return library.getBooks().size();
@@ -118,10 +120,32 @@ public class BookMasterController extends ComponentController implements Observe
                 Book book = library.getBooks().get(rowIndex);
                 switch (columnIndex) {
                     case 0:
-                        return book.getName();
+                        List<Copy> availableCopies = library.getAvailableCopies();
+                        for (Iterator<Copy> it = availableCopies.iterator(); it.hasNext(); ) {
+                            if (!it.next().getTitle().equals(book))
+                                it.remove();
+                        }
+                        if (availableCopies.size() == 0 && library.getLentCopiesOfBook(book).size() > 0) {
+                            List<Loan> loans = library.getLentCopiesOfBook(book);
+                            GregorianCalendar lentUntil = loans.get(0).getDueDate();
+                            for (Loan loan : loans) {
+                                lentUntil = (loan.getDueDate().getTimeInMillis() < lentUntil.getTimeInMillis()) ? loan.getDueDate() : lentUntil;
+                            }
+                            if (Calendar.getInstance().getTimeInMillis() > lentUntil.getTimeInMillis()) {
+                                return LoanUtil.LOAN_IS_OVERDUE;
+                            } else {
+                                long diffTime = lentUntil.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+                                long daysOverDue = diffTime / (1000 * 60 * 60 * 24);
+                                return "ab " + new SimpleDateFormat().format(new Long(lentUntil.getTimeInMillis())) + " (" + daysOverDue + " Tage)";
+                            }
+                        } else {
+                            return availableCopies.size();
+                        }
                     case 1:
-                        return book.getAuthor();
+                        return book.getName();
                     case 2:
+                        return book.getAuthor();
+                    case 3:
                         return book.getPublisher();
                     default:
                         return "";
@@ -139,7 +163,7 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void initializeObserving() {
-        for(Book book : library.getBooks()) {
+        for (Book book : library.getBooks()) {
             book.addObserver(this);
         }
     }
@@ -172,14 +196,14 @@ public class BookMasterController extends ComponentController implements Observe
         TableModel tableModel = bookMaster.getTable().getModel();
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
         bookMaster.getTable().setRowSorter(sorter);
-        sorter.setRowFilter(RowFilter.regexFilter("(?i)"+bookMaster.getSearchField().getText()));
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + bookMaster.getSearchField().getText()));
     }
 
 
     private void presentBook(Book book) {
-        if(masterDetailController != null) {
+        if (masterDetailController != null) {
             ComponentController controller = bookControllerMap.get(book);
-            if(!masterDetailController.containsDetailController(controller)) {
+            if (!masterDetailController.containsDetailController(controller)) {
                 masterDetailController.addDetailController(controller);
             }
             masterDetailController.setSelectedDetailController(controller);
@@ -190,11 +214,11 @@ public class BookMasterController extends ComponentController implements Observe
     private void removeControllerFromMap(ComponentController controller) {
         List<Book> booksToRemove = new LinkedList<>();
         for (Book book : bookControllerMap.keySet()) {
-            if(bookControllerMap.get(book) == controller) {
+            if (bookControllerMap.get(book) == controller) {
                 booksToRemove.add(book);
             }
         }
-        for(Book book : booksToRemove) {
+        for (Book book : booksToRemove) {
             bookControllerMap.remove(book);
         }
     }
@@ -227,14 +251,14 @@ public class BookMasterController extends ComponentController implements Observe
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
         removeControllerFromMap(bookDetailController);
-        if(masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
+        if (masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
     }
 
     @Override
     public void detailControllerDidSave(BookDetailController bookDetailController, boolean shouldClose) {
-        if(shouldClose) {
+        if (shouldClose) {
             removeControllerFromMap(bookDetailController);
-            if(masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
+            if (masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
         }
     }
 
