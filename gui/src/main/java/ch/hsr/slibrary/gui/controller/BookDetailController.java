@@ -1,5 +1,6 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
@@ -13,8 +14,6 @@ import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -101,7 +100,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
+                if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
             }
         });
 
@@ -111,27 +110,15 @@ public class BookDetailController extends ValidatableComponentController impleme
                 saveChanges();
                 if (isValid()) {
                     saveChanges();
-                    if(getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, true);
+                    if (getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, true);
                 }
             }
         });
 
-        bookDetail.getContainer().addKeyListener(new KeyListener() {
+        bookDetail.getContainer().addKeyListener(new EscapeKeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    if(getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
+            public void escapeAction() {
+                if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
             }
         });
 
@@ -144,7 +131,7 @@ public class BookDetailController extends ValidatableComponentController impleme
             @Override
             public Object getElementAt(int index) {
                 Copy copy = library.getCopiesOfBook(book).get(index);
-                return "#"+copy.getInventoryNumber();
+                return "#" + copy.getInventoryNumber();
             }
 
             @Override

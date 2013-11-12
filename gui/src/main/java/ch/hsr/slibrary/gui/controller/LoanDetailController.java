@@ -1,5 +1,6 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.form.LoanDetail;
 import ch.hsr.slibrary.spa.Library;
@@ -9,8 +10,6 @@ import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -92,12 +91,18 @@ public class LoanDetailController extends ValidatableComponentController impleme
                 //To change body of implemented methods use File | Settings | File Templates.
             }
         });
+        loanDetail.getCustomerSelect().setSelectedIndex(library.getCustomers().indexOf(loan.getCustomer()));
+
+        if (!loan.isLent()) {
+            loanDetail.getCustomerIdentityField().setEnabled(false);
+            loanDetail.getCustomerSelect().setEnabled(false);
+        }
 
         final LoanDetailController self = this;
         loanDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
             }
         });
 
@@ -107,27 +112,15 @@ public class LoanDetailController extends ValidatableComponentController impleme
                 saveChanges();
                 if (isValid()) {
                     saveChanges();
-                    if(getDelegate() != null) getDelegate().detailControllerDidSave(self, false);
+                    if (getDelegate() != null) getDelegate().detailControllerDidSave(self, false);
                 }
             }
         });
 
-        loanDetail.getContainer().addKeyListener(new KeyListener() {
+        loanDetail.getContainer().addKeyListener(new EscapeKeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    if(getDelegate() != null) getDelegate().detailControllerDidCancel(self);
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
+            public void escapeAction() {
+                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
             }
         });
     }
