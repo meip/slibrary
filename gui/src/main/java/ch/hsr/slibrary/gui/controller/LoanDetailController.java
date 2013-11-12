@@ -5,6 +5,8 @@ import ch.hsr.slibrary.gui.form.LoanDetail;
 import ch.hsr.slibrary.spa.Library;
 import ch.hsr.slibrary.spa.Loan;
 
+import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -56,6 +58,41 @@ public class LoanDetailController extends ValidatableComponentController impleme
     }
 
     private void initializeUI() {
+        loanDetail.getCustomerSelect().setModel(new ComboBoxModel() {
+
+            Object selectedItem;
+
+            @Override
+            public void setSelectedItem(Object anItem) {
+                selectedItem = anItem;
+            }
+
+            @Override
+            public Object getSelectedItem() {
+                return selectedItem;
+            }
+
+            @Override
+            public int getSize() {
+                return library.getCustomers().size();
+            }
+
+            @Override
+            public Object getElementAt(int index) {
+                return library.getCustomers().get(index);
+            }
+
+            @Override
+            public void addListDataListener(ListDataListener l) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void removeListDataListener(ListDataListener l) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
+
         final LoanDetailController self = this;
         loanDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
