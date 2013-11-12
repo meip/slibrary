@@ -1,6 +1,7 @@
 package ch.hsr.slibrary.gui.controller;
 
 import ch.hsr.slibrary.gui.controller.listener.LoanTableListener;
+import ch.hsr.slibrary.gui.controller.listener.SearchableTableListener;
 import ch.hsr.slibrary.gui.controller.system.ComponentController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
@@ -14,13 +15,11 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class LoanMasterController extends ComponentController implements Observer, BookDetailControllerDelegate, MasterDetailControllerDelegate {
+public class LoanMasterController extends ComponentController implements Observer, LoanDetailControllerDelegate, MasterDetailControllerDelegate {
 
 
     private MasterDetailController masterDetailController;
@@ -166,36 +165,12 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void initializeSearchField() {
-        loanMaster.getSearchField().addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                filterTable();
-            }
-        });
+        loanMaster.getSearchField().addKeyListener(new SearchableTableListener(loanMaster.getLoanTable(), loanMaster.getSearchField()));
     }
 
     private LoanDetailController createControllerForLoan(Loan loan) {
         return new LoanDetailController("Ausleihe: " + loan.getCopy().getTitle().getName(), new LoanDetail(), loan, library);
     }
-
-
-    private void filterTable() {
-        TableModel tableModel = loanMaster.getLoanTable().getModel();
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
-        loanMaster.getLoanTable().setRowSorter(sorter);
-        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + loanMaster.getSearchField().getText()));
-    }
-
 
     private void presentLoan(Loan loan) {
         if (masterDetailController != null) {
@@ -245,20 +220,6 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     @Override
-    public void detailControllerDidCancel(BookDetailController bookDetailController) {
-        removeControllerFromMap(bookDetailController);
-        if (masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
-    }
-
-    @Override
-    public void detailControllerDidSave(BookDetailController bookDetailController, boolean shouldClose) {
-        if (shouldClose) {
-            removeControllerFromMap(bookDetailController);
-            if (masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
-        }
-    }
-
-    @Override
     public void willRemoveDetailController(ComponentController detailController) {
 
     }
@@ -281,5 +242,19 @@ public class LoanMasterController extends ComponentController implements Observe
     @Override
     public void controllerDidChangeTitle(ComponentController controller) {
 
+    }
+
+    @Override
+    public void detailControllerDidCancel(LoanDetailController loanDetailController) {
+        removeControllerFromMap(loanDetailController);
+        if (masterDetailController != null) masterDetailController.removeDetailController(loanDetailController);
+    }
+
+    @Override
+    public void detailControllerDidSave(LoanDetailController loanDetailController, boolean shouldClose) {
+        if (shouldClose) {
+            removeControllerFromMap(loanDetailController);
+            if (masterDetailController != null) masterDetailController.removeDetailController(loanDetailController);
+        }
     }
 }

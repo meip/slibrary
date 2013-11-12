@@ -1,5 +1,6 @@
 package ch.hsr.slibrary.gui.controller;
 
+import ch.hsr.slibrary.gui.controller.listener.SearchableTableListener;
 import ch.hsr.slibrary.gui.controller.system.ComponentController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
@@ -15,12 +16,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -136,7 +133,7 @@ public class BookMasterController extends ComponentController implements Observe
                             } else {
                                 long diffTime = lentUntil.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
                                 long daysOverDue = diffTime / (1000 * 60 * 60 * 24);
-                                return "ab " + new SimpleDateFormat().format(new Long(lentUntil.getTimeInMillis())) + " (" + daysOverDue + " Tage)";
+                                return "ab " + new SimpleDateFormat("dd.MM.yyyy").format(new Long(lentUntil.getTimeInMillis())) + " (" + daysOverDue + " Tage)";
                             }
                         } else {
                             return availableCopies.size();
@@ -169,36 +166,12 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void initializeSearchField() {
-        bookMaster.getSearchField().addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                filterTable();
-            }
-        });
+        bookMaster.getSearchField().addKeyListener(new SearchableTableListener(bookMaster.getTable(), bookMaster.getSearchField()));
     }
 
     private BookDetailController createControllerForBook(Book book) {
         return new BookDetailController(book.getName(), new BookDetail(), book, library);
     }
-
-
-    private void filterTable() {
-        TableModel tableModel = bookMaster.getTable().getModel();
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
-        bookMaster.getTable().setRowSorter(sorter);
-        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + bookMaster.getSearchField().getText()));
-    }
-
 
     private void presentBook(Book book) {
         if (masterDetailController != null) {
