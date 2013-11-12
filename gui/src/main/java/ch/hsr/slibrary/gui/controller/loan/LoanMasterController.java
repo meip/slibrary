@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.loan;
 
 import ch.hsr.slibrary.gui.controller.listener.LoanTableListener;
 import ch.hsr.slibrary.gui.controller.listener.SearchableTableListener;

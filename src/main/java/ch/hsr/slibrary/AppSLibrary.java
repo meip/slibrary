@@ -2,9 +2,6 @@ package ch.hsr.slibrary;
 
 import ch.hsr.slibrary.gui.controller.*;
 import ch.hsr.slibrary.gui.controller.system.*;
-import ch.hsr.slibrary.gui.form.BookMaster;
-import ch.hsr.slibrary.gui.form.CustomerMaster;
-import ch.hsr.slibrary.gui.form.LoanMaster;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
 import ch.hsr.slibrary.spa.*;
@@ -20,8 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * User: p1meier
@@ -30,13 +25,6 @@ import java.util.List;
 public class AppSLibrary implements TabControllerDelegate{
 
     private WindowController windowController;
-    private MasterDetailController bookMDController;
-    private MasterDetailController loanMDController;
-    private MasterDetailController customerMDController;
-    private MainMenuBarController menuBarController;
-    private BookMasterController bookMasterController;
-    private LoanMasterController loanMasterController;
-    private CustomerMasterController customerMasterController;
     private TabController mainTabController;
     private Library library;
 
@@ -57,29 +45,13 @@ public class AppSLibrary implements TabControllerDelegate{
 
     private void initializeControllerMainControllers() {
         windowController = new WindowController();
-        menuBarController = new MainMenuBarController(new JMenuBar(), windowController);
-        windowController.setMenuBarForAllControllers(menuBarController);
-        windowController.addDelegate(menuBarController);
-
-        bookMasterController = new BookMasterController("Bücher", new BookMaster(), library);
-        bookMasterController.initialize();
-        bookMDController = new MDIntegratedTabbedController(bookMasterController, "Bücher");
-        bookMasterController.setMasterDetailController(bookMDController);
-
-        loanMasterController = new LoanMasterController("Ausleihen", new LoanMaster(), library);
-        loanMasterController.initialize();
-        loanMDController = new MDIntegratedTabbedController(loanMasterController, "Ausleihen");
-        loanMasterController.setMasterDetailController(loanMDController);
-
-        customerMasterController = new CustomerMasterController("Kunden", new CustomerMaster(), library);
-        customerMasterController.initialize();
-        customerMDController = new MDIntegratedTabbedController(customerMasterController, "Kunden");
-        customerMasterController.setMasterDetailController(customerMDController);
+        windowController.setMenuBarControllers(new MainMenuBarController(new JMenuBar(), windowController));
+        windowController.addDelegate((MainMenuBarController) windowController.getMenuBarController());
 
         mainTabController = new TabController("Swinging Library", new TabGUIComponent());
-        mainTabController.addController(bookMDController);
-        mainTabController.addController(loanMDController);
-        mainTabController.addController(customerMDController);
+        mainTabController.addController(ControllerFactory.createBookSetup(library));
+        mainTabController.addController(ControllerFactory.createLoanSetup(library));
+        mainTabController.addController(ControllerFactory.createCustomerSetup(library));
         mainTabController.setTabDelegate(this);
 
         windowController.presentControllerAsFrame(mainTabController, JFrame.EXIT_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_SCREEN));
@@ -88,12 +60,12 @@ public class AppSLibrary implements TabControllerDelegate{
 
     @Override
     public void tabControllerDidAddController(TabController tabController, ComponentController controller) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override
     public void tabControllerDidRemoveController(TabController tabController, ComponentController controller) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override

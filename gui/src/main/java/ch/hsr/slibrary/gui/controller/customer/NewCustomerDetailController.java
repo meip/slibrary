@@ -1,5 +1,6 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.customer;
 
+import ch.hsr.slibrary.gui.controller.customer.CustomerDetailController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;

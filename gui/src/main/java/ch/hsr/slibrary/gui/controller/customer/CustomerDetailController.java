@@ -1,5 +1,6 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.customer;
 
+import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;

@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.customer;
 
 import ch.hsr.slibrary.gui.controller.listener.SearchableTableListener;
 import ch.hsr.slibrary.gui.controller.system.ComponentController;

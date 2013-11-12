@@ -18,7 +18,7 @@ public class WindowController implements ComponentControllerDelegate{
 
     private Set<WindowControllerDelegate> delegates = new HashSet<>();
     private Map<ComponentController, JFrame> controllerFrames = new HashMap<>();
-    private MenuBarController defaultMenuBarController;
+    private MenuBarController menuBarController;
 
 
     public void presentControllerAsFrame(ComponentController controller) {
@@ -39,8 +39,8 @@ public class WindowController implements ComponentControllerDelegate{
             frame.setVisible(true);
             addWindowListenersToFrame(frame, controller);
 
-            if(defaultMenuBarController != null) {
-                frame.setJMenuBar(defaultMenuBarController.getMenuBar());
+            if(menuBarController != null) {
+                frame.setJMenuBar(menuBarController.getMenuBar());
             }
 
             for(WindowControllerDelegate delegate : delegates) {
@@ -93,7 +93,7 @@ public class WindowController implements ComponentControllerDelegate{
             @Override
             public void windowActivated(WindowEvent e) {
                 if(controllerFrames.containsKey(controller)) {
-                    controllerFrames.get(controller).setJMenuBar(defaultMenuBarController.getMenuBar());
+                    controllerFrames.get(controller).setJMenuBar(menuBarController.getMenuBar());
                 }
                 for(WindowControllerDelegate delegate : delegates) {
                     delegate.windowDidActivateController(self, controller);
@@ -148,7 +148,7 @@ public class WindowController implements ComponentControllerDelegate{
     public void bringToFront(ComponentController controller) {
         if(controllerFrames.containsKey(controller)) {
             controllerFrames.get(controller).toFront();
-            controllerFrames.get(controller).setJMenuBar(defaultMenuBarController.getMenuBar());
+            controllerFrames.get(controller).setJMenuBar(menuBarController.getMenuBar());
         }
     }
 
@@ -195,7 +195,7 @@ public class WindowController implements ComponentControllerDelegate{
             JFrame frame = controllerFrames.get(oldController);
             frame.setTitle(newController.getTitle());
             frame.setContentPane(newController.getComponent().getContainer());
-            frame.setJMenuBar(defaultMenuBarController.getMenuBar());
+            frame.setJMenuBar(menuBarController.getMenuBar());
             addWindowListenersToFrame(frame, newController);
             controllerFrames.remove(oldController);
             controllerFrames.put(newController, frame);
@@ -206,11 +206,15 @@ public class WindowController implements ComponentControllerDelegate{
     }
 
 
-    public void setMenuBarForAllControllers(MenuBarController menuBarController) {
-        defaultMenuBarController = menuBarController;
+    public void setMenuBarControllers(MenuBarController menuBarController) {
+        this.menuBarController = menuBarController;
         for(JFrame frame : controllerFrames.values()) {
             frame.setJMenuBar(menuBarController.getMenuBar());
         }
+    }
+
+    public MenuBarController getMenuBarController() {
+        return menuBarController;
     }
 
     @Override

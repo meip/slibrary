@@ -1,4 +1,4 @@
-package ch.hsr.slibrary.gui.controller;
+package ch.hsr.slibrary.gui.controller.book;
 
 import ch.hsr.slibrary.gui.controller.system.ComponentControllerDelegate;
 
