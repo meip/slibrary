@@ -3,6 +3,7 @@ package ch.hsr.slibrary;
 import ch.hsr.slibrary.gui.controller.*;
 import ch.hsr.slibrary.gui.controller.system.*;
 import ch.hsr.slibrary.gui.form.BookMaster;
+import ch.hsr.slibrary.gui.form.CustomerMaster;
 import ch.hsr.slibrary.gui.form.LoanMaster;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
 import ch.hsr.slibrary.gui.util.WindowBounds;
@@ -31,9 +32,11 @@ public class AppSLibrary implements TabControllerDelegate{
     private WindowController windowController;
     private MasterDetailController bookMDController;
     private MasterDetailController loanMDController;
+    private MasterDetailController customerMDController;
     private MainMenuBarController menuBarController;
     private BookMasterController bookMasterController;
     private LoanMasterController loanMasterController;
+    private CustomerMasterController customerMasterController;
     private TabController mainTabController;
     private Library library;
 
@@ -68,9 +71,15 @@ public class AppSLibrary implements TabControllerDelegate{
         loanMDController = new MDIntegratedTabbedController(loanMasterController, "Ausleihen");
         loanMasterController.setMasterDetailController(loanMDController);
 
+        customerMasterController = new CustomerMasterController("Kunden", new CustomerMaster(), library);
+        customerMasterController.initialize();
+        customerMDController = new MDIntegratedTabbedController(customerMasterController, "Kunden");
+        customerMasterController.setMasterDetailController(customerMDController);
+
         mainTabController = new TabController("Swinging Library", new TabGUIComponent());
         mainTabController.addController(bookMDController);
         mainTabController.addController(loanMDController);
+        mainTabController.addController(customerMDController);
         mainTabController.setTabDelegate(this);
 
         windowController.presentControllerAsFrame(mainTabController, JFrame.EXIT_ON_CLOSE, WindowController.getBoundsForWindowPosition(WindowBounds.WINDOW_POSITION_FILL_SCREEN));

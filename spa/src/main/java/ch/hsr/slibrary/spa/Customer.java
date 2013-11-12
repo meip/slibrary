@@ -1,6 +1,8 @@
 package ch.hsr.slibrary.spa;
 
-public class Customer {
+import java.util.Observable;
+
+public class Customer extends Observable{
 	
 	private String name, surname, street, city;
 	private int zip;
