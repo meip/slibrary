@@ -82,15 +82,11 @@ public class LoanMasterController extends ComponentController implements Observe
         loanMaster.getNewLoanButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (masterDetailController != null) {
-                    //ComponentController controller = new NewLoanDetailController("Neue Ausleihe erfassen", new LoanDetail(), library);
-                    //masterDetailController.addDetailController(controller);
-                    //masterDetailController.setSelectedDetailController(controller);
-                }
+                //ComponentController controller = new NewLoanDetailController("Neue Ausleihe erfassen", new LoanDetail(), library);
+                //masterDetailController.addDetailController(controller);
+                //masterDetailController.setSelectedDetailController(controller);
             }
         });
-
-
     }
 
     private void initializeTable() {
@@ -173,13 +169,11 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void presentLoan(Loan loan) {
-        if (masterDetailController != null) {
-            ComponentController controller = loanControllerMap.get(loan);
-            if (!masterDetailController.containsDetailController(controller)) {
-                masterDetailController.addDetailController(controller);
-            }
-            masterDetailController.setSelectedDetailController(controller);
+        ComponentController controller = loanControllerMap.get(loan);
+        if (!masterDetailController.containsDetailController(controller)) {
+            masterDetailController.addDetailController(controller);
         }
+        masterDetailController.setSelectedDetailController(controller);
     }
 
     private void removeControllerFromMap(ComponentController controller) {
@@ -247,14 +241,14 @@ public class LoanMasterController extends ComponentController implements Observe
     @Override
     public void detailControllerDidCancel(LoanDetailController loanDetailController) {
         removeControllerFromMap(loanDetailController);
-        if (masterDetailController != null) masterDetailController.removeDetailController(loanDetailController);
+        masterDetailController.removeDetailController(loanDetailController);
     }
 
     @Override
     public void detailControllerDidSave(LoanDetailController loanDetailController, boolean shouldClose) {
         if (shouldClose) {
             removeControllerFromMap(loanDetailController);
-            if (masterDetailController != null) masterDetailController.removeDetailController(loanDetailController);
+            masterDetailController.removeDetailController(loanDetailController);
         }
     }
 }

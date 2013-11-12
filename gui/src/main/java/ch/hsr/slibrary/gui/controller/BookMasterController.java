@@ -81,11 +81,9 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getAddBookButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (masterDetailController != null) {
-                    ComponentController controller = new NewBookDetailController("Neues Buch erfassen", new BookDetail(), library);
-                    masterDetailController.addDetailController(controller);
-                    masterDetailController.setSelectedDetailController(controller);
-                }
+                ComponentController controller = new NewBookDetailController("Neues Buch erfassen", new BookDetail(), library);
+                masterDetailController.addDetailController(controller);
+                masterDetailController.setSelectedDetailController(controller);
             }
         });
 
@@ -174,14 +172,11 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void presentBook(Book book) {
-        if (masterDetailController != null) {
-            ComponentController controller = bookControllerMap.get(book);
-            if (!masterDetailController.containsDetailController(controller)) {
-                masterDetailController.addDetailController(controller);
-            }
-            masterDetailController.setSelectedDetailController(controller);
+        ComponentController controller = bookControllerMap.get(book);
+        if (!masterDetailController.containsDetailController(controller)) {
+            masterDetailController.addDetailController(controller);
         }
-
+        masterDetailController.setSelectedDetailController(controller);
     }
 
     private void removeControllerFromMap(ComponentController controller) {
@@ -224,14 +219,14 @@ public class BookMasterController extends ComponentController implements Observe
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
         removeControllerFromMap(bookDetailController);
-        if (masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
+        masterDetailController.removeDetailController(bookDetailController);
     }
 
     @Override
     public void detailControllerDidSave(BookDetailController bookDetailController, boolean shouldClose) {
         if (shouldClose) {
             removeControllerFromMap(bookDetailController);
-            if (masterDetailController != null) masterDetailController.removeDetailController(bookDetailController);
+            masterDetailController.removeDetailController(bookDetailController);
         }
     }
 
