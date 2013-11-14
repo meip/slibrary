@@ -15,6 +15,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 public class CustomerMasterController extends ComponentController implements Observer, CustomerDetailControllerDelegate, MasterDetailControllerDelegate {
@@ -63,12 +65,6 @@ public class CustomerMasterController extends ComponentController implements Obs
                 for (int index : customerMaster.getCustomerTable().getSelectedRows()) {
                     index = customerMaster.getCustomerTable().convertRowIndexToModel(index);
                     Customer customer = library.getCustomers().get(index);
-                    if (!customerControllerMap.containsKey(customer)) {
-                        CustomerDetailController controller = new CustomerDetailController(customer.getName() + " " + customer.getSurname(), new CustomerDetail(), customer, library);
-                        controller.setDelegate(self);
-                        controller.setMasterDetailController(self.masterDetailController);
-                        customerControllerMap.put(customer, controller);
-                    }
                     presentCustomer(customer);
                 }
             }
@@ -126,6 +122,17 @@ public class CustomerMasterController extends ComponentController implements Obs
                 }
             }
         });
+        customerMaster.getCustomerTable().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    JTable jtable = (JTable)e.getSource();
+                    int index = jtable.convertRowIndexToModel(jtable.getSelectedRow());
+                    Customer customer = library.getCustomers().get(index);
+                    presentCustomer(customer);
+                }
+            }
+        });
+
         listSelectionModel = customerMaster.getCustomerTable().getSelectionModel();
         listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -172,6 +179,12 @@ public class CustomerMasterController extends ComponentController implements Obs
     }
 
     private void presentCustomer(Customer customer) {
+        if (!customerControllerMap.containsKey(customer)) {
+            CustomerDetailController controller = new CustomerDetailController(customer.getName() + " " + customer.getSurname(), new CustomerDetail(), customer, library);
+            controller.setDelegate(this);
+            controller.setMasterDetailController(this.masterDetailController);
+            customerControllerMap.put(customer, controller);
+        }
         ComponentController controller = customerControllerMap.get(customer);
         if (!masterDetailController.containsDetailController(controller)) {
             masterDetailController.addDetailController(controller);

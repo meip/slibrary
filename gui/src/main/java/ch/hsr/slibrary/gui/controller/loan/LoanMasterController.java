@@ -15,7 +15,10 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -56,9 +59,6 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void initializeButtonListeners() {
-
-        final LoanMasterController self = this;
-
         loanMaster.getShowSelctionButton().setEnabled(false);
         loanMaster.getShowSelctionButton().addActionListener(new ActionListener() {
             @Override
@@ -67,12 +67,6 @@ public class LoanMasterController extends ComponentController implements Observe
                 for (int index : loanMaster.getLoanTable().getSelectedRows()) {
                     index = loanMaster.getLoanTable().convertRowIndexToModel(index);
                     Loan loan = library.getLoans().get(index);
-                    if (!loanControllerMap.containsKey(loan)) {
-                        LoanDetailController controller = createControllerForLoan(loan);
-                        controller.setDelegate(self);
-                        controller.setMasterDetailController(self.masterDetailController);
-                        loanControllerMap.put(loan, controller);
-                    }
                     presentLoan(loan);
                 }
             }
@@ -145,6 +139,16 @@ public class LoanMasterController extends ComponentController implements Observe
                 updateButtons();
             }
         });
+        loanMaster.getLoanTable().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    JTable jtable = (JTable) e.getSource();
+                    int index = jtable.convertRowIndexToModel(jtable.getSelectedRow());
+                    Loan loan = library.getLoans().get(index);
+                    presentLoan(loan);
+                }
+            }
+        });
     }
 
     private void initializeObserving() {
@@ -170,6 +174,12 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void presentLoan(Loan loan) {
+        if (!loanControllerMap.containsKey(loan)) {
+            LoanDetailController controller = createControllerForLoan(loan);
+            controller.setDelegate(this);
+            controller.setMasterDetailController(this.masterDetailController);
+            loanControllerMap.put(loan, controller);
+        }
         ComponentController controller = loanControllerMap.get(loan);
         if (!masterDetailController.containsDetailController(controller)) {
             masterDetailController.addDetailController(controller);

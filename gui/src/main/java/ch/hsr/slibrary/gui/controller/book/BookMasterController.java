@@ -7,10 +7,7 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
 import ch.hsr.slibrary.gui.util.LoanUtil;
-import ch.hsr.slibrary.spa.Book;
-import ch.hsr.slibrary.spa.Copy;
-import ch.hsr.slibrary.spa.Library;
-import ch.hsr.slibrary.spa.Loan;
+import ch.hsr.slibrary.spa.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -18,6 +15,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -56,9 +55,6 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void initializeButtonListeners() {
-
-        final BookMasterController self = this;
-
         bookMaster.getDisplaySelectedButton().setEnabled(false);
         bookMaster.getDisplaySelectedButton().addActionListener(new ActionListener() {
             @Override
@@ -67,12 +63,6 @@ public class BookMasterController extends ComponentController implements Observe
                 for (int index : bookMaster.getTable().getSelectedRows()) {
                     index = bookMaster.getTable().convertRowIndexToModel(index);
                     Book book = library.getBooks().get(index);
-                    if (!bookControllerMap.containsKey(book)) {
-                        BookDetailController controller = createControllerForBook(book);
-                        controller.setDelegate(self);
-                        controller.setMasterDetailController(self.masterDetailController);
-                        bookControllerMap.put(book, controller);
-                    }
                     presentBook(book);
                 }
             }
@@ -147,6 +137,16 @@ public class BookMasterController extends ComponentController implements Observe
                 }
             }
         });
+        bookMaster.getTable().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    JTable jtable = (JTable) e.getSource();
+                    int index = jtable.convertRowIndexToModel(jtable.getSelectedRow());
+                    Book book = library.getBooks().get(index);
+                    presentBook(book);
+                }
+            }
+        });
         listSelectionModel = bookMaster.getTable().getSelectionModel();
         listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -172,6 +172,12 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void presentBook(Book book) {
+        if (!bookControllerMap.containsKey(book)) {
+            BookDetailController controller = createControllerForBook(book);
+            controller.setDelegate(this);
+            controller.setMasterDetailController(this.masterDetailController);
+            bookControllerMap.put(book, controller);
+        }
         ComponentController controller = bookControllerMap.get(book);
         if (!masterDetailController.containsDetailController(controller)) {
             masterDetailController.addDetailController(controller);
