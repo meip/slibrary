@@ -11,6 +11,7 @@ public class CustomerDetail extends GUIComponent{
     private JButton cancelButton;
     private JPanel customerDetail;
     private JButton saveButton;
+    private JTable copyTable;
 
     public CustomerDetail() {
         this.container = customerDetail;
@@ -78,5 +79,13 @@ public class CustomerDetail extends GUIComponent{
 
     public void setSaveButton(JButton saveButton) {
         this.saveButton = saveButton;
+    }
+
+    public JTable getCopyTable() {
+        return copyTable;
+    }
+
+    public void setCopyTable(JTable copyTable) {
+        this.copyTable = copyTable;
     }
 }

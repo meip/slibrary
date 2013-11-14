@@ -1,17 +1,20 @@
 package ch.hsr.slibrary.gui.controller.customer;
 
-import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
+import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
+import ch.hsr.slibrary.spa.Loan;
 
+import javax.swing.table.AbstractTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,7 +24,6 @@ public class CustomerDetailController extends ValidatableComponentController imp
     protected Customer customer;
     protected Library library;
     private CustomerDetailControllerDelegate delegate;
-
     private MasterDetailController masterDetailController;
 
     public CustomerDetailController(String title, CustomerDetail component, Customer customer, Library library) {
@@ -82,6 +84,45 @@ public class CustomerDetailController extends ValidatableComponentController imp
             @Override
             public void escapeAction() {
                 if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+            }
+        });
+        initializeTable();
+    }
+
+    private void initializeTable() {
+        customerDetail.getCopyTable().setModel(new AbstractTableModel() {
+
+            private String[] columnNames = {"Title", "Ausgeliehen am", "Ausgeliehen bis"};
+
+            @Override
+            public int getRowCount() {
+                return library.getCustomerLoans(customer).size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return columnNames.length;
+            }
+
+            @Override
+            public String getColumnName(int columnIndex) {
+                return columnNames[columnIndex];
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Loan loan = library.getCustomerLoans(customer).get(rowIndex);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+                switch (columnIndex) {
+                    case 0:
+                        return loan.getCopy().getTitle().getName();
+                    case 1:
+                        return sdf.format(new Long(loan.getPickupDate().getTimeInMillis()));
+                    case 2:
+                        return (loan.isLent()) ? sdf.format(new Long(loan.getDueDate().getTimeInMillis())) : sdf.format(new Long(loan.getReturnDate().getTimeInMillis()));
+                    default:
+                        return "";
+                }
             }
         });
     }
