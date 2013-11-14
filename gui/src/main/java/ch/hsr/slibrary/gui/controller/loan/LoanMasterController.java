@@ -115,15 +115,7 @@ public class LoanMasterController extends ComponentController implements Observe
                     case 2:
                         return loan.getCopy().getTitle().getName();
                     case 3:
-                        if (loan.getDaysOverdue() > 0) {
-                            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (seit " + loan.getDaysOverdue() + " Tage überfällig)";
-                        } else if (loan.isLent()) {
-                            long diffTime = loan.getDueDate().getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
-                            long daysOverDue = diffTime / (1000 * 60 * 60 * 24);
-                            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (in " + daysOverDue + " Tagen)";
-                        } else {
-                            return sdf.format(new Long(loan.getReturnDate().getTimeInMillis()));
-                        }
+                        return LoanUtil.getReturnDate(loan);
                     case 4:
                         return loan.getCustomer().getSurname() + " " + loan.getCustomer().getName();
                     default:

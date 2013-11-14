@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Observable;
+import java.util.concurrent.TimeUnit;
 
 public class Loan extends Observable {
 
@@ -95,9 +96,7 @@ public class Loan extends Observable {
 
 		GregorianCalendar dueDate = (GregorianCalendar) pickupDate.clone();
 		dueDate.add(GregorianCalendar.DAY_OF_YEAR, DAYS_TO_RETURN_BOOK);
-
-		return (int) (new GregorianCalendar().getTimeInMillis() -
-				dueDate.getTimeInMillis())/ 1000 /60 /60 /24;
+		return (int) TimeUnit.MILLISECONDS.toDays(new GregorianCalendar().getTimeInMillis() - dueDate.getTimeInMillis());
 	}
 
 	public boolean isOverdue() {

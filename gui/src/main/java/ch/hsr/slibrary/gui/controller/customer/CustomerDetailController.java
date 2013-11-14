@@ -4,6 +4,7 @@ import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
+import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
@@ -112,14 +113,13 @@ public class CustomerDetailController extends ValidatableComponentController imp
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 Loan loan = library.getCustomerLoans(customer).get(rowIndex);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                 switch (columnIndex) {
                     case 0:
                         return loan.getCopy().getTitle().getName();
                     case 1:
-                        return sdf.format(new Long(loan.getPickupDate().getTimeInMillis()));
+                        return LoanUtil.getPickupDate(loan);
                     case 2:
-                        return (loan.isLent()) ? sdf.format(new Long(loan.getDueDate().getTimeInMillis())) : sdf.format(new Long(loan.getReturnDate().getTimeInMillis()));
+                        return LoanUtil.getReturnDate(loan);
                     default:
                         return "";
                 }
