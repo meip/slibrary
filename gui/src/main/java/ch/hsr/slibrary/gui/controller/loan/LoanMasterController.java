@@ -112,6 +112,7 @@ public class LoanMasterController extends ComponentController implements Observe
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 Loan loan = library.getLoans().get(rowIndex);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                 switch (columnIndex) {
                     case 0:
                         return LoanUtil.loanStatus(loan.getDaysOverdue());
@@ -121,13 +122,13 @@ public class LoanMasterController extends ComponentController implements Observe
                         return loan.getCopy().getTitle().getName();
                     case 3:
                         if (loan.getDaysOverdue() > 0) {
-                            return new SimpleDateFormat().format(new Long(loan.getDueDate().getTimeInMillis())) + " (seit " + loan.getDaysOverdue() + " Tage überfällig)";
+                            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (seit " + loan.getDaysOverdue() + " Tage überfällig)";
                         } else if (loan.isLent()) {
                             long diffTime = loan.getDueDate().getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
                             long daysOverDue = diffTime / (1000 * 60 * 60 * 24);
-                            return new SimpleDateFormat().format(new Long(loan.getDueDate().getTimeInMillis())) + " (in " + daysOverDue + " Tagen)";
+                            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (in " + daysOverDue + " Tagen)";
                         } else {
-                            return new SimpleDateFormat().format(new Long(loan.getReturnDate().getTimeInMillis()));
+                            return sdf.format(new Long(loan.getReturnDate().getTimeInMillis()));
                         }
                     case 4:
                         return loan.getCustomer().getSurname() + " " + loan.getCustomer().getName();
