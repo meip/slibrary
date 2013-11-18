@@ -33,6 +33,8 @@ object Dependencies {
 
   val jgoodiescommon = "com.jgoodies" % "jgoodies-common" % "1.6.0"
   val jgoodiesform = "com.jgoodies" % "jgoodies-forms" % "1.7.1"
+  val swingxautocompletion = "org.swinglabs.swingx" % "swingx-autocomplete" % "1.6.5-1"
+
 }
 
 object SLibraryBuild extends Build {
@@ -50,7 +52,8 @@ object SLibraryBuild extends Build {
   )
 
   val slibraryGUIDeps = Seq(
-    junitinterface
+    junitinterface,
+    swingxautocompletion
   )
 
   lazy val uintbooks = Project(
