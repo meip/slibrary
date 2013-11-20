@@ -63,4 +63,29 @@ public class Customer extends Observable{
 		return name + " " + surname + " , " + street + " , " + zip + " " + city;
 	}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Customer customer = (Customer) o;
+
+        if (zip != customer.zip) return false;
+        if (city != null ? !city.equals(customer.city) : customer.city != null) return false;
+        if (!name.equals(customer.name)) return false;
+        if (!street.equals(customer.street)) return false;
+        if (!surname.equals(customer.surname)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + surname.hashCode();
+        result = 31 * result + street.hashCode();
+        result = 31 * result + (city != null ? city.hashCode() : 0);
+        result = 31 * result + zip;
+        return result;
+    }
 }

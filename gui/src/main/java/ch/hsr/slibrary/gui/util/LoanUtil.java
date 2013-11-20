@@ -22,11 +22,15 @@ public class LoanUtil {
     }
 
     public static String getReturnDate(Loan loan) {
+        return getReturnDate(loan, true);
+    }
+
+    public static String getReturnDate(Loan loan, boolean stringAppendix) {
         if (loan.getDaysOverdue() > 0) {
-            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (seit " + loan.getDaysOverdue() + " Tage überfällig)";
+            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + ((stringAppendix) ? " (seit " + loan.getDaysOverdue() + " Tage überfällig)" : "");
         } else if (loan.isLent()) {
-            long daysOverDue = TimeUnit.MILLISECONDS.toDays(loan.getDueDate().getTimeInMillis() - Calendar.getInstance().getTimeInMillis());;
-            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (in " + daysOverDue + " Tagen)";
+            long daysOverDue = TimeUnit.MILLISECONDS.toDays(loan.getDueDate().getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + ((stringAppendix) ? " (in " + daysOverDue + " Tagen)" : "");
         } else {
             return sdf.format(new Long(loan.getReturnDate().getTimeInMillis()));
         }

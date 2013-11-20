@@ -9,7 +9,7 @@
     <border type="none"/>
     <children>
       <grid id="13072" layout-manager="FormLayout">
-        <rowspec value="center:d:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:3dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:max(d;4px):noGrow"/>
@@ -21,27 +21,9 @@
         <properties/>
         <border type="none" title="Kundenauswahl"/>
         <children>
-          <component id="e5534" class="javax.swing.JTextField" binding="customerIdentityField">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-              <forms defaultalign-horz="false"/>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="cc6f7" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <text value="Kennung:"/>
-            </properties>
-          </component>
           <component id="78de3" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
@@ -50,10 +32,56 @@
           </component>
           <component id="a792b" class="javax.swing.JComboBox" binding="customerSelect">
             <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties/>
+          </component>
+          <grid id="e7fcc" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+            <constraints>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="e6fe1" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <text value="Überfällige Ausleihen:"/>
+                </properties>
+              </component>
+              <component id="2b4c6" class="javax.swing.JLabel" binding="loansOverdueLabel">
+                <constraints/>
+                <properties>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <hspacer id="23845">
+                <constraints/>
+              </hspacer>
+              <component id="19770" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <text value="Aktuelle Ausleihen:"/>
+                </properties>
+              </component>
+              <component id="51304" class="javax.swing.JLabel" binding="loansCurrentLabel">
+                <constraints/>
+                <properties>
+                  <text value="0"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <component id="80bd" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Status:"/>
+            </properties>
           </component>
         </children>
       </grid>
@@ -97,85 +125,18 @@
               <text value="Zürck am:"/>
             </properties>
           </component>
-          <grid id="27daa" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
+          <component id="eabf1" class="javax.swing.JComboBox" binding="copySelect">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false"/>
             </constraints>
             <properties/>
-            <border type="none"/>
-            <children>
-              <component id="c13da" class="javax.swing.JTextField" binding="copyIdField">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="f353b" class="javax.swing.JLabel" binding="copyIdValidationLabel">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="X"/>
-                </properties>
-              </component>
-              <component id="5c860" class="javax.swing.JButton" binding="addLoanButton">
-                <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Button"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-        </children>
-      </grid>
-      <grid id="345e2" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="a3072" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Anzahl Ausleihe:"/>
-            </properties>
           </component>
-          <component id="53ff2" class="javax.swing.JTable" binding="copyTable">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="50"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="3eabe" class="javax.swing.JLabel" binding="amountLabel">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="0"/>
-            </properties>
-          </component>
-          <hspacer id="50e7d">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </hspacer>
         </children>
       </grid>
       <grid id="65a52" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -194,6 +155,11 @@
           </component>
         </children>
       </grid>
+      <vspacer id="5638e">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
     </children>
   </grid>
 </form>

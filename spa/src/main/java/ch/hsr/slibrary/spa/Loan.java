@@ -61,11 +61,19 @@ public class Loan extends Observable {
 		return copy;
 	}
 
-	public Customer getCustomer() {
+    public void setCopy(Copy copy) {
+        this.copy = copy;
+    }
+
+    public Customer getCustomer() {
 		return customer;
 	}
 
-	@Override
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    @Override
 	public String toString() {
 		return "Loan of: " + copy.getTitle().getName() + "\tFrom: "
 				+ customer.getName() + " " + customer.getSurname()

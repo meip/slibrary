@@ -3,29 +3,19 @@ package ch.hsr.slibrary.gui.form;
 import javax.swing.*;
 
 public class LoanDetail extends GUIComponent {
-    private JTextField customerIdentityField;
+    private JPanel loanDetailPanel;
     private JComboBox customerSelect;
     private JTextField returnDateField;
     private JLabel amountLabel;
     private JTable copyTable;
-    private JTextField copyIdField;
-    private JButton addLoanButton;
-    private JLabel copyIdValidationLabel;
-    private JPanel loanDetailPanel;
     private JButton cancelButton;
     private JButton saveButton;
-
+    private JLabel loansOverdueLabel;
+    private JLabel loansCurrentLabel;
+    private JComboBox copySelect;
 
     public LoanDetail() {
         this.container = loanDetailPanel;
-    }
-
-    public JTextField getCustomerIdentityField() {
-        return customerIdentityField;
-    }
-
-    public void setCustomerIdentityField(JTextField customerIdentityField) {
-        this.customerIdentityField = customerIdentityField;
     }
 
     public JComboBox getCustomerSelect() {
@@ -60,28 +50,12 @@ public class LoanDetail extends GUIComponent {
         this.copyTable = copyTable;
     }
 
-    public JTextField getCopyIdField() {
-        return copyIdField;
+    public JComboBox getCopySelect() {
+        return copySelect;
     }
 
-    public void setCopyIdField(JTextField copyIdField) {
-        this.copyIdField = copyIdField;
-    }
-
-    public JButton getAddLoanButton() {
-        return addLoanButton;
-    }
-
-    public void setAddLoanButton(JButton addLoanButton) {
-        this.addLoanButton = addLoanButton;
-    }
-
-    public JLabel getCopyIdValidationLabel() {
-        return copyIdValidationLabel;
-    }
-
-    public void setCopyIdValidationLabel(JLabel copyIdValidationLabel) {
-        this.copyIdValidationLabel = copyIdValidationLabel;
+    public void setCopySelect(JComboBox copySelect) {
+        this.copySelect = copySelect;
     }
 
     public JPanel getLoanDetailPanel() {
@@ -106,5 +80,21 @@ public class LoanDetail extends GUIComponent {
 
     public void setSaveButton(JButton saveButton) {
         this.saveButton = saveButton;
+    }
+
+    public JLabel getLoansOverdueLabel() {
+        return loansOverdueLabel;
+    }
+
+    public void setLoansOverdueLabel(JLabel loansOverdueLabel) {
+        this.loansOverdueLabel = loansOverdueLabel;
+    }
+
+    public JLabel getLoansCurrentLabel() {
+        return loansCurrentLabel;
+    }
+
+    public void setLoansCurrentLabel(JLabel loansCurrentLabel) {
+        this.loansCurrentLabel = loansCurrentLabel;
     }
 }

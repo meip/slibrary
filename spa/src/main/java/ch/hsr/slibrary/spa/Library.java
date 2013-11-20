@@ -85,15 +85,19 @@ public class Library {
 	}
 
 	public List<Loan> getCustomerLoans(Customer customer) {
-		List<Loan> lentCopies = new ArrayList<Loan>();
-		for (Loan l : loans) {
-			if (l.getCustomer().equals(customer)) {
-				lentCopies.add(l);
-			}
-		}
-		return lentCopies;
+		return getCustomerLoans(customer, false);
 	}
-	
+
+    public List<Loan> getCustomerLoans(Customer customer, boolean onlyLent) {
+        List<Loan> lentCopies = new ArrayList<Loan>();
+        for (Loan l : loans) {
+            if (l.getCustomer().equals(customer) && ((onlyLent) ? l.isLent() : true)) {
+                lentCopies.add(l);
+            }
+        }
+        return lentCopies;
+    }
+
 	public List<Loan> getOverdueLoans() {
 		List<Loan> overdueLoans = new ArrayList<Loan>();
 		for ( Loan l : getLoans() ) {
@@ -102,11 +106,29 @@ public class Library {
 		}
 		return overdueLoans;
 	}
-	
+
+    public List<Loan> getOverdueLoansForCustomer(Customer c) {
+        List<Loan> overdueLoans = new ArrayList<Loan>();
+        for ( Loan l : getLoans() ) {
+            if (l.isOverdue() && l.getCustomer().equals(c))
+                overdueLoans.add(l);
+        }
+        return overdueLoans;
+    }
+
 	public List<Copy> getAvailableCopies(){
 		return getCopies(false);
 	}
-	
+
+    public boolean isCopyAvailableByInventoryId(long inventoryId) {
+        for (Copy copy : getAvailableCopies()) {
+            if (copy.getInventoryNumber() == inventoryId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	public List<Copy> getLentOutBooks(){
 		return getCopies(true);
 	}
@@ -124,6 +146,13 @@ public class Library {
 	public List<Copy> getCopies() {
 		return copies;
 	}
+
+    public Copy getCopyByInventoryNumber(long inventoryNumber) {
+        for(Copy c: copies) {
+            if(c.getInventoryNumber() == inventoryNumber) { return c; }
+        }
+        return null;
+    }
 
 	public List<Loan> getLoans() {
 		return loans;

@@ -63,7 +63,6 @@ public class LoanMasterController extends ComponentController implements Observe
         loanMaster.getShowSelctionButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 for (int index : loanMaster.getLoanTable().getSelectedRows()) {
                     index = loanMaster.getLoanTable().convertRowIndexToModel(index);
                     Loan loan = library.getLoans().get(index);
@@ -72,13 +71,15 @@ public class LoanMasterController extends ComponentController implements Observe
             }
         });
 
-
+        final LoanMasterController self = this;
         loanMaster.getNewLoanButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //ComponentController controller = new NewLoanDetailController("Neue Ausleihe erfassen", new LoanDetail(), library);
-                //masterDetailController.addDetailController(controller);
-                //masterDetailController.setSelectedDetailController(controller);
+                NewLoanDetailController controller = new NewLoanDetailController("Neue Ausleihe erfassen", new LoanDetail(), library);
+                controller.setDelegate(self);
+                controller.setMasterDetailController(self.masterDetailController);
+                masterDetailController.addDetailController(controller);
+                masterDetailController.setSelectedDetailController(controller);
             }
         });
     }
@@ -90,7 +91,7 @@ public class LoanMasterController extends ComponentController implements Observe
 
             @Override
             public int getRowCount() {
-                return library.getBooks().size();
+                return library.getLoans().size();
             }
 
             @Override
@@ -200,11 +201,13 @@ public class LoanMasterController extends ComponentController implements Observe
         updateLabels();
         updateButtons();
         updateTable();
+        loanMaster.getOnlyLentCheckbox().setSelected(loanMaster.getOnlyLentCheckbox().isSelected());
+        loanMaster.getOnlyOverdueCheckbox().setSelected(loanMaster.getOnlyOverdueCheckbox().isSelected());
     }
 
     private void updateLabels() {
         loanMaster.getLoanCountLabel().setText(new Integer(library.getLoans().size()).toString());
-        loanMaster.getCurrentLoanLabel().setText(new Integer(library.getLoans().size()).toString());
+        loanMaster.getCurrentLoanLabel().setText(new Integer(library.getLentOutBooks().size()).toString());
         loanMaster.getOverdueLoanLabel().setText(new Integer(library.getOverdueLoans().size()).toString());
     }
 
@@ -253,5 +256,7 @@ public class LoanMasterController extends ComponentController implements Observe
             removeControllerFromMap(loanDetailController);
             masterDetailController.removeDetailController(loanDetailController);
         }
+        //Need to call it explicit cause RowFilters on loanTable
+        ((AbstractTableModel) loanMaster.getLoanTable().getModel()).fireTableDataChanged();
     }
 }
