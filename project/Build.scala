@@ -14,7 +14,8 @@ object BuildSettings {
     exportJars := true,
     unmanagedBase <<= baseDirectory {
       base => base / "custom_lib"
-    }
+    },
+    javacOptions ++= Seq("-encoding", "UTF-8")
   )
 }
 
