@@ -12,10 +12,10 @@ import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
 import ch.hsr.slibrary.spa.Loan;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -88,12 +88,22 @@ public class CustomerDetailController extends ValidatableComponentController imp
             }
         });
         initializeTable();
+        customerDetail.getReturnSelectedCopyButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (int index : customerDetail.getCopyTable().getSelectedRows()) {
+                    index = customerDetail.getCopyTable().convertRowIndexToModel(index);
+                    library.getCustomerLoans(customer).get(index).returnCopy();
+                    customerDetail.getCopyTable().updateUI();
+                }
+            }
+        });
     }
 
     private void initializeTable() {
         customerDetail.getCopyTable().setModel(new AbstractTableModel() {
-
-            private String[] columnNames = {"Title", "Ausgeliehen am", "Ausgeliehen bis"};
+            private final int ICON_COLUMN = 0;
+            private String[] columnNames = {"Status", "Title", "Exemplar-ID", "Ausgeliehen am", "Ausgeliehen bis"};
 
             @Override
             public int getRowCount() {
@@ -115,14 +125,27 @@ public class CustomerDetailController extends ValidatableComponentController imp
                 Loan loan = library.getCustomerLoans(customer).get(rowIndex);
                 switch (columnIndex) {
                     case 0:
-                        return loan.getCopy().getTitle().getName();
+                        return new ImageIcon(getClass().getClassLoader().getResource((loan.isLent()) ? "error_10x10.png" : "correct_10x10.png" ));
                     case 1:
-                        return LoanUtil.getPickupDate(loan);
+                        return loan.getCopy().getTitle().getName();
                     case 2:
+                        return loan.getCopy().getInventoryNumber();
+                    case 3:
+                        return LoanUtil.getPickupDate(loan);
+                    case 4:
                         return LoanUtil.getReturnDate(loan);
                     default:
                         return "";
                 }
+            }
+            public Class getColumnClass(int column) {
+                Class clazz = String.class;
+                switch (column) {
+                    case ICON_COLUMN:
+                        clazz = Icon.class;
+                        break;
+                }
+                return clazz;
             }
         });
     }
