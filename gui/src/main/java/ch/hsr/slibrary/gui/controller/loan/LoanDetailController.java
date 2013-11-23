@@ -4,10 +4,9 @@ import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.LoanDetail;
+import ch.hsr.slibrary.gui.form.LoanListing;
 import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.gui.validation.EmptySelectionValidation;
-import ch.hsr.slibrary.gui.validation.ErrorBorder;
-import ch.hsr.slibrary.gui.validation.Validation;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
 import ch.hsr.slibrary.spa.Copy;
 import ch.hsr.slibrary.spa.Customer;
@@ -26,6 +25,7 @@ import java.util.Observer;
 public class LoanDetailController extends ValidatableComponentController implements Observer {
 
     protected LoanDetail loanDetail;
+    protected LoanListingController loanListingController;
     protected Loan loan;
     protected Library library;
     private LoanDetailControllerDelegate delegate;
@@ -38,6 +38,8 @@ public class LoanDetailController extends ValidatableComponentController impleme
         this.loanDetail = component;
         this.loan = loan;
         this.library = library;
+        this.loanListingController = new LoanListingController("Ausleiheliste", new LoanListing(), loan.getCustomer(), library);
+        this.loanListingController.initialize();
         this.setTitle(title);
 
         initialize();
@@ -100,6 +102,9 @@ public class LoanDetailController extends ValidatableComponentController impleme
                 if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
             }
         });
+
+        loanDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
+        loanListingController.setSelectedLoan(loan);
     }
 
     private void initializeCustomerSelectionUi() {
@@ -152,6 +157,8 @@ public class LoanDetailController extends ValidatableComponentController impleme
                         loanDetail.getLoansOverdueLabel().setForeground(Color.BLACK);
                         loanDetail.getSaveButton().setEnabled(true);
                     }
+                    loanListingController.setCustomer(customer);
+                    loanListingController.updateUI();
                 }
             }
         });
@@ -160,12 +167,15 @@ public class LoanDetailController extends ValidatableComponentController impleme
     }
 
     private void initializeCopySelectionUi() {
-        loanDetail.getCopySelect().setModel(new ComboBoxModel<Long>() {
-            Long selectedItem;
+        loanDetail.getCopySelect().setModel(new ComboBoxModel<Copy>() {
+            Copy selectedItem;
 
             @Override
             public void setSelectedItem(Object anItem) {
-                selectedItem = (Long) anItem;
+                if ((selectedItem != null && !selectedItem.equals(anItem)) ||
+                        selectedItem == null && anItem != null) {
+                    selectedItem = (Copy) anItem;
+                }
             }
 
             @Override
@@ -179,8 +189,8 @@ public class LoanDetailController extends ValidatableComponentController impleme
             }
 
             @Override
-            public Long getElementAt(int index) {
-                return library.getAvailableCopies().get(index).getInventoryNumber();
+            public Copy getElementAt(int index) {
+                return library.getAvailableCopies().get(index);
             }
 
             @Override
@@ -202,7 +212,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
         }
         if (loan.getCopy() != null) {
             // Make copy selection static and disable it
-            loanDetail.getCopySelect().setModel(new ComboBoxModel<Long>(){
+            loanDetail.getCopySelect().setModel(new ComboBoxModel<Copy>() {
                 @Override
                 public void setSelectedItem(Object anItem) {
 
@@ -210,7 +220,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
 
                 @Override
                 public Object getSelectedItem() {
-                    return loan.getCopy().getInventoryNumber();  //To change body of implemented methods use File | Settings | File Templates.
+                    return loan.getCopy();
                 }
 
                 @Override
@@ -219,8 +229,8 @@ public class LoanDetailController extends ValidatableComponentController impleme
                 }
 
                 @Override
-                public Long getElementAt(int index) {
-                    return loan.getCopy().getInventoryNumber();
+                public Copy getElementAt(int index) {
+                    return loan.getCopy();
                 }
 
                 @Override
@@ -237,11 +247,13 @@ public class LoanDetailController extends ValidatableComponentController impleme
         }
 
         loanDetail.getReturnDateField().setText(LoanUtil.getReturnDate(loan, false));
+
+        loanListingController.updateUI();
     }
 
     public void saveChanges() {
         this.loan.setCustomer((Customer) loanDetail.getCustomerSelect().getSelectedItem());
-        this.loan.setCopy(library.getCopyByInventoryNumber((long) loanDetail.getCopySelect().getSelectedItem()));
+        this.loan.setCopy((Copy) loanDetail.getCopySelect().getSelectedItem());
     }
 
     @Override

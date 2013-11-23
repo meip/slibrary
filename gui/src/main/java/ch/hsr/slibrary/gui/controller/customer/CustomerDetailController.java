@@ -1,9 +1,11 @@
 package ch.hsr.slibrary.gui.controller.customer;
 
 import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
+import ch.hsr.slibrary.gui.controller.loan.LoanListingController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
+import ch.hsr.slibrary.gui.form.LoanListing;
 import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
@@ -22,6 +24,7 @@ import java.util.Observer;
 public class CustomerDetailController extends ValidatableComponentController implements Observer {
 
     protected CustomerDetail customerDetail;
+    protected LoanListingController loanListingController;
     protected Customer customer;
     protected Library library;
     private CustomerDetailControllerDelegate delegate;
@@ -33,8 +36,8 @@ public class CustomerDetailController extends ValidatableComponentController imp
         this.customerDetail = component;
         this.customer = customer;
         this.library = library;
-        this.setTitle(title);
-
+        this.loanListingController = new LoanListingController("Ausleiheliste", new LoanListing(), customer, library);
+        this.loanListingController.initialize();
         initialize();
     }
 
@@ -87,67 +90,7 @@ public class CustomerDetailController extends ValidatableComponentController imp
                 if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
             }
         });
-        initializeTable();
-        customerDetail.getReturnSelectedCopyButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (int index : customerDetail.getCopyTable().getSelectedRows()) {
-                    index = customerDetail.getCopyTable().convertRowIndexToModel(index);
-                    library.getCustomerLoans(customer).get(index).returnCopy();
-                    customerDetail.getCopyTable().updateUI();
-                }
-            }
-        });
-    }
-
-    private void initializeTable() {
-        customerDetail.getCopyTable().setModel(new AbstractTableModel() {
-            private final int ICON_COLUMN = 0;
-            private String[] columnNames = {"Status", "Title", "Exemplar-ID", "Ausgeliehen am", "Ausgeliehen bis"};
-
-            @Override
-            public int getRowCount() {
-                return library.getCustomerLoans(customer).size();
-            }
-
-            @Override
-            public int getColumnCount() {
-                return columnNames.length;
-            }
-
-            @Override
-            public String getColumnName(int columnIndex) {
-                return columnNames[columnIndex];
-            }
-
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                Loan loan = library.getCustomerLoans(customer).get(rowIndex);
-                switch (columnIndex) {
-                    case 0:
-                        return new ImageIcon(getClass().getClassLoader().getResource((loan.isLent()) ? "error_10x10.png" : "correct_10x10.png" ));
-                    case 1:
-                        return loan.getCopy().getTitle().getName();
-                    case 2:
-                        return loan.getCopy().getInventoryNumber();
-                    case 3:
-                        return LoanUtil.getPickupDate(loan);
-                    case 4:
-                        return LoanUtil.getReturnDate(loan);
-                    default:
-                        return "";
-                }
-            }
-            public Class getColumnClass(int column) {
-                Class clazz = String.class;
-                switch (column) {
-                    case ICON_COLUMN:
-                        clazz = Icon.class;
-                        break;
-                }
-                return clazz;
-            }
-        });
+        customerDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
     }
 
     public void updateUI() {

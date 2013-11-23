@@ -1,6 +1,7 @@
 package ch.hsr.slibrary.gui.form;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class LoanDetail extends GUIComponent {
     private JPanel loanDetailPanel;
@@ -13,6 +14,7 @@ public class LoanDetail extends GUIComponent {
     private JLabel loansOverdueLabel;
     private JLabel loansCurrentLabel;
     private JComboBox copySelect;
+    private JPanel loanListingPanel;
 
     public LoanDetail() {
         this.container = loanDetailPanel;
@@ -96,5 +98,13 @@ public class LoanDetail extends GUIComponent {
 
     public void setLoansCurrentLabel(JLabel loansCurrentLabel) {
         this.loansCurrentLabel = loansCurrentLabel;
+    }
+
+    public JPanel getLoanListingPanel() {
+        return loanListingPanel;
+    }
+
+    public void setLoanListingPanel(JPanel loanListingPanel) {
+        this.loanListingPanel = loanListingPanel;
     }
 }

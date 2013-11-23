@@ -1,6 +1,7 @@
 package ch.hsr.slibrary.gui.controller.loan;
 
 import ch.hsr.slibrary.gui.form.LoanDetail;
+import ch.hsr.slibrary.spa.Copy;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
 import ch.hsr.slibrary.spa.Loan;
@@ -30,7 +31,7 @@ public class NewLoanDetailController extends LoanDetailController {
     }
 
     public void saveChanges() {
-        library.createAndAddLoan((Customer) loanDetail.getCustomerSelect().getSelectedItem(), library.getCopyByInventoryNumber((long) loanDetail.getCopySelect().getSelectedItem()));
+        library.createAndAddLoan((Customer) loanDetail.getCustomerSelect().getSelectedItem(), (Copy) loanDetail.getCopySelect().getSelectedItem());
     }
 
 }

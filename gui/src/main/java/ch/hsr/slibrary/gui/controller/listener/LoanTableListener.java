@@ -30,7 +30,8 @@ public class LoanTableListener implements ItemListener {
         if (onlyLentChechBox.isSelected() && onlyOverdueCheckbox.isSelected()) {
             RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
                 public boolean include(Entry entry) {
-                    String daysOverdueStatus = (String) entry.getValue(0);
+                    ImageIcon statusIcon = (ImageIcon) entry.getValue(0);
+                    String daysOverdueStatus = statusIcon.getDescription();
                     int i = (int) entry.getIdentifier();
                     return library.getLoans().get(i).isLent() && !daysOverdueStatus.equals(LoanUtil.LOAN_IS_VALID);
                 }
@@ -47,7 +48,8 @@ public class LoanTableListener implements ItemListener {
         } else if (!onlyLentChechBox.isSelected() && onlyOverdueCheckbox.isSelected()) {
             RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
                 public boolean include(Entry entry) {
-                    String daysOverdueStatus = (String) entry.getValue(0);
+                    ImageIcon statusIcon = (ImageIcon) entry.getValue(0);
+                    String daysOverdueStatus = statusIcon.getDescription();
                     return !daysOverdueStatus.equals(LoanUtil.LOAN_IS_VALID);
                 }
             };

@@ -121,4 +121,26 @@ public class Loan extends Observable {
         dueDate.add(GregorianCalendar.SECOND, 59);
         return dueDate;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Loan loan = (Loan) o;
+
+        if (!copy.equals(loan.copy)) return false;
+        if (!customer.equals(loan.customer)) return false;
+        if (!pickupDate.equals(loan.pickupDate)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = copy.hashCode();
+        result = 31 * result + customer.hashCode();
+        result = 31 * result + pickupDate.hashCode();
+        return result;
+    }
 }

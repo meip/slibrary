@@ -86,7 +86,7 @@ public class LoanMasterController extends ComponentController implements Observe
 
     private void initializeTable() {
         loanMaster.getLoanTable().setModel(new AbstractTableModel() {
-
+            private final int ICON_COLUMN = 0;
             private String[] columnNames = {"Status", "Exemplar-ID", "Titel", "Ausgeliehen bis", "Ausgeliehen an"};
 
             @Override
@@ -107,10 +107,11 @@ public class LoanMasterController extends ComponentController implements Observe
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 Loan loan = library.getLoans().get(rowIndex);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                 switch (columnIndex) {
-                    case 0:
-                        return LoanUtil.loanStatus(loan.getDaysOverdue());
+                    case ICON_COLUMN:
+                        ImageIcon icon =  new ImageIcon(getClass().getClassLoader().getResource((loan.isLent()) ? "error_10x10.png" : "correct_10x10.png" ));
+                        icon.setDescription(LoanUtil.loanStatus(loan.getDaysOverdue()));
+                        return icon;
                     case 1:
                         return loan.getCopy().getInventoryNumber();
                     case 2:
@@ -122,6 +123,16 @@ public class LoanMasterController extends ComponentController implements Observe
                     default:
                         return "";
                 }
+            }
+
+            public Class getColumnClass(int column) {
+                Class clazz = String.class;
+                switch (column) {
+                    case ICON_COLUMN:
+                        clazz = Icon.class;
+                        break;
+                }
+                return clazz;
             }
         });
         listSelectionModel = loanMaster.getLoanTable().getSelectionModel();
