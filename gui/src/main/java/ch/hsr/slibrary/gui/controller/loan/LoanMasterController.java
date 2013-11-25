@@ -10,6 +10,7 @@ import ch.hsr.slibrary.gui.form.LoanMaster;
 import ch.hsr.slibrary.gui.util.AlternateTableRowRenderer;
 import ch.hsr.slibrary.gui.util.IconAlternateTableRowRenderer;
 import ch.hsr.slibrary.gui.util.LoanUtil;
+import ch.hsr.slibrary.gui.util.TableHelper;
 import ch.hsr.slibrary.spa.Library;
 import ch.hsr.slibrary.spa.Loan;
 
@@ -26,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
-public class LoanMasterController extends ComponentController implements Observer, LoanDetailControllerDelegate, MasterDetailControllerDelegate {
+public class LoanMasterController extends ComponentController implements Observer, LoanDetailControllerDelegate, MasterDetailControllerDelegate, LoanListingControllerDelegate {
 
 
     private MasterDetailController masterDetailController;
@@ -89,12 +90,9 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void initializeTable() {
-        loanMaster.getLoanTable().setRowHeight(30);
-        loanMaster.getLoanTable().setDefaultRenderer(Object.class, new AlternateTableRowRenderer());
-        loanMaster.getLoanTable().setDefaultRenderer(Icon.class, new IconAlternateTableRowRenderer());
-        loanMaster.getLoanTable().setShowVerticalLines(true);
-        loanMaster.getLoanTable().setShowHorizontalLines(false);
-        loanMaster.getLoanTable().setGridColor(Color.lightGray);
+
+
+        TableHelper.setAlternatingRowStyle(loanMaster.getLoanTable());
         loanMaster.getLoanTable().setModel(new AbstractTableModel() {
             private final int ICON_COLUMN = 0;
             private String[] columnNames = {"Status", "Exemplar-ID", "Titel", "Ausgeliehen bis", "Ausgeliehen an"};
@@ -108,6 +106,7 @@ public class LoanMasterController extends ComponentController implements Observe
             public int getColumnCount() {
                 return columnNames.length;
             }
+
 
             @Override
             public String getColumnName(int columnIndex) {
@@ -146,6 +145,14 @@ public class LoanMasterController extends ComponentController implements Observe
                 return clazz;
             }
         });
+        loanMaster.getLoanTable().getColumnModel().getColumn(0).setMaxWidth(100);
+        loanMaster.getLoanTable().getColumnModel().getColumn(1).setMaxWidth(100);
+        loanMaster.getLoanTable().getColumnModel().getColumn(3).setMaxWidth(250);
+        loanMaster.getLoanTable().getColumnModel().getColumn(3).setPreferredWidth(250);
+        loanMaster.getLoanTable().getColumnModel().getColumn(4).setMaxWidth(250);
+        loanMaster.getLoanTable().getColumnModel().getColumn(4).setPreferredWidth(250);
+        //loanMaster.getLoanTable().setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+
         listSelectionModel = loanMaster.getLoanTable().getSelectionModel();
         listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -191,6 +198,7 @@ public class LoanMasterController extends ComponentController implements Observe
     private void presentLoan(Loan loan) {
         if (!loanControllerMap.containsKey(loan)) {
             LoanDetailController controller = createControllerForLoan(loan);
+            controller.getLoanListingController().setListingDelegate(this);
             controller.setDelegate(this);
             controller.setMasterDetailController(this.masterDetailController);
             loanControllerMap.put(loan, controller);
@@ -203,6 +211,9 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void removeControllerFromMap(ComponentController controller) {
+        if(controller.getClass() == LoanDetailController.class) {
+            ((LoanDetailController)controller).getLoanListingController().setListingDelegate(null);
+        }
         List<Loan> loansToRemove = new LinkedList<>();
         for (Loan loan : loanControllerMap.keySet()) {
             if (loanControllerMap.get(loan) == controller) {
@@ -280,5 +291,12 @@ public class LoanMasterController extends ComponentController implements Observe
         }
         //Need to call it explicit cause RowFilters on loanTable
         ((AbstractTableModel) loanMaster.getLoanTable().getModel()).fireTableDataChanged();
+    }
+
+    @Override
+    public void loanListingControllerDidSelectLoans(LoanListingController controller, List<Loan> loans) {
+        for(Loan loan : loans) {
+            presentLoan(loan);
+        }
     }
 }
