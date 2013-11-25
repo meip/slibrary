@@ -6,6 +6,7 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
+import ch.hsr.slibrary.gui.util.AlternateTableRowRenderer;
 import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.spa.*;
 
@@ -84,6 +85,8 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void initializeTable() {
+        bookMaster.getTable().setRowHeight(30);
+        bookMaster.getTable().setDefaultRenderer(Object.class, new AlternateTableRowRenderer());
         bookMaster.getTable().setModel(new AbstractTableModel() {
 
             private String[] columnNames = {"Verfügbar", "Titel", "Autor", "Publisher", "Regal"};

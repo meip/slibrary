@@ -7,6 +7,8 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.LoanDetail;
 import ch.hsr.slibrary.gui.form.LoanMaster;
+import ch.hsr.slibrary.gui.util.AlternateTableRowRenderer;
+import ch.hsr.slibrary.gui.util.IconAlternateTableRowRenderer;
 import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.spa.Library;
 import ch.hsr.slibrary.spa.Loan;
@@ -15,12 +17,14 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class LoanMasterController extends ComponentController implements Observer, LoanDetailControllerDelegate, MasterDetailControllerDelegate {
 
@@ -85,6 +89,12 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void initializeTable() {
+        loanMaster.getLoanTable().setRowHeight(30);
+        loanMaster.getLoanTable().setDefaultRenderer(Object.class, new AlternateTableRowRenderer());
+        loanMaster.getLoanTable().setDefaultRenderer(Icon.class, new IconAlternateTableRowRenderer());
+        loanMaster.getLoanTable().setShowVerticalLines(true);
+        loanMaster.getLoanTable().setShowHorizontalLines(false);
+        loanMaster.getLoanTable().setGridColor(Color.lightGray);
         loanMaster.getLoanTable().setModel(new AbstractTableModel() {
             private final int ICON_COLUMN = 0;
             private String[] columnNames = {"Status", "Exemplar-ID", "Titel", "Ausgeliehen bis", "Ausgeliehen an"};
@@ -104,12 +114,13 @@ public class LoanMasterController extends ComponentController implements Observe
                 return columnNames[columnIndex];
             }
 
+
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 Loan loan = library.getLoans().get(rowIndex);
                 switch (columnIndex) {
                     case ICON_COLUMN:
-                        ImageIcon icon =  new ImageIcon(getClass().getClassLoader().getResource((loan.isLent()) ? "error_10x10.png" : "correct_10x10.png" ));
+                        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource((loan.isLent()) ? "error_10x10.png" : "correct_10x10.png"));
                         icon.setDescription(LoanUtil.loanStatus(loan.getDaysOverdue()));
                         return icon;
                     case 1:
@@ -126,7 +137,7 @@ public class LoanMasterController extends ComponentController implements Observe
             }
 
             public Class getColumnClass(int column) {
-                Class clazz = String.class;
+                Class clazz = String.class;//getValueAt(0, column).getClass();
                 switch (column) {
                     case ICON_COLUMN:
                         clazz = Icon.class;

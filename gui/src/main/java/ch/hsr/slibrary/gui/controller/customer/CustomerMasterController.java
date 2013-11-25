@@ -6,6 +6,7 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.gui.form.CustomerMaster;
+import ch.hsr.slibrary.gui.util.AlternateTableRowRenderer;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
 
@@ -84,6 +85,8 @@ public class CustomerMasterController extends ComponentController implements Obs
     }
 
     private void initializeTable() {
+        customerMaster.getCustomerTable().setRowHeight(30);
+        customerMaster.getCustomerTable().setDefaultRenderer(Object.class, new AlternateTableRowRenderer());
         customerMaster.getCustomerTable().setModel(new AbstractTableModel() {
 
             private String[] columnNames = {"Vorname", "Nachname", "Strasse", "Ort", "PLZ"};
