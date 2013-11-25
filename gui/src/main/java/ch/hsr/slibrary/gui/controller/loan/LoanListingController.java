@@ -1,12 +1,12 @@
 package ch.hsr.slibrary.gui.controller.loan;
 
-import ch.hsr.slibrary.gui.controller.customer.CustomerDetailControllerDelegate;
 import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.gui.form.LoanListing;
 import ch.hsr.slibrary.gui.util.LoanUtil;
+import ch.hsr.slibrary.gui.util.TableHelper;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
@@ -16,20 +16,21 @@ import ch.hsr.slibrary.spa.Loan;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 public class LoanListingController extends ValidatableComponentController implements Observer {
 
     protected LoanListing loanListing;
     protected Customer customer;
     protected Library library;
-    private CustomerDetailControllerDelegate delegate;
+    private LoanListingControllerDelegate delegate;
     private MasterDetailController masterDetailController;
+    private Loan loan;
+
 
     public LoanListingController(String title, LoanListing component, Customer customer, Library library) {
         super(title);
@@ -38,6 +39,11 @@ public class LoanListingController extends ValidatableComponentController implem
         this.customer = customer;
         this.library = library;
         initialize();
+    }
+
+    public LoanListingController(String title, LoanListing component, Customer customer, Loan loan, Library library) {
+        this(title,component,customer,library);
+        this.loan = loan;
     }
 
     public MasterDetailController getMasterDetailController() {
@@ -56,20 +62,30 @@ public class LoanListingController extends ValidatableComponentController implem
 
     private void initializeUI() {
         initializeTable();
+        final LoanListingController self = this;
         loanListing.getReturnSelectedCopyButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<Loan> loans = new LinkedList<>();
                 for (int index : loanListing.getCopyTable().getSelectedRows()) {
                     index = loanListing.getCopyTable().convertRowIndexToModel(index);
-                    library.getCustomerLoans(customer).get(index).returnCopy();
+                    /*library.getCustomerLoans(customer).get(index).returnCopy();
                     loanListing.getCopyTable().updateUI();
-                    customer.notifyObservers();
+                    customer.notifyObservers();*/
+                    loans.add(library.getCustomerLoans(customer).get(index));
+                }
+                if(self.delegate != null) {
+                    self.delegate.loanListingControllerDidSelectLoans(self, loans);
                 }
             }
         });
     }
 
     private void initializeTable() {
+        TableHelper.setAlternatingRowStyle(loanListing.getCopyTable());
+        loanListing.getCopyTable().setPreferredScrollableViewportSize(loanListing.getCopyTable().getPreferredSize());
+
+
         loanListing.getCopyTable().setModel(new AbstractTableModel() {
             private final int ICON_COLUMN = 0;
             private String[] columnNames = {"Status", "Title", "Exemplar-ID", "Ausgeliehen am", "Ausgeliehen bis"};
@@ -117,6 +133,18 @@ public class LoanListingController extends ValidatableComponentController implem
                 return clazz;
             }
         });
+
+        if(loan != null) {
+            TableRowSorter<TableModel> sorter = new TableRowSorter<>(loanListing.getCopyTable().getModel());
+            RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+                public boolean include(Entry entry) {
+                    int i = (int) entry.getIdentifier();
+                    return library.getCustomerLoans(customer).get(i) != loan;
+                }
+            };
+            sorter.setRowFilter(filter);
+            loanListing.getCopyTable().setRowSorter(sorter);
+        }
     }
 
     public void updateUI() {
@@ -146,5 +174,13 @@ public class LoanListingController extends ValidatableComponentController implem
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public LoanListingControllerDelegate getListingDelegate() {
+        return delegate;
+    }
+
+    public void setListingDelegate(LoanListingControllerDelegate delegate) {
+        this.delegate = delegate;
     }
 }

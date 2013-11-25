@@ -39,6 +39,8 @@ public class Loan extends Observable {
 					"Return Date is before pickupDate");
 		}
 		this.returnDate = returnDate;
+        setChanged();
+        notifyObservers();
 	}
 
 	public void setPickupDate(GregorianCalendar pickupDate)

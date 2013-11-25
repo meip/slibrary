@@ -15,6 +15,7 @@ import ch.hsr.slibrary.spa.Loan;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -38,7 +39,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
         this.loanDetail = component;
         this.loan = loan;
         this.library = library;
-        this.loanListingController = new LoanListingController("Ausleiheliste", new LoanListing(), loan.getCustomer(), library);
+        this.loanListingController = new LoanListingController("Ausleiheliste", new LoanListing(), loan.getCustomer(), loan, library);
         this.loanListingController.initialize();
         this.setTitle(title);
 
@@ -58,6 +59,10 @@ public class LoanDetailController extends ValidatableComponentController impleme
         initializeUI();
         setValidations();
         updateUI();
+
+        /*for(Loan loan: library.getCustomerLoans(this.loan.getCustomer())) {
+            loan.addObserver(this);
+        }*/
     }
 
     public LoanDetailControllerDelegate getDelegate() {
@@ -71,6 +76,11 @@ public class LoanDetailController extends ValidatableComponentController impleme
     private void initializeUI() {
         initializeCustomerSelectionUi();
         initializeCopySelectionUi();
+
+        TitledBorder border = (TitledBorder) loanDetail.getCopyPanel().getBorder();
+        if(border != null) border.setTitle("Ausgeliehenes Exemplar");
+
+        loanDetail.getBookLabel().setText(loan.getCopy().getTitle().getName());
 
         if (!loan.isLent()) {
             loanDetail.getCustomerSelect().setEnabled(false);
@@ -276,5 +286,9 @@ public class LoanDetailController extends ValidatableComponentController impleme
                 return loanDetail.getCopySelect().getSelectedObjects().length > 0;
             }
         }));
+    }
+
+    public LoanListingController getLoanListingController() {
+        return loanListingController;
     }
 }

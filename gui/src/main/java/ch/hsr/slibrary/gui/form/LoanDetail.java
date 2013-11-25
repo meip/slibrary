@@ -15,9 +15,20 @@ public class LoanDetail extends GUIComponent {
     private JLabel loansCurrentLabel;
     private JComboBox copySelect;
     private JPanel loanListingPanel;
+    private JPanel copyPanel;
+    private JLabel bookLabel;
 
     public LoanDetail() {
         this.container = loanDetailPanel;
+    }
+
+
+    public JLabel getBookLabel() {
+        return bookLabel;
+    }
+
+    public JPanel getCopyPanel() {
+        return copyPanel;
     }
 
     public JComboBox getCustomerSelect() {
