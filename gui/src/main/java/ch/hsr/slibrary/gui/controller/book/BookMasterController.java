@@ -13,12 +13,15 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class BookMasterController extends ComponentController implements Observer, BookDetailControllerDelegate, MasterDetailControllerDelegate {
 
@@ -83,7 +86,7 @@ public class BookMasterController extends ComponentController implements Observe
     private void initializeTable() {
         bookMaster.getTable().setModel(new AbstractTableModel() {
 
-            private String[] columnNames = {"Verfügbar", "Titel", "Autor", "Publisher"};
+            private String[] columnNames = {"Verfügbar", "Titel", "Autor", "Publisher", "Regal"};
 
             @Override
             public int getRowCount() {
@@ -132,6 +135,8 @@ public class BookMasterController extends ComponentController implements Observe
                         return book.getAuthor();
                     case 3:
                         return book.getPublisher();
+                    case 4:
+                        return book.getShelf();
                     default:
                         return "";
                 }
@@ -147,6 +152,20 @@ public class BookMasterController extends ComponentController implements Observe
                 }
             }
         });
+
+       /* bookMaster.getTable().setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table,
+                                                           Object value, boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                Component c = super.getTableCellRendererComponent(table,
+                        value, isSelected, hasFocus, row, column);
+                c.setBackground(row % 2 == 0 ? Color.white : Color.LIGHT_GRAY);
+                return c;
+            }
+        });*/
+
         listSelectionModel = bookMaster.getTable().getSelectionModel();
         listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -155,6 +174,8 @@ public class BookMasterController extends ComponentController implements Observe
                 updateButtons();
             }
         });
+
+
     }
 
     private void initializeObserving() {
