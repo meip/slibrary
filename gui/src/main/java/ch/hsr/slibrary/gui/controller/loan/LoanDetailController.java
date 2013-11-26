@@ -81,6 +81,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
         if(border != null) border.setTitle("Ausgeliehenes Exemplar");
 
         loanDetail.getBookLabel().setText(loan.getCopy().getTitle().getName());
+        loanDetail.getLentOnLabel().setText(LoanUtil.getPickupDate(loan));
 
         if (!loan.isLent()) {
             loanDetail.getCustomerSelect().setEnabled(false);

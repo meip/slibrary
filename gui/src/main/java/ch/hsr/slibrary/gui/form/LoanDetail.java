@@ -17,11 +17,15 @@ public class LoanDetail extends GUIComponent {
     private JPanel loanListingPanel;
     private JPanel copyPanel;
     private JLabel bookLabel;
+    private JLabel lentOnLabel;
 
     public LoanDetail() {
         this.container = loanDetailPanel;
     }
 
+    public JLabel getLentOnLabel() {
+        return lentOnLabel;
+    }
 
     public JLabel getBookLabel() {
         return bookLabel;
