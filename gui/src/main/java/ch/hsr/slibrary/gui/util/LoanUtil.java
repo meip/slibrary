@@ -21,6 +21,17 @@ public class LoanUtil {
         return sdf.format(new Long(loan.getPickupDate().getTimeInMillis()));
     }
 
+    public static String getDueDateFormatted(Loan loan) {
+        if(loan.getDaysOverdue() > 0) {
+            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (seit " + loan.getDaysOverdue() + " Tage überfällig)";
+        }  else if (loan.isLent()) {
+            long daysOverDue = TimeUnit.MILLISECONDS.toDays(loan.getDueDate().getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+            return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + " (in " + daysOverDue + " Tagen)";
+         } else {
+            return sdf.format(new Long(loan.getDueDate().getTimeInMillis()));
+        }
+    }
+
     public static String getReturnDate(Loan loan) {
         return getReturnDate(loan, true);
     }

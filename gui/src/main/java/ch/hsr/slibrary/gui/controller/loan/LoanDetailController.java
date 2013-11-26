@@ -274,7 +274,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
             loanDetail.getCopySelect().setEnabled(false);
         }
 
-        loanDetail.getReturnDateField().setText(LoanUtil.getReturnDate(loan, false));
+        loanDetail.getReturnDateField().setText(LoanUtil.getDueDateFormatted(loan));
 
         loanListingController.updateUI();
     }
