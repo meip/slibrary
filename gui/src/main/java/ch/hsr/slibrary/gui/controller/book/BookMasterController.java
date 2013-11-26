@@ -6,24 +6,23 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.form.BookMaster;
-import ch.hsr.slibrary.gui.util.AlternateTableRowRenderer;
 import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.gui.util.TableHelper;
-import ch.hsr.slibrary.spa.*;
+import ch.hsr.slibrary.spa.Book;
+import ch.hsr.slibrary.spa.Copy;
+import ch.hsr.slibrary.spa.Library;
+import ch.hsr.slibrary.spa.Loan;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 public class BookMasterController extends ComponentController implements Observer, BookDetailControllerDelegate, MasterDetailControllerDelegate {
 
@@ -60,6 +59,7 @@ public class BookMasterController extends ComponentController implements Observe
     }
 
     private void initializeButtonListeners() {
+        final BookMasterController self = this;
         bookMaster.getDisplaySelectedButton().setEnabled(false);
         bookMaster.getDisplaySelectedButton().addActionListener(new ActionListener() {
             @Override
@@ -76,7 +76,9 @@ public class BookMasterController extends ComponentController implements Observe
         bookMaster.getAddBookButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ComponentController controller = new NewBookDetailController("Neues Buch erfassen", new BookDetail(), library);
+                NewBookDetailController controller = new NewBookDetailController("Neues Buch erfassen", new BookDetail(), library);
+                controller.setDelegate(self);
+                controller.setMasterDetailController(self.masterDetailController);
                 masterDetailController.addDetailController(controller);
                 masterDetailController.setSelectedDetailController(controller);
             }

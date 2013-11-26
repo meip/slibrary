@@ -20,10 +20,10 @@ import java.util.Observer;
 
 public class BookDetailController extends ValidatableComponentController implements Observer {
 
-    private BookDetail bookDetail;
-    private Book book;
-    private Library library;
-    private BookDetailControllerDelegate delegate;
+    protected BookDetail bookDetail;
+    protected Book book;
+    protected Library library;
+    protected BookDetailControllerDelegate delegate;
 
     private MasterDetailController masterDetailController;
 
@@ -152,7 +152,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getTitleField().setText(book.getName());
         bookDetail.getAuthorField().setText(book.getAuthor());
         bookDetail.getPublisherField().setText(book.getPublisher());
-        bookDetail.getShelfComboBox().setSelectedIndex(book.getShelf().ordinal());
+        if (book.getShelf() != null) bookDetail.getShelfComboBox().setSelectedIndex(book.getShelf().ordinal());
     }
 
     public void saveChanges() {
