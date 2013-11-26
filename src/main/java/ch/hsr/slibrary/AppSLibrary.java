@@ -215,7 +215,7 @@ public class AppSLibrary implements TabControllerDelegate, NotificationResponder
 
     @Override
     public void receiveNotification(Notification notification) {
-        if(notification.messageID == MessageID.SHOW_LOAN_DETAIL_MESSAGE) {
+        if(notification.messageID.equals(MessageID.SHOW_LOAN_DETAIL_MESSAGE)) {
             mainTabController.showControllerAt(1);
         }
     }

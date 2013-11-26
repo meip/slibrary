@@ -25,6 +25,10 @@ public class LoanUtil {
         return getReturnDate(loan, true);
     }
 
+    public static String getDueDate(Loan loan) {
+        return sdf.format(loan.getDueDate());
+    }
+
     public static String getReturnDate(Loan loan, boolean stringAppendix) {
         if (loan.getDaysOverdue() > 0) {
             return sdf.format(new Long(loan.getDueDate().getTimeInMillis())) + ((stringAppendix) ? " (seit " + loan.getDaysOverdue() + " Tage überfällig)" : "");
@@ -35,4 +39,5 @@ public class LoanUtil {
             return sdf.format(new Long(loan.getReturnDate().getTimeInMillis()));
         }
     }
+
 }

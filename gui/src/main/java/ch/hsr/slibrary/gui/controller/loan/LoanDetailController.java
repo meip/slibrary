@@ -116,6 +116,23 @@ public class LoanDetailController extends ValidatableComponentController impleme
 
         loanDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
         loanListingController.setSelectedLoan(loan);
+
+        loanDetail.getReturnedOnLabel().setText(loan.getReturnDate() != null ? LoanUtil.getReturnDate(loan, false) : "-");
+        loanDetail.getReturnedCheckBox().setSelected(!loan.isLent());
+        loanDetail.getReturnedCheckBox().setEnabled(loan.isLent());
+        loanDetail.getReturnedCheckBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(loanDetail.getReturnedCheckBox().isSelected()) {
+                    loan.returnCopy();
+                    loanDetail.getReturnedCheckBox().setEnabled(false);
+                    loanDetail.getReturnedOnLabel().setText(LoanUtil.getReturnDate(loan, true));
+
+                    loanDetail.getCancelButton().setEnabled(false);
+                    loanDetail.getSaveButton().setEnabled(true);
+                }
+            }
+        });
     }
 
     private void initializeCustomerSelectionUi() {

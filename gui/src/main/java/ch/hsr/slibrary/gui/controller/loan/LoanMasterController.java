@@ -300,6 +300,8 @@ public class LoanMasterController extends ComponentController implements Observe
 
     @Override
     public void receiveNotification(Notification notification) {
-        presentLoan((Loan) notification.messageBody);
+       if(notification.messageID.equals(MessageID.SHOW_LOAN_DETAIL_MESSAGE)) {
+           presentLoan((Loan) notification.messageBody);
+       }
     }
 }

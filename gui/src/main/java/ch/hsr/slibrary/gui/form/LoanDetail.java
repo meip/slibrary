@@ -18,9 +18,19 @@ public class LoanDetail extends GUIComponent {
     private JPanel copyPanel;
     private JLabel bookLabel;
     private JLabel lentOnLabel;
+    private JLabel returnedOnLabel;
+    private JCheckBox returnedCheckBox;
 
     public LoanDetail() {
         this.container = loanDetailPanel;
+    }
+
+    public JLabel getReturnedOnLabel() {
+        return returnedOnLabel;
+    }
+
+    public JCheckBox getReturnedCheckBox() {
+        return returnedCheckBox;
     }
 
     public JLabel getLentOnLabel() {
@@ -121,5 +131,9 @@ public class LoanDetail extends GUIComponent {
 
     public void setLoanListingPanel(JPanel loanListingPanel) {
         this.loanListingPanel = loanListingPanel;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }
