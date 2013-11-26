@@ -6,6 +6,8 @@ import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.gui.form.LoanListing;
 import ch.hsr.slibrary.gui.util.LoanUtil;
+import ch.hsr.slibrary.gui.util.MessageID;
+import ch.hsr.slibrary.gui.util.NotificationCenter;
 import ch.hsr.slibrary.gui.util.TableHelper;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
@@ -73,10 +75,11 @@ public class LoanListingController extends ValidatableComponentController implem
                     loanListing.getCopyTable().updateUI();
                     customer.notifyObservers();*/
                     loans.add(library.getCustomerLoans(customer).get(index));
+                    NotificationCenter.getInstance().sendNotification(MessageID.SHOW_LOAN_DETAIL_MESSAGE, library.getCustomerLoans(customer).get(index));
                 }
-                if(self.delegate != null) {
+                /*if(self.delegate != null) {
                     self.delegate.loanListingControllerDidSelectLoans(self, loans);
-                }
+                }*/
             }
         });
     }

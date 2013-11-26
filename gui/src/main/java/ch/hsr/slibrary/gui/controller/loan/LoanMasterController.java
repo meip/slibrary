@@ -7,10 +7,7 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
 import ch.hsr.slibrary.gui.form.LoanDetail;
 import ch.hsr.slibrary.gui.form.LoanMaster;
-import ch.hsr.slibrary.gui.util.AlternateTableRowRenderer;
-import ch.hsr.slibrary.gui.util.IconAlternateTableRowRenderer;
-import ch.hsr.slibrary.gui.util.LoanUtil;
-import ch.hsr.slibrary.gui.util.TableHelper;
+import ch.hsr.slibrary.gui.util.*;
 import ch.hsr.slibrary.spa.Library;
 import ch.hsr.slibrary.spa.Loan;
 
@@ -27,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
-public class LoanMasterController extends ComponentController implements Observer, LoanDetailControllerDelegate, MasterDetailControllerDelegate, LoanListingControllerDelegate {
+public class LoanMasterController extends ComponentController implements Observer, LoanDetailControllerDelegate, MasterDetailControllerDelegate, LoanListingControllerDelegate, NotificationResponder {
 
 
     private MasterDetailController masterDetailController;
@@ -54,6 +51,7 @@ public class LoanMasterController extends ComponentController implements Observe
 
     @Override
     public void initialize() {
+        NotificationCenter.getInstance().addResponder(MessageID.SHOW_LOAN_DETAIL_MESSAGE, this);
         initializeButtonListeners();
         initializeTable();
         initializeOnlyLentFilter();
@@ -298,5 +296,10 @@ public class LoanMasterController extends ComponentController implements Observe
         for(Loan loan : loans) {
             presentLoan(loan);
         }
+    }
+
+    @Override
+    public void receiveNotification(Notification notification) {
+        presentLoan((Loan) notification.messageBody);
     }
 }

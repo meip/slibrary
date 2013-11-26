@@ -3,7 +3,7 @@ package ch.hsr.slibrary;
 import ch.hsr.slibrary.gui.controller.*;
 import ch.hsr.slibrary.gui.controller.system.*;
 import ch.hsr.slibrary.gui.form.TabGUIComponent;
-import ch.hsr.slibrary.gui.util.WindowBounds;
+import ch.hsr.slibrary.gui.util.*;
 import ch.hsr.slibrary.spa.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -22,11 +22,13 @@ import java.util.GregorianCalendar;
  * User: p1meier
  * Date: 15.10.13
  */
-public class AppSLibrary implements TabControllerDelegate{
+public class AppSLibrary implements TabControllerDelegate, NotificationResponder{
 
     private WindowController windowController;
     private TabController mainTabController;
     private Library library;
+
+
 
 
     public AppSLibrary(Library library) {
@@ -44,6 +46,9 @@ public class AppSLibrary implements TabControllerDelegate{
     }
 
     private void initializeControllerMainControllers() {
+
+        NotificationCenter.getInstance().addResponder(MessageID.SHOW_LOAN_DETAIL_MESSAGE, this);
+
         windowController = new WindowController();
         windowController.setMenuBarControllers(new MainMenuBarController(new JMenuBar(), windowController));
         windowController.addDelegate((MainMenuBarController) windowController.getMenuBarController());
@@ -208,4 +213,10 @@ public class AppSLibrary implements TabControllerDelegate{
     }
 
 
+    @Override
+    public void receiveNotification(Notification notification) {
+        if(notification.messageID == MessageID.SHOW_LOAN_DETAIL_MESSAGE) {
+            mainTabController.showControllerAt(1);
+        }
+    }
 }
