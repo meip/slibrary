@@ -41,6 +41,7 @@ public class Library {
 
 	public Copy createAndAddCopy(Book title) {
 		Copy c = new Copy(title);
+        title.notifyChanged();
 		copies.add(c);
 		return c;
 	}

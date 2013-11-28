@@ -13,12 +13,11 @@ public class BookDetail extends GUIComponent {
     private JTextField titleField;
     private JComboBox shelfComboBox;
     private JButton addCopyButton;
-    private JList copyList;
     private JLabel copyAmountLabel;
-    private JButton removeCopyButton;
     private JPanel bookDetailPanel;
     private JButton saveButton;
     private JButton cancelButton;
+    private JTable copyTable;
 
 
     public BookDetail() {
@@ -74,13 +73,10 @@ public class BookDetail extends GUIComponent {
         this.addCopyButton = addCopyButton;
     }
 
-    public JList getCopyList() {
-        return copyList;
+    public JTable getCopyTable() {
+        return copyTable;
     }
 
-    public void setCopyList(JList copyList) {
-        this.copyList = copyList;
-    }
 
     public JLabel getCopyAmountLabel() {
         return copyAmountLabel;
@@ -88,14 +84,6 @@ public class BookDetail extends GUIComponent {
 
     public void setCopyAmountLabel(JLabel copyAmountLabel) {
         this.copyAmountLabel = copyAmountLabel;
-    }
-
-    public JButton getRemoveCopyButton() {
-        return removeCopyButton;
-    }
-
-    public void setRemoveCopyButton(JButton removeCopyButton) {
-        this.removeCopyButton = removeCopyButton;
     }
 
     public JPanel getBookDetailPanel() {

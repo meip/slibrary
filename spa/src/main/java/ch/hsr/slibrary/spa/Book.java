@@ -56,6 +56,11 @@ public class Book extends Observable{
 		return title + ", " + author + ", " + publisher;
 	}
 
+    public void notifyChanged() {
+        setChanged();
+        notifyObservers();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
