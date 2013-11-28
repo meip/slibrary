@@ -132,8 +132,4 @@ public class LoanDetail extends GUIComponent {
     public void setLoanListingPanel(JPanel loanListingPanel) {
         this.loanListingPanel = loanListingPanel;
     }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 }

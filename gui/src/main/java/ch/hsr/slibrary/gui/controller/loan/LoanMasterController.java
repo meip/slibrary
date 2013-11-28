@@ -1,7 +1,6 @@
 package ch.hsr.slibrary.gui.controller.loan;
 
 import ch.hsr.slibrary.gui.controller.listener.LoanTableListener;
-import ch.hsr.slibrary.gui.controller.listener.SearchableTableListener;
 import ch.hsr.slibrary.gui.controller.system.ComponentController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailControllerDelegate;
@@ -15,14 +14,11 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 public class LoanMasterController extends ComponentController implements Observer, LoanDetailControllerDelegate, MasterDetailControllerDelegate, LoanListingControllerDelegate, NotificationResponder {
 
@@ -54,10 +50,8 @@ public class LoanMasterController extends ComponentController implements Observe
         NotificationCenter.getInstance().addResponder(MessageID.SHOW_LOAN_DETAIL_MESSAGE, this);
         initializeButtonListeners();
         initializeTable();
-        initializeOnlyLentFilter();
-        initializeOverdueFilter();
+        initializeFilters();
         initializeObserving();
-        initializeSearchField();
         updateUI();
     }
 
@@ -177,17 +171,14 @@ public class LoanMasterController extends ComponentController implements Observe
         }
     }
 
-    private void initializeOverdueFilter() {
-        loanMaster.getOnlyOverdueCheckbox().addItemListener(new LoanTableListener(library, loanMaster.getOnlyOverdueCheckbox(), loanMaster.getOnlyLentCheckbox(), loanMaster.getLoanTable()));
+
+    private void initializeFilters() {
+        LoanTableListener listener = new LoanTableListener(library, loanMaster.getOnlyOverdueCheckbox(), loanMaster.getOnlyLentCheckbox(), loanMaster.getSearchField(), loanMaster.getLoanTable());
+        loanMaster.getOnlyOverdueCheckbox().addItemListener(listener);
+        loanMaster.getOnlyLentCheckbox().addItemListener(listener);
+        loanMaster.getSearchField().addKeyListener(listener);
     }
 
-    private void initializeOnlyLentFilter() {
-        loanMaster.getOnlyLentCheckbox().addItemListener(new LoanTableListener(library, loanMaster.getOnlyOverdueCheckbox(), loanMaster.getOnlyLentCheckbox(), loanMaster.getLoanTable()));
-    }
-
-    private void initializeSearchField() {
-        loanMaster.getSearchField().addKeyListener(new SearchableTableListener(loanMaster.getLoanTable(), loanMaster.getSearchField()));
-    }
 
     private LoanDetailController createControllerForLoan(Loan loan) {
         return new LoanDetailController("Ausleihe: " + loan.getCopy().getTitle().getName(), new LoanDetail(), loan, library);
@@ -209,8 +200,8 @@ public class LoanMasterController extends ComponentController implements Observe
     }
 
     private void removeControllerFromMap(ComponentController controller) {
-        if(controller.getClass() == LoanDetailController.class) {
-            ((LoanDetailController)controller).getLoanListingController().setListingDelegate(null);
+        if (controller.getClass() == LoanDetailController.class) {
+            ((LoanDetailController) controller).getLoanListingController().setListingDelegate(null);
         }
         List<Loan> loansToRemove = new LinkedList<>();
         for (Loan loan : loanControllerMap.keySet()) {
@@ -293,15 +284,15 @@ public class LoanMasterController extends ComponentController implements Observe
 
     @Override
     public void loanListingControllerDidSelectLoans(LoanListingController controller, List<Loan> loans) {
-        for(Loan loan : loans) {
+        for (Loan loan : loans) {
             presentLoan(loan);
         }
     }
 
     @Override
     public void receiveNotification(Notification notification) {
-       if(notification.messageID.equals(MessageID.SHOW_LOAN_DETAIL_MESSAGE)) {
-           presentLoan((Loan) notification.messageBody);
-       }
+        if (notification.messageID.equals(MessageID.SHOW_LOAN_DETAIL_MESSAGE)) {
+            presentLoan((Loan) notification.messageBody);
+        }
     }
 }

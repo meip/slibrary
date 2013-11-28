@@ -30,13 +30,6 @@
               <text value="Kunde:"/>
             </properties>
           </component>
-          <component id="a792b" class="javax.swing.JComboBox" binding="customerSelect">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties/>
-          </component>
           <grid id="e7fcc" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
@@ -82,6 +75,13 @@
             <properties>
               <text value="Status:"/>
             </properties>
+          </component>
+          <component id="a2b11" class="javax.swing.JComboBox" binding="customerSelect">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties/>
           </component>
         </children>
       </grid>
