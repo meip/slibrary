@@ -60,9 +60,9 @@ public class LoanDetailController extends ValidatableComponentController impleme
         setValidations();
         updateUI();
 
-        /*for(Loan loan: library.getCustomerLoans(this.loan.getCustomer())) {
+        for (Loan loan : library.getCustomerLoans(this.loan.getCustomer())) {
             loan.addObserver(this);
-        }*/
+        }
     }
 
     public LoanDetailControllerDelegate getDelegate() {
@@ -78,16 +78,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
         initializeCopySelectionUi();
 
         TitledBorder border = (TitledBorder) loanDetail.getCopyPanel().getBorder();
-        if(border != null) border.setTitle("Ausgeliehenes Exemplar");
-
-        loanDetail.getBookLabel().setText(loan.getCopy().getTitle().getName());
-        loanDetail.getLentOnLabel().setText(LoanUtil.getPickupDate(loan));
-
-        if (!loan.isLent()) {
-            loanDetail.getCustomerSelect().setEnabled(false);
-            loanDetail.getCopySelect().setEnabled(false);
-            loanDetail.getReturnDateField().setEnabled(false);
-        }
+        if (border != null) border.setTitle("Ausgeliehenes Exemplar");
 
         final LoanDetailController self = this;
         loanDetail.getCancelButton().addActionListener(new ActionListener() {
@@ -116,21 +107,10 @@ public class LoanDetailController extends ValidatableComponentController impleme
 
         loanDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
         loanListingController.setSelectedLoan(loan);
-
-        loanDetail.getReturnedOnLabel().setText(loan.getReturnDate() != null ? LoanUtil.getReturnDate(loan, false) : "-");
-        loanDetail.getReturnedCheckBox().setSelected(!loan.isLent());
-        loanDetail.getReturnedCheckBox().setEnabled(loan.isLent());
         loanDetail.getReturnedCheckBox().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(loanDetail.getReturnedCheckBox().isSelected()) {
-                    loan.returnCopy();
-                    loanDetail.getReturnedCheckBox().setEnabled(false);
-                    loanDetail.getReturnedOnLabel().setText(LoanUtil.getReturnDate(loan, true));
 
-                    loanDetail.getCancelButton().setEnabled(false);
-                    loanDetail.getSaveButton().setEnabled(true);
-                }
             }
         });
     }
@@ -235,10 +215,23 @@ public class LoanDetailController extends ValidatableComponentController impleme
     }
 
     public void updateUI() {
+        loanDetail.getLentOnLabel().setText(LoanUtil.getPickupDate(loan));
+
+        if (!loan.isLent()) {
+            loanDetail.getCustomerSelect().setEnabled(false);
+            loanDetail.getCopySelect().setEnabled(false);
+            loanDetail.getReturnDateField().setEnabled(false);
+        }
+
+        loanDetail.getReturnedOnLabel().setText(loan.getReturnDate() != null ? LoanUtil.getReturnDate(loan, false) : "-");
+        loanDetail.getReturnedCheckBox().setSelected(!loan.isLent());
+        loanDetail.getReturnedCheckBox().setEnabled(loan.isLent());
+
         if (loan.getCustomer() != null) {
             loanDetail.getCustomerSelect().setSelectedIndex(library.getCustomers().indexOf(loan.getCustomer()));
         }
         if (loan.getCopy() != null) {
+            loanDetail.getBookLabel().setText(loan.getCopy().getTitle().getName());
             // Make copy selection static and disable it
             loanDetail.getCopySelect().setModel(new ComboBoxModel<Copy>() {
                 @Override
@@ -280,8 +273,12 @@ public class LoanDetailController extends ValidatableComponentController impleme
     }
 
     public void saveChanges() {
-        this.loan.setCustomer((Customer) loanDetail.getCustomerSelect().getSelectedItem());
-        this.loan.setCopy((Copy) loanDetail.getCopySelect().getSelectedItem());
+        loan.setCustomer((Customer) loanDetail.getCustomerSelect().getSelectedItem());
+        loan.setCopy((Copy) loanDetail.getCopySelect().getSelectedItem());
+        if (loanDetail.getReturnedCheckBox().isSelected()) {
+            loan.returnCopy();
+        }
+        loan.notifyObservers();
     }
 
     @Override

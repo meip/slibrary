@@ -18,7 +18,6 @@ public class Book extends Observable{
 	public void setName(String name) {
 		this.title = name;
         setChanged();
-        notifyObservers();
 	}
 
 	public String getAuthor() {
@@ -28,7 +27,6 @@ public class Book extends Observable{
 	public void setAuthor(String autor) {
 		this.author = autor;
         setChanged();
-        notifyObservers();
 	}
 
 	public String getPublisher() {
@@ -38,7 +36,6 @@ public class Book extends Observable{
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
         setChanged();
-        notifyObservers();
 	}
 	
 	public Shelf getShelf() {
@@ -48,7 +45,6 @@ public class Book extends Observable{
 	public void setShelf(Shelf shelf) {
 		this.shelf = shelf;
         setChanged();
-        notifyObservers();
 	}
 	
 	@Override

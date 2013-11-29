@@ -121,7 +121,6 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getSaveButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveChanges();
                 if (isValid()) {
                     saveChanges();
                     if (getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, true);
@@ -274,11 +273,12 @@ public class BookDetailController extends ValidatableComponentController impleme
     }
 
     public void saveChanges() {
-        setTitle(bookDetail.getTitleField().getText());
         book.setName(bookDetail.getTitleField().getText());
         book.setAuthor(bookDetail.getAuthorField().getText());
         book.setPublisher(bookDetail.getPublisherField().getText());
         book.setShelf((Shelf) bookDetail.getShelfComboBox().getSelectedItem());
+        book.notifyChanged();
+        setTitle(bookDetail.getTitleField().getText());
     }
 
     @Override

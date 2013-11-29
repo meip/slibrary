@@ -24,6 +24,7 @@ public class Customer extends Observable{
 
 	public void setName(String name) {
 		this.name = name;
+        setChanged();
 	}
 
 	public String getSurname() {
@@ -32,6 +33,7 @@ public class Customer extends Observable{
 
 	public void setSurname(String surname) {
 		this.surname = surname;
+        setChanged();
 	}
 
 	public String getStreet() {
@@ -40,6 +42,7 @@ public class Customer extends Observable{
 
 	public void setStreet(String street) {
 		this.street = street;
+        setChanged();
 	}
 
 	public String getCity() {
@@ -48,6 +51,7 @@ public class Customer extends Observable{
 
 	public void setCity(String city) {
 		this.city = city;
+        setChanged();
 	}
 
 	public int getZip() {
@@ -56,6 +60,7 @@ public class Customer extends Observable{
 
 	public void setZip(int zip) {
 		this.zip = zip;
+        setChanged();
 	}
 	
 	@Override

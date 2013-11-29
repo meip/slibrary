@@ -107,6 +107,7 @@ public class CustomerDetailController extends ValidatableComponentController imp
         customer.setStreet(customerDetail.getStreetField().getText());
         customer.setCity(customerDetail.getCityField().getText());
         customer.setZip(Integer.valueOf(customerDetail.getZipField().getText()));
+        customer.notifyObservers();
         setTitle(customer.getName() + " " + customer.getSurname());
     }
 
