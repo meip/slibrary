@@ -160,10 +160,8 @@ public class LoanDetailController extends ValidatableComponentController impleme
                     loanDetail.getLoansCurrentLabel().setText(String.valueOf(library.getCustomerLoans(customer, true).size()));
                     if (library.getOverdueLoansForCustomer(customer).size() > 0) {
                         loanDetail.getLoansOverdueLabel().setForeground(Color.RED);
-                        loanDetail.getSaveButton().setEnabled(false);
                     } else {
                         loanDetail.getLoansOverdueLabel().setForeground(Color.BLACK);
-                        loanDetail.getSaveButton().setEnabled(true);
                     }
                     loanListingController.setCustomer(customer);
                     loanListingController.updateUI();
