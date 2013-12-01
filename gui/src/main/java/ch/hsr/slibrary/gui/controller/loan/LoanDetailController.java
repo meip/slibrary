@@ -166,6 +166,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
                     loanListingController.setCustomer(customer);
                     loanListingController.updateUI();
                 }
+                updateUI();
             }
         });
         loanDetail.getCustomerSelect().setSelectedItem(loan.getCustomer());
@@ -209,6 +210,12 @@ public class LoanDetailController extends ValidatableComponentController impleme
                 //To change body of implemented methods use File | Settings | File Templates.
             }
         });
+        loanDetail.getCopySelect().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateUI();
+            }
+        });
         AutoCompleteDecorator.decorate(loanDetail.getCopySelect());
     }
 
@@ -221,6 +228,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
             loanDetail.getReturnDateField().setEnabled(false);
         }
 
+
         loanDetail.getReturnedOnLabel().setText(loan.getReturnDate() != null ? LoanUtil.getReturnDate(loan, false) : "-");
         loanDetail.getReturnedCheckBox().setSelected(!loan.isLent());
         loanDetail.getReturnedCheckBox().setEnabled(loan.isLent());
@@ -228,8 +236,15 @@ public class LoanDetailController extends ValidatableComponentController impleme
         if (loan.getCustomer() != null) {
             loanDetail.getCustomerSelect().setSelectedIndex(library.getCustomers().indexOf(loan.getCustomer()));
         }
+
+        if(loanDetail.getCopySelect().getSelectedIndex() > -1) {
+            loanDetail.getBookLabel().setText(((Copy) loanDetail.getCopySelect().getSelectedItem()).getTitle().getName());
+        }
+
+        loanDetail.getLoanListingPanel().setVisible(loanDetail.getCustomerSelect().getSelectedIndex() > -1);
+
         if (loan.getCopy() != null) {
-            loanDetail.getBookLabel().setText(loan.getCopy().getTitle().getName());
+
             // Make copy selection static and disable it
             loanDetail.getCopySelect().setModel(new ComboBoxModel<Copy>() {
                 @Override
