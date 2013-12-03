@@ -135,33 +135,13 @@ public class BookDetailController extends ValidatableComponentController impleme
             }
         });
 
-
-        final List<String> names = new ArrayList<>();
-        names.add("Neu");
-        names.add("Gut");
-        names.add("Beschädigt");
-        names.add("Verloren");
-        names.add("Entsorgt");
-
         final JComboBox cb = new JComboBox();
-        cb.setModel(new ComboBoxModel() {
-            private Map<Copy.Condition, String> conditionMap = new HashMap<>();
-
-            {
-                conditionMap.put(Copy.Condition.NEW, names.get(0));
-                conditionMap.put(Copy.Condition.GOOD, names.get(1));
-                conditionMap.put(Copy.Condition.DAMAGED, names.get(2));
-                conditionMap.put(Copy.Condition.LOST, names.get(3));
-                conditionMap.put(Copy.Condition.WASTE, names.get(4));
-            }
-
-
-            Object selectedItem;
-
+        cb.setModel(new ComboBoxModel<Copy.Condition>() {
+            Copy.Condition selectedItem;
 
             @Override
             public void setSelectedItem(Object anItem) {
-                selectedItem = anItem;
+                selectedItem = (Copy.Condition) anItem;
             }
 
             @Override
@@ -169,15 +149,14 @@ public class BookDetailController extends ValidatableComponentController impleme
                 return selectedItem;
             }
 
-
             @Override
             public int getSize() {
                 return Copy.Condition.values().length;
             }
 
             @Override
-            public Object getElementAt(int index) {
-                return conditionMap.get(Copy.Condition.values()[index]);
+            public Copy.Condition getElementAt(int index) {
+                return Copy.Condition.values()[index];
             }
 
             @Override
@@ -223,7 +202,7 @@ public class BookDetailController extends ValidatableComponentController impleme
 
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return true;  //To change body of implemented methods use File | Settings | File Templates.
+                return (columnIndex == 1) ? true : false;
             }
 
             @Override
@@ -232,9 +211,8 @@ public class BookDetailController extends ValidatableComponentController impleme
                 switch (columnIndex) {
                     case 0:
                         return "#" + copy.getInventoryNumber();
-
                     case 1:
-                        return names.get(Copy.Condition.valueOf(copy.getCondition().name()).ordinal());
+                        return Copy.Condition.valueOf(copy.getCondition().name());
                     default:
                         return null;
                 }
