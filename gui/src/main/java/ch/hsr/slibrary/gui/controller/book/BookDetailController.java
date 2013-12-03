@@ -26,7 +26,6 @@ public class BookDetailController extends ValidatableComponentController impleme
     protected Book book;
     protected Library library;
     protected BookDetailControllerDelegate delegate;
-
     private MasterDetailController masterDetailController;
 
     public BookDetailController(String title, BookDetail component, Book book, Library library) {
@@ -70,8 +69,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getAddCopyButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Copy copy = library.createAndAddCopy(book);
-                copy.setCondition(Copy.Condition.NEW);
+               addCopyPressed();
             }
         });
 
@@ -114,17 +112,14 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
+                cancelPressed();
             }
         });
 
         bookDetail.getSaveButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (isValid()) {
-                    saveChanges();
-                    if (getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, true);
-                }
+                savePressed();
             }
         });
 
@@ -264,6 +259,24 @@ public class BookDetailController extends ValidatableComponentController impleme
 
     }
 
+    protected void cancelPressed() {
+        if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(this);
+    }
+
+    protected void savePressed() {
+        if (isValid()) {
+            saveChanges();
+            if (getTabDelegate() != null) getTabDelegate().detailControllerDidSave(this, true);
+        }
+    }
+
+    protected void addCopyPressed() {
+        if(book != null) {
+            Copy copy = library.createAndAddCopy(book);
+            copy.setCondition(Copy.Condition.NEW);
+        }
+    }
+
     public void updateUI() {
         bookDetail.getTitleField().setText(book.getName());
         bookDetail.getAuthorField().setText(book.getAuthor());
@@ -273,10 +286,13 @@ public class BookDetailController extends ValidatableComponentController impleme
     }
 
     public void saveChanges() {
-        book.setName(bookDetail.getTitleField().getText());
+
+        book = library.createAndAddBook(bookDetail.getTitleField().getText());
         book.setAuthor(bookDetail.getAuthorField().getText());
         book.setPublisher(bookDetail.getPublisherField().getText());
         book.setShelf((Shelf) bookDetail.getShelfComboBox().getSelectedItem());
+
+
         book.notifyChanged();
         setTitle(bookDetail.getTitleField().getText());
     }

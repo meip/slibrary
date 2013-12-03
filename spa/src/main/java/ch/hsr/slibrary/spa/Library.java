@@ -1,9 +1,12 @@
 package ch.hsr.slibrary.spa;
 
+import com.apple.jobjc.foundation.NSNotificationCenter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
-public class Library {
+public class Library extends Observable {
 
 	private List<Copy> copies;
 	private List<Customer> customers;
@@ -21,6 +24,8 @@ public class Library {
 		if (!isCopyLent(copy)) {
 			Loan l = new Loan(customer, copy);
 			loans.add(l);
+            setChanged();
+            notifyObservers("loanAdded");
 			return l;
 		} else {
 			return null;
@@ -30,12 +35,16 @@ public class Library {
 	public Customer createAndAddCustomer(String name, String surname) {
 		Customer c = new Customer(name, surname);
 		customers.add(c);
+        setChanged();
+        notifyObservers("customerAdded");
 		return c;
 	}
 
 	public Book createAndAddBook(String name) {
 		Book b = new Book(name);
 		books.add(b);
+        setChanged();
+        notifyObservers("bookAdded");
 		return b;
 	}
 
@@ -43,8 +52,30 @@ public class Library {
 		Copy c = new Copy(title);
         title.notifyChanged();
 		copies.add(c);
+        setChanged();
+        notifyObservers("copyAdded");
 		return c;
 	}
+
+    public void removeBook(Book book) {
+        for(int i = copies.size() - 1; i >=0; --i) {
+            if(copies.get(i).getTitle().equals(book)) {
+                copies.remove(i);
+                setChanged();
+                notifyObservers("bookRemoved");
+                return;
+            }
+        }
+    }
+
+    public boolean removeCopy(Copy copy) {
+        boolean result = copies.remove(copy);
+        if(result) {
+            setChanged();
+            notifyObservers("copyRemoved");
+        }
+        return result;
+    }
 
 	public Book findByBookTitle(String title) {
 		for (Book b : books) {
@@ -54,6 +85,7 @@ public class Library {
 		}
 		return null;
 	}
+
 
 	public boolean isCopyLent(Copy copy) {
 		for (Loan l : loans) {

@@ -11,8 +11,14 @@ import java.awt.event.ActionListener;
 public class NewBookDetailController extends BookDetailController {
 
     public NewBookDetailController(String title, BookDetail component, Library library) {
-        super(title, component, new Book(""), library);
+        super(title, component, library.createAndAddBook(""), library);
         initializeSaveButton();
+    }
+
+    @Override
+    protected void cancelPressed() {
+        library.removeBook(book);
+        super.cancelPressed();
     }
 
     public void initializeSaveButton() {

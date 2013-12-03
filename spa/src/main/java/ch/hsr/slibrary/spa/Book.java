@@ -9,6 +9,9 @@ public class Book extends Observable{
 
 	public Book(String name) {
 		this.title = name;
+        author = "";
+        publisher = "";
+        shelf = Shelf.A1;
 	}
 
 	public String getName() {
