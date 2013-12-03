@@ -2,7 +2,7 @@ package ch.hsr.slibrary.spa;
 
 import java.util.Observable;
 
-public class Customer extends Observable{
+public class Customer extends Observable {
 	
 	private String name, surname, street, city;
 	private int zip;
@@ -24,7 +24,7 @@ public class Customer extends Observable{
 
 	public void setName(String name) {
 		this.name = name;
-        setChanged();
+        notifyChanged();
 	}
 
 	public String getSurname() {
@@ -33,7 +33,7 @@ public class Customer extends Observable{
 
 	public void setSurname(String surname) {
 		this.surname = surname;
-        setChanged();
+        notifyChanged();
 	}
 
 	public String getStreet() {
@@ -42,7 +42,7 @@ public class Customer extends Observable{
 
 	public void setStreet(String street) {
 		this.street = street;
-        setChanged();
+        notifyChanged();
 	}
 
 	public String getCity() {
@@ -51,7 +51,7 @@ public class Customer extends Observable{
 
 	public void setCity(String city) {
 		this.city = city;
-        setChanged();
+        notifyChanged();
 	}
 
 	public int getZip() {
@@ -60,8 +60,13 @@ public class Customer extends Observable{
 
 	public void setZip(int zip) {
 		this.zip = zip;
-        setChanged();
+        notifyChanged();
 	}
+
+    public void notifyChanged() {
+        setChanged();
+        notifyObservers();
+    }
 	
 	@Override
 	public String toString() {

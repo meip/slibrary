@@ -2,7 +2,7 @@ package ch.hsr.slibrary.spa;
 
 import java.util.Observable;
 
-public class Book extends Observable{
+public class Book extends Observable {
 
 	private String title, author, publisher;
 	private Shelf shelf;
@@ -17,7 +17,7 @@ public class Book extends Observable{
 
 	public void setName(String name) {
 		this.title = name;
-        setChanged();
+        notifyChanged();
 	}
 
 	public String getAuthor() {
@@ -26,7 +26,7 @@ public class Book extends Observable{
 
 	public void setAuthor(String autor) {
 		this.author = autor;
-        setChanged();
+        notifyChanged();
 	}
 
 	public String getPublisher() {
@@ -35,7 +35,7 @@ public class Book extends Observable{
 
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
-        setChanged();
+        notifyChanged();
 	}
 	
 	public Shelf getShelf() {
@@ -44,7 +44,7 @@ public class Book extends Observable{
 	
 	public void setShelf(Shelf shelf) {
 		this.shelf = shelf;
-        setChanged();
+        notifyChanged();
 	}
 	
 	@Override

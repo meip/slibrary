@@ -6,16 +6,12 @@ import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.gui.form.LoanListing;
-import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
-import ch.hsr.slibrary.spa.Loan;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
@@ -94,21 +90,24 @@ public class CustomerDetailController extends ValidatableComponentController imp
     }
 
     public void updateUI() {
-        customerDetail.getFirstnameField().setText(customer.getName());
-        customerDetail.getSurnameField().setText(customer.getSurname());
-        customerDetail.getStreetField().setText(customer.getStreet());
-        customerDetail.getCityField().setText(customer.getCity());
-        customerDetail.getZipField().setText(Integer.valueOf(customer.getZip()).toString());
+        if (!isInSaveProgress) {
+            customerDetail.getFirstnameField().setText(customer.getName());
+            customerDetail.getSurnameField().setText(customer.getSurname());
+            customerDetail.getStreetField().setText(customer.getStreet());
+            customerDetail.getCityField().setText(customer.getCity());
+            customerDetail.getZipField().setText(Integer.valueOf(customer.getZip()).toString());
+        }
     }
 
     public void saveChanges() {
+        isInSaveProgress = true;
         customer.setName(customerDetail.getFirstnameField().getText());
         customer.setSurname(customerDetail.getSurnameField().getText());
         customer.setStreet(customerDetail.getStreetField().getText());
         customer.setCity(customerDetail.getCityField().getText());
         customer.setZip(Integer.valueOf(customerDetail.getZipField().getText()));
-        customer.notifyObservers();
         setTitle(customer.getName() + " " + customer.getSurname());
+        isInSaveProgress = false;
     }
 
     @Override

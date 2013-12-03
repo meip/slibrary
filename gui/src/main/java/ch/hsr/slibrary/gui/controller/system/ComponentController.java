@@ -10,6 +10,7 @@ public abstract class ComponentController {
     protected GUIComponent component;
     private ComponentControllerDelegate delegate;
     private String title = "";
+    protected boolean isInSaveProgress = false;
 
     public ComponentController(String title) {
         setTitle(title);
