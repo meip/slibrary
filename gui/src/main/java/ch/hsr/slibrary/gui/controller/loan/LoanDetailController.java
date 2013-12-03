@@ -226,7 +226,6 @@ public class LoanDetailController extends ValidatableComponentController impleme
             if (!loan.isLent()) {
                 loanDetail.getCustomerSelect().setEnabled(false);
                 loanDetail.getCopySelect().setEnabled(false);
-                loanDetail.getReturnDateField().setEnabled(false);
             }
 
 
@@ -281,7 +280,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
                 loanDetail.getCopySelect().setEnabled(false);
             }
 
-            loanDetail.getReturnDateField().setText(LoanUtil.getDueDateFormatted(loan));
+            loanDetail.getReturnDateLabel().setText(LoanUtil.getDueDateFormatted(loan));
 
             loanListingController.updateUI();
         }
