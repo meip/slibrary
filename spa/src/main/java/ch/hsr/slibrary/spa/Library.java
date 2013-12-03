@@ -3,6 +3,7 @@ package ch.hsr.slibrary.spa;
 import com.apple.jobjc.foundation.NSNotificationCenter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
@@ -42,9 +43,7 @@ public class Library extends Observable {
 
 	public Book createAndAddBook(String name) {
 		Book b = new Book(name);
-		books.add(b);
-        setChanged();
-        notifyObservers("bookAdded");
+		addBook(b);
 		return b;
 	}
 
@@ -58,13 +57,18 @@ public class Library extends Observable {
 	}
 
     public void removeBook(Book book) {
-        for(int i = copies.size() - 1; i >=0; --i) {
-            if(copies.get(i).getTitle().equals(book)) {
-                copies.remove(i);
+        Iterator<Copy> it = copies.iterator();
+        while(it.hasNext()) {
+            Copy copy = it.next();
+            if(copy.getTitle().equals(book)) {
+                it.remove();
                 setChanged();
-                notifyObservers("bookRemoved");
-                return;
+                notifyObservers("copyRemoved");
             }
+        }
+        if(books.remove(book)) {
+            setChanged();
+            notifyObservers("bookRemoved");
         }
     }
 
@@ -75,6 +79,12 @@ public class Library extends Observable {
             notifyObservers("copyRemoved");
         }
         return result;
+    }
+
+    public void addBook(Book book) {
+        books.add(book);
+        setChanged();
+        notifyObservers("bookAdded");
     }
 
 	public Book findByBookTitle(String title) {

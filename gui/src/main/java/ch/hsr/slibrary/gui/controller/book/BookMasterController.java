@@ -193,7 +193,7 @@ public class BookMasterController extends ComponentController implements Observe
     private void initializeObserving() {
         library.addObserver(this);
         for (Book book : library.getBooks()) {
-            book.addObserver(this);
+           book.addObserver(this);
         }
     }
 

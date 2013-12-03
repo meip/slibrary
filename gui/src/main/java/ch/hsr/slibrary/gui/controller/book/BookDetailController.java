@@ -231,7 +231,6 @@ public class BookDetailController extends ValidatableComponentController impleme
     }
 
     protected void cancelPressed() {
-        escapeComponent();
         if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(this);
     }
 
@@ -267,6 +266,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         book.setShelf((Shelf) bookDetail.getShelfComboBox().getSelectedItem());
         setTitle(bookDetail.getTitleField().getText());
         isInSaveProgress = false;
+        library.addBook(book);
     }
 
     @Override
@@ -283,6 +283,6 @@ public class BookDetailController extends ValidatableComponentController impleme
 
     @Override
     public void escapeComponent() {
-        if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(this);
+        cancelPressed();
     }
 }
