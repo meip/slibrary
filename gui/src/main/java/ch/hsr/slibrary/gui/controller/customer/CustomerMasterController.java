@@ -15,11 +15,10 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 public class CustomerMasterController extends ComponentController implements Observer, CustomerDetailControllerDelegate, MasterDetailControllerDelegate {
 
@@ -82,6 +81,17 @@ public class CustomerMasterController extends ComponentController implements Obs
                 masterDetailController.setSelectedDetailController(controller);
             }
         });
+
+        customerMaster.getNewcustomerButton().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+                "NEWCUSTOMER");
+        customerMaster.getNewcustomerButton().getActionMap().put("NEWCUSTOMER", new AbstractAction() {
+            public void actionPerformed(ActionEvent evt) {
+                customerMaster.getNewcustomerButton().doClick();
+                System.out.println("NEWCUSTOMER action");
+            }
+        });
+
 
     }
 

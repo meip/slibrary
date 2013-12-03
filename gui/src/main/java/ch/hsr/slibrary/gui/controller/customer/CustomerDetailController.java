@@ -1,21 +1,16 @@
 package ch.hsr.slibrary.gui.controller.customer;
 
-import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.loan.LoanListingController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.gui.form.LoanListing;
-import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
 import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
 import ch.hsr.slibrary.gui.validation.ValidationRule;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
-import ch.hsr.slibrary.spa.Loan;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
@@ -70,7 +65,7 @@ public class CustomerDetailController extends ValidatableComponentController imp
         customerDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                escapeComponent();
             }
         });
 
@@ -83,32 +78,30 @@ public class CustomerDetailController extends ValidatableComponentController imp
                 }
             }
         });
-
-        customerDetail.getContainer().addKeyListener(new EscapeKeyListener() {
-            @Override
-            public void escapeAction() {
-                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
-            }
-        });
         customerDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
+
+        super.bindKeyStrokes();
     }
 
     public void updateUI() {
-        customerDetail.getFirstnameField().setText(customer.getName());
-        customerDetail.getSurnameField().setText(customer.getSurname());
-        customerDetail.getStreetField().setText(customer.getStreet());
-        customerDetail.getCityField().setText(customer.getCity());
-        customerDetail.getZipField().setText(Integer.valueOf(customer.getZip()).toString());
+        if (!isInSaveProgress) {
+            customerDetail.getFirstnameField().setText(customer.getName());
+            customerDetail.getSurnameField().setText(customer.getSurname());
+            customerDetail.getStreetField().setText(customer.getStreet());
+            customerDetail.getCityField().setText(customer.getCity());
+            customerDetail.getZipField().setText(Integer.valueOf(customer.getZip()).toString());
+        }
     }
 
     public void saveChanges() {
+        isInSaveProgress = true;
         customer.setName(customerDetail.getFirstnameField().getText());
         customer.setSurname(customerDetail.getSurnameField().getText());
         customer.setStreet(customerDetail.getStreetField().getText());
         customer.setCity(customerDetail.getCityField().getText());
         customer.setZip(Integer.valueOf(customerDetail.getZipField().getText()));
-        customer.notifyObservers();
         setTitle(customer.getName() + " " + customer.getSurname());
+        isInSaveProgress = false;
     }
 
     @Override
@@ -124,5 +117,10 @@ public class CustomerDetailController extends ValidatableComponentController imp
         validationRules.add(new ValidationRule(new EmptyTextValidation(customerDetail.getCityField(), "City")));
         validationRules.add(new ValidationRule(new EmptyTextValidation(customerDetail.getZipField(), "ZIP")));
         validationRules.add(new ValidationRule(new IsIntRangeValidation(customerDetail.getZipField(), 0, 10000, "ZIP")));
+    }
+
+    @Override
+    public void escapeComponent() {
+        if (getDelegate() != null) getDelegate().detailControllerDidCancel(this);
     }
 }

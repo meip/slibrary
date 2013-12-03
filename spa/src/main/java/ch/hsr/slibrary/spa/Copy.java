@@ -2,7 +2,23 @@ package ch.hsr.slibrary.spa;
 
 public class Copy {
 	
-	public enum Condition {NEW, GOOD, DAMAGED, WASTE, LOST }
+	public enum Condition {
+        NEW{
+            public String toString() {return "Neu";}
+        },
+        GOOD{
+            public String toString() {return "Gut";}
+        },
+        DAMAGED{
+            public String toString() {return "Beschädigt";}
+        },
+        WASTE{
+            public String toString() {return "Entsorgt";}
+        },
+        LOST{
+            public String toString() {return "Verloren";}
+        }
+    };
 	
 	public static long nextInventoryNumber = 1;
 	

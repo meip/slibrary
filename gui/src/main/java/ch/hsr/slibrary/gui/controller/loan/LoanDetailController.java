@@ -1,6 +1,5 @@
 package ch.hsr.slibrary.gui.controller.loan;
 
-import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.LoanDetail;
@@ -98,13 +97,6 @@ public class LoanDetailController extends ValidatableComponentController impleme
             }
         });
 
-        loanDetail.getContainer().addKeyListener(new EscapeKeyListener() {
-            @Override
-            public void escapeAction() {
-                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
-            }
-        });
-
         loanDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
         loanListingController.setSelectedLoan(loan);
         loanDetail.getReturnedCheckBox().addActionListener(new ActionListener() {
@@ -113,6 +105,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
 
             }
         });
+        super.bindKeyStrokes();
     }
 
     private void initializeCustomerSelectionUi() {
@@ -220,78 +213,84 @@ public class LoanDetailController extends ValidatableComponentController impleme
     }
 
     public void updateUI() {
-        loanDetail.getLentOnLabel().setText(LoanUtil.getPickupDate(loan));
+        if (!isInSaveProgress) {
+            loanDetail.getLentOnLabel().setText(LoanUtil.getPickupDate(loan));
 
-        if (!loan.isLent()) {
-            loanDetail.getCustomerSelect().setEnabled(false);
-            loanDetail.getCopySelect().setEnabled(false);
-            loanDetail.getReturnDateField().setEnabled(false);
+            if (!loan.isLent()) {
+                loanDetail.getCustomerSelect().setEnabled(false);
+                loanDetail.getCopySelect().setEnabled(false);
+            }
+
+
+            loanDetail.getReturnedOnLabel().setText(loan.getReturnDate() != null ? LoanUtil.getReturnDate(loan, false) : "-");
+            loanDetail.getReturnedCheckBox().setSelected(!loan.isLent());
+            loanDetail.getReturnedCheckBox().setEnabled(loan.isLent());
+
+            if (loan.getCustomer() != null) {
+                loanDetail.getCustomerSelect().setSelectedIndex(library.getCustomers().indexOf(loan.getCustomer()));
+            }
+
+            if(loanDetail.getCopySelect().getSelectedIndex() > -1) {
+                loanDetail.getBookLabel().setText(((Copy) loanDetail.getCopySelect().getSelectedItem()).getTitle().getName());
+            }
+
+            loanDetail.getLoanListingPanel().setVisible(loanDetail.getCustomerSelect().getSelectedIndex() > -1);
+
+            if (loan.getCopy() != null) {
+
+                // Make copy selection static and disable it
+                loanDetail.getCopySelect().setModel(new ComboBoxModel<Copy>() {
+                    @Override
+                    public void setSelectedItem(Object anItem) {
+
+                    }
+
+                    @Override
+                    public Object getSelectedItem() {
+                        return loan.getCopy();
+                    }
+
+                    @Override
+                    public int getSize() {
+                        return 1;  //To change body of implemented methods use File | Settings | File Templates.
+                    }
+
+                    @Override
+                    public Copy getElementAt(int index) {
+                        return loan.getCopy();
+                    }
+
+                    @Override
+                    public void addListDataListener(ListDataListener l) {
+                        //To change body of implemented methods use File | Settings | File Templates.
+                    }
+
+                    @Override
+                    public void removeListDataListener(ListDataListener l) {
+                        //To change body of implemented methods use File | Settings | File Templates.
+                    }
+                });
+                loanDetail.getCopySelect().setEnabled(false);
+            }
+
+            loanDetail.getReturnDateLabel().setText(LoanUtil.getDueDateFormatted(loan));
+
+            loanListingController.updateUI();
         }
-
-
-        loanDetail.getReturnedOnLabel().setText(loan.getReturnDate() != null ? LoanUtil.getReturnDate(loan, false) : "-");
-        loanDetail.getReturnedCheckBox().setSelected(!loan.isLent());
-        loanDetail.getReturnedCheckBox().setEnabled(loan.isLent());
-
-        if (loan.getCustomer() != null) {
-            loanDetail.getCustomerSelect().setSelectedIndex(library.getCustomers().indexOf(loan.getCustomer()));
-        }
-
-        if(loanDetail.getCopySelect().getSelectedIndex() > -1) {
-            loanDetail.getBookLabel().setText(((Copy) loanDetail.getCopySelect().getSelectedItem()).getTitle().getName());
-        }
-
-        loanDetail.getLoanListingPanel().setVisible(loanDetail.getCustomerSelect().getSelectedIndex() > -1);
-
-        if (loan.getCopy() != null) {
-
-            // Make copy selection static and disable it
-            loanDetail.getCopySelect().setModel(new ComboBoxModel<Copy>() {
-                @Override
-                public void setSelectedItem(Object anItem) {
-
-                }
-
-                @Override
-                public Object getSelectedItem() {
-                    return loan.getCopy();
-                }
-
-                @Override
-                public int getSize() {
-                    return 1;  //To change body of implemented methods use File | Settings | File Templates.
-                }
-
-                @Override
-                public Copy getElementAt(int index) {
-                    return loan.getCopy();
-                }
-
-                @Override
-                public void addListDataListener(ListDataListener l) {
-                    //To change body of implemented methods use File | Settings | File Templates.
-                }
-
-                @Override
-                public void removeListDataListener(ListDataListener l) {
-                    //To change body of implemented methods use File | Settings | File Templates.
-                }
-            });
-            loanDetail.getCopySelect().setEnabled(false);
-        }
-
-        loanDetail.getReturnDateField().setText(LoanUtil.getDueDateFormatted(loan));
-
-        loanListingController.updateUI();
     }
 
     public void saveChanges() {
+        isInSaveProgress = true;
         loan.setCustomer((Customer) loanDetail.getCustomerSelect().getSelectedItem());
         loan.setCopy((Copy) loanDetail.getCopySelect().getSelectedItem());
         if (loanDetail.getReturnedCheckBox().isSelected()) {
             loan.returnCopy();
         }
-        loan.notifyObservers();
+        isInSaveProgress = false;
+    }
+
+    public LoanListingController getLoanListingController() {
+        return loanListingController;
     }
 
     @Override
@@ -316,7 +315,8 @@ public class LoanDetailController extends ValidatableComponentController impleme
         }));
     }
 
-    public LoanListingController getLoanListingController() {
-        return loanListingController;
+    @Override
+     public void escapeComponent() {
+        if (getDelegate() != null) getDelegate().detailControllerDidCancel(this);
     }
 }

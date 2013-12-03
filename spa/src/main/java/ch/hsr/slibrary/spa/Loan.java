@@ -39,7 +39,7 @@ public class Loan extends Observable {
 					"Return Date is before pickupDate");
 		}
 		this.returnDate = returnDate;
-        setChanged();
+        notifyChanged();
 	}
 
 	public void setPickupDate(GregorianCalendar pickupDate)
@@ -48,7 +48,7 @@ public class Loan extends Observable {
 			throw new IllegalLoanOperationException("Loan is already retuned");
 		}
 		this.pickupDate = pickupDate;
-        setChanged();
+        notifyChanged();
 	}
 
 	public GregorianCalendar getPickupDate() {
@@ -65,7 +65,7 @@ public class Loan extends Observable {
 
     public void setCopy(Copy copy) {
         this.copy = copy;
-        setChanged();
+        notifyChanged();
     }
 
     public Customer getCustomer() {
@@ -74,7 +74,12 @@ public class Loan extends Observable {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+        notifyChanged();
+    }
+    
+    public void notifyChanged() {
         setChanged();
+        notifyObservers();
     }
 
     @Override

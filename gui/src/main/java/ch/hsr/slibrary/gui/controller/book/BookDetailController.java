@@ -1,8 +1,7 @@
 package ch.hsr.slibrary.gui.controller.book;
 
-import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
-import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
+import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.BookDetail;
 import ch.hsr.slibrary.gui.util.TableHelper;
 import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
@@ -18,7 +17,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
 
 public class BookDetailController extends ValidatableComponentController implements Observer {
 
@@ -26,6 +26,7 @@ public class BookDetailController extends ValidatableComponentController impleme
     protected Book book;
     protected Library library;
     protected BookDetailControllerDelegate delegate;
+
     private MasterDetailController masterDetailController;
 
     public BookDetailController(String title, BookDetail component, Book book, Library library) {
@@ -123,41 +124,13 @@ public class BookDetailController extends ValidatableComponentController impleme
             }
         });
 
-        bookDetail.getContainer().addKeyListener(new EscapeKeyListener() {
-            @Override
-            public void escapeAction() {
-                if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
-            }
-        });
-
-
-
-        final List<String> names = new ArrayList<>();
-        names.add("Neu");
-        names.add("Gut");
-        names.add("Beschädigt");
-        names.add("Verloren");
-        names.add("Entsorgt");
-
         final JComboBox cb = new JComboBox();
-        cb.setModel(new ComboBoxModel() {
-            private Map<Copy.Condition, String> conditionMap = new HashMap<>();
-            {
-                conditionMap.put(Copy.Condition.NEW, names.get(0));
-                conditionMap.put(Copy.Condition.GOOD, names.get(1));
-                conditionMap.put(Copy.Condition.DAMAGED, names.get(2));
-                conditionMap.put(Copy.Condition.LOST, names.get(3));
-                conditionMap.put(Copy.Condition.WASTE, names.get(4));
-            }
-
-
-            Object selectedItem;
-
-
+        cb.setModel(new ComboBoxModel<Copy.Condition>() {
+            Copy.Condition selectedItem;
 
             @Override
             public void setSelectedItem(Object anItem) {
-                selectedItem = anItem;
+                selectedItem = (Copy.Condition) anItem;
             }
 
             @Override
@@ -165,15 +138,14 @@ public class BookDetailController extends ValidatableComponentController impleme
                 return selectedItem;
             }
 
-
             @Override
             public int getSize() {
                 return Copy.Condition.values().length;
             }
 
             @Override
-            public Object getElementAt(int index) {
-                return conditionMap.get(Copy.Condition.values()[index]);
+            public Copy.Condition getElementAt(int index) {
+                return Copy.Condition.values()[index];
             }
 
             @Override
@@ -188,10 +160,10 @@ public class BookDetailController extends ValidatableComponentController impleme
         });
 
 
-
         TableHelper.setAlternatingRowStyle(bookDetail.getCopyTable());
         bookDetail.getCopyTable().setModel(new TableModel() {
             private String[] columnNames = {"ID", "Zustand"};
+
             @Override
             public int getRowCount() {
                 return library.getCopiesOfBook(book).size();
@@ -219,7 +191,7 @@ public class BookDetailController extends ValidatableComponentController impleme
 
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return true;  //To change body of implemented methods use File | Settings | File Templates.
+                return (columnIndex == 1) ? true : false;
             }
 
             @Override
@@ -228,9 +200,8 @@ public class BookDetailController extends ValidatableComponentController impleme
                 switch (columnIndex) {
                     case 0:
                         return "#" + copy.getInventoryNumber();
-
                     case 1:
-                       return names.get(Copy.Condition.valueOf(copy.getCondition().name()).ordinal());
+                        return Copy.Condition.valueOf(copy.getCondition().name());
                     default:
                         return null;
                 }
@@ -254,12 +225,13 @@ public class BookDetailController extends ValidatableComponentController impleme
         });
 
 
-
         bookDetail.getCopyTable().getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(cb));
 
+        super.bindKeyStrokes();
     }
 
     protected void cancelPressed() {
+        escapeComponent();
         if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(this);
     }
 
@@ -278,23 +250,23 @@ public class BookDetailController extends ValidatableComponentController impleme
     }
 
     public void updateUI() {
-        bookDetail.getTitleField().setText(book.getName());
-        bookDetail.getAuthorField().setText(book.getAuthor());
-        bookDetail.getPublisherField().setText(book.getPublisher());
-        if (book.getShelf() != null) bookDetail.getShelfComboBox().setSelectedIndex(book.getShelf().ordinal());
-        bookDetail.getCopyTable().updateUI();
+        if (!isInSaveProgress) {
+            bookDetail.getTitleField().setText(book.getName());
+            bookDetail.getAuthorField().setText(book.getAuthor());
+            bookDetail.getPublisherField().setText(book.getPublisher());
+            if (book.getShelf() != null) bookDetail.getShelfComboBox().setSelectedIndex(book.getShelf().ordinal());
+            bookDetail.getCopyTable().updateUI();
+        }
     }
 
     public void saveChanges() {
-
-        book = library.createAndAddBook(bookDetail.getTitleField().getText());
+        isInSaveProgress = true;
+        book.setName(bookDetail.getTitleField().getText());
         book.setAuthor(bookDetail.getAuthorField().getText());
         book.setPublisher(bookDetail.getPublisherField().getText());
         book.setShelf((Shelf) bookDetail.getShelfComboBox().getSelectedItem());
-
-
-        book.notifyChanged();
         setTitle(bookDetail.getTitleField().getText());
+        isInSaveProgress = false;
     }
 
     @Override
@@ -307,5 +279,10 @@ public class BookDetailController extends ValidatableComponentController impleme
         validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getTitleField(), "Titel")));
         validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getAuthorField(), "Author")));
         validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getPublisherField(), "Publisher")));
+    }
+
+    @Override
+    public void escapeComponent() {
+        if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(this);
     }
 }

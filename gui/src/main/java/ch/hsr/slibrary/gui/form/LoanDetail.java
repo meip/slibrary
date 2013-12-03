@@ -6,7 +6,7 @@ import java.awt.*;
 public class LoanDetail extends GUIComponent {
     private JPanel loanDetailPanel;
     private JComboBox customerSelect;
-    private JTextField returnDateField;
+    private JLabel returnDateLabel;
     private JLabel amountLabel;
     private JTable copyTable;
     private JButton cancelButton;
@@ -53,12 +53,12 @@ public class LoanDetail extends GUIComponent {
         this.customerSelect = customerSelect;
     }
 
-    public JTextField getReturnDateField() {
-        return returnDateField;
+    public JLabel getReturnDateLabel() {
+        return returnDateLabel;
     }
 
-    public void setReturnDateField(JTextField returnDateField) {
-        this.returnDateField = returnDateField;
+    public void setReturnDateLabel(JLabel returnDateLabel) {
+        this.returnDateLabel = returnDateLabel;
     }
 
     public JLabel getAmountLabel() {
