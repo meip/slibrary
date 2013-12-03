@@ -62,7 +62,7 @@ public class LoanTableListener implements ItemListener, KeyListener {
             }
         };
 
-        regexFilter = RowFilter.regexFilter("(?i)" + searchField.getText());
+        regexFilter = RowFilter.regexFilter("(?i)" + Pattern.quote(searchField.getText()));
 
         List<RowFilter<Object, Object>> allFilters = new LinkedList<>();
 

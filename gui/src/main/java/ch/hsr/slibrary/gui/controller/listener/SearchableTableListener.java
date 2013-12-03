@@ -5,6 +5,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.regex.Pattern;
 
 public class SearchableTableListener implements KeyListener {
     private JTable jTable;
@@ -34,6 +35,6 @@ public class SearchableTableListener implements KeyListener {
         TableModel tableModel = jTable.getModel();
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
         jTable.setRowSorter(sorter);
-        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + searchField.getText()));
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(searchField.getText())));
     }
 }
