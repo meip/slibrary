@@ -265,8 +265,8 @@ public class BookDetailController extends ValidatableComponentController impleme
         book.setPublisher(bookDetail.getPublisherField().getText());
         book.setShelf((Shelf) bookDetail.getShelfComboBox().getSelectedItem());
         setTitle(bookDetail.getTitleField().getText());
-        isInSaveProgress = false;
         library.addBook(book);
+        isInSaveProgress = false;
     }
 
     @Override
