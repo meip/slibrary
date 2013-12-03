@@ -32,31 +32,25 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
         initialize();
     }
 
-
-
     private void initialize() {
 
-        final  MainMenuBarController self = this;
-
+        final MainMenuBarController self = this;
 
         fileMenu = new JMenu("Ablage");
         getMenuBar().add(fileMenu);
-        JMenuItem fileItem = new JRadioButtonMenuItem("Fenster schliessen");
-        fileItem.addActionListener(new ActionListener() {
+        JMenuItem windowCloseItem = new JRadioButtonMenuItem("Fenster schliessen");
+        windowCloseItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 windowController.dismissCurrentController();
             }
         });
-        fileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        fileMenu.add(fileItem);
-
+        windowCloseItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        fileMenu.add(windowCloseItem);
 
         windowMenu = new JMenu("Fenster");
         getMenuBar().add(windowMenu);
         windowButtonGroup = new ButtonGroup();
-
-
     }
 
     public MainMenuBarControllerDelegate getDelegate() {
@@ -66,8 +60,6 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
     public void setDelegate(MainMenuBarControllerDelegate delegate) {
         this.delegate = delegate;
     }
-
-
 
     private void addWindowItem(final ComponentController controller) {
         JRadioButtonMenuItem item = new JRadioButtonMenuItem(controller.getTitle());
@@ -84,7 +76,7 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
     }
 
     private void removeWindowItem(ComponentController controller) {
-        if(controllerItems.containsKey(controller)) {
+        if (controllerItems.containsKey(controller)) {
             windowMenu.remove(controllerItems.get(controller));
             windowButtonGroup.remove(controllerItems.get(controller));
             controllerItems.remove(controller);
@@ -92,7 +84,7 @@ public class MainMenuBarController extends MenuBarController implements WindowCo
     }
 
     private void selectWindowItem(ComponentController controller) {
-        if(controllerItems.containsKey(controller)) {
+        if (controllerItems.containsKey(controller)) {
             controllerItems.get(controller).setSelected(true);
         }
     }

@@ -1,6 +1,5 @@
 package ch.hsr.slibrary.gui.controller.book;
 
-import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.BookDetail;
@@ -18,7 +17,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
 
 public class BookDetailController extends ValidatableComponentController implements Observer {
 
@@ -114,7 +114,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
+                escapeComponent();
             }
         });
 
@@ -125,13 +125,6 @@ public class BookDetailController extends ValidatableComponentController impleme
                     saveChanges();
                     if (getTabDelegate() != null) getTabDelegate().detailControllerDidSave(self, true);
                 }
-            }
-        });
-
-        bookDetail.getContainer().addKeyListener(new EscapeKeyListener() {
-            @Override
-            public void escapeAction() {
-                if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(self);
             }
         });
 
@@ -238,6 +231,7 @@ public class BookDetailController extends ValidatableComponentController impleme
 
         bookDetail.getCopyTable().getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(cb));
 
+        super.bindKeyStrokes();
     }
 
     public void updateUI() {
@@ -270,5 +264,10 @@ public class BookDetailController extends ValidatableComponentController impleme
         validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getTitleField(), "Titel")));
         validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getAuthorField(), "Author")));
         validationRules.add(new ValidationRule(new EmptyTextValidation(bookDetail.getPublisherField(), "Publisher")));
+    }
+
+    @Override
+    public void escapeComponent() {
+        if (getTabDelegate() != null) getTabDelegate().detailControllerDidCancel(this);
     }
 }

@@ -1,6 +1,5 @@
 package ch.hsr.slibrary.gui.controller.customer;
 
-import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.loan.LoanListingController;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
@@ -66,7 +65,7 @@ public class CustomerDetailController extends ValidatableComponentController imp
         customerDetail.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
+                escapeComponent();
             }
         });
 
@@ -79,14 +78,9 @@ public class CustomerDetailController extends ValidatableComponentController imp
                 }
             }
         });
-
-        customerDetail.getContainer().addKeyListener(new EscapeKeyListener() {
-            @Override
-            public void escapeAction() {
-                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
-            }
-        });
         customerDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
+
+        super.bindKeyStrokes();
     }
 
     public void updateUI() {
@@ -123,5 +117,10 @@ public class CustomerDetailController extends ValidatableComponentController imp
         validationRules.add(new ValidationRule(new EmptyTextValidation(customerDetail.getCityField(), "City")));
         validationRules.add(new ValidationRule(new EmptyTextValidation(customerDetail.getZipField(), "ZIP")));
         validationRules.add(new ValidationRule(new IsIntRangeValidation(customerDetail.getZipField(), 0, 10000, "ZIP")));
+    }
+
+    @Override
+    public void escapeComponent() {
+        if (getDelegate() != null) getDelegate().detailControllerDidCancel(this);
     }
 }

@@ -1,17 +1,12 @@
 package ch.hsr.slibrary.gui.controller.loan;
 
-import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
-import ch.hsr.slibrary.gui.form.CustomerDetail;
 import ch.hsr.slibrary.gui.form.LoanListing;
 import ch.hsr.slibrary.gui.util.LoanUtil;
 import ch.hsr.slibrary.gui.util.MessageID;
 import ch.hsr.slibrary.gui.util.NotificationCenter;
 import ch.hsr.slibrary.gui.util.TableHelper;
-import ch.hsr.slibrary.gui.validation.EmptyTextValidation;
-import ch.hsr.slibrary.gui.validation.IsIntRangeValidation;
-import ch.hsr.slibrary.gui.validation.ValidationRule;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
 import ch.hsr.slibrary.spa.Loan;
@@ -185,5 +180,10 @@ public class LoanListingController extends ValidatableComponentController implem
 
     public void setListingDelegate(LoanListingControllerDelegate delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public void escapeComponent() {
+        return;
     }
 }

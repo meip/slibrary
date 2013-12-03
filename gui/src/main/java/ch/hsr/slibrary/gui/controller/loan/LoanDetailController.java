@@ -1,6 +1,5 @@
 package ch.hsr.slibrary.gui.controller.loan;
 
-import ch.hsr.slibrary.gui.controller.listener.EscapeKeyListener;
 import ch.hsr.slibrary.gui.controller.system.MasterDetailController;
 import ch.hsr.slibrary.gui.controller.system.ValidatableComponentController;
 import ch.hsr.slibrary.gui.form.LoanDetail;
@@ -98,13 +97,6 @@ public class LoanDetailController extends ValidatableComponentController impleme
             }
         });
 
-        loanDetail.getContainer().addKeyListener(new EscapeKeyListener() {
-            @Override
-            public void escapeAction() {
-                if (getDelegate() != null) getDelegate().detailControllerDidCancel(self);
-            }
-        });
-
         loanDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
         loanListingController.setSelectedLoan(loan);
         loanDetail.getReturnedCheckBox().addActionListener(new ActionListener() {
@@ -113,6 +105,7 @@ public class LoanDetailController extends ValidatableComponentController impleme
 
             }
         });
+        super.bindKeyStrokes();
     }
 
     private void initializeCustomerSelectionUi() {
@@ -296,6 +289,10 @@ public class LoanDetailController extends ValidatableComponentController impleme
         isInSaveProgress = false;
     }
 
+    public LoanListingController getLoanListingController() {
+        return loanListingController;
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         updateUI();
@@ -318,7 +315,8 @@ public class LoanDetailController extends ValidatableComponentController impleme
         }));
     }
 
-    public LoanListingController getLoanListingController() {
-        return loanListingController;
+    @Override
+     public void escapeComponent() {
+        if (getDelegate() != null) getDelegate().detailControllerDidCancel(this);
     }
 }

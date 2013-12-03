@@ -26,8 +26,6 @@ public class WindowController implements ComponentControllerDelegate{
     }
 
     public void presentControllerAsFrame(final ComponentController controller, int closeOperation, Rectangle windowBounds ) {
-
-
         if(!controllerFrames.containsKey(controller)) {
             JFrame frame = new JFrame(controller.getTitle());
             frame.setContentPane(controller.getComponent().getContainer());
@@ -49,7 +47,6 @@ public class WindowController implements ComponentControllerDelegate{
 
             controllerFrames.put(controller, frame);
             controller.setDelegate(this);
-
         } else {
             bringToFront(controller);
         }
