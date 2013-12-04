@@ -1,11 +1,12 @@
 import sbt._
 import sbt.Keys._
 import sbtassembly.Plugin._
-import AssemblyKeys._
+import sbtassembly.Plugin.AssemblyKeys._
+import scala.Some
 
 object BuildSettings {
   val buildOrganization = "ch.hsr.uint.slibrary"
-  val buildVersion = "0.0.1"
+  val buildVersion = "1.0"
 
   val buildSettings = Defaults.defaultSettings ++ Seq(
     organization := buildOrganization,
@@ -63,7 +64,8 @@ object SLibraryBuild extends Build {
     settings = buildSettings ++ assemblySettings ++ Seq(
       mainClass in assembly := Some("ch.hsr.slibrary.AppSLibrary"),
       jarName in assembly := "slibrary.jar",
-      test in assembly := {}
+      test in assembly := {},
+      assemblyOption in assembly ~= { _.copy(includeScala = false) }
     )
   ) dependsOn (slibraryGUI, slibrarySPA)
 
