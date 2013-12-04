@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class WindowController implements ComponentControllerDelegate{
+public class WindowController implements ComponentControllerDelegate {
 
 
     private Set<WindowControllerDelegate> delegates = new HashSet<>();
@@ -35,6 +35,7 @@ public class WindowController implements ComponentControllerDelegate{
                 frame.setBounds(windowBounds);
             }
             frame.setVisible(true);
+            frame.setMinimumSize(new Dimension(1440, 768));
             addWindowListenersToFrame(frame, controller);
 
             if(menuBarController != null) {
