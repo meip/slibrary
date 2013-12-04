@@ -17,6 +17,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -70,7 +71,7 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getAddCopyButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               addCopyPressed();
+                addCopyPressed();
             }
         });
 
@@ -228,6 +229,15 @@ public class BookDetailController extends ValidatableComponentController impleme
         bookDetail.getCopyTable().getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(cb));
 
         super.bindKeyStrokes();
+        bookDetail.getBookDetailPanel().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+                "FINISHDETAIL");
+        bookDetail.getBookDetailPanel().getActionMap().put("FINISHDETAIL", new AbstractAction() {
+            public void actionPerformed(ActionEvent evt) {
+                bookDetail.getSaveButton().doClick();
+                System.out.println("FINISHDETAIL action");
+            }
+        });
     }
 
     protected void cancelPressed() {

@@ -11,8 +11,10 @@ import ch.hsr.slibrary.gui.validation.ValidationRule;
 import ch.hsr.slibrary.spa.Customer;
 import ch.hsr.slibrary.spa.Library;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -81,6 +83,15 @@ public class CustomerDetailController extends ValidatableComponentController imp
         customerDetail.getLoanListingPanel().add(loanListingController.getComponent().getContainer());
 
         super.bindKeyStrokes();
+        customerDetail.getCustomerDetail().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+                "FINISHDETAIL");
+        customerDetail.getCustomerDetail().getActionMap().put("FINISHDETAIL", new AbstractAction() {
+            public void actionPerformed(ActionEvent evt) {
+                customerDetail.getSaveButton().doClick();
+                System.out.println("FINISHDETAIL action");
+            }
+        });
     }
 
     public void updateUI() {
