@@ -179,7 +179,7 @@ public class Library extends Observable {
 	private List<Copy> getCopies(boolean isLent) {
 		List<Copy> retCopies = new ArrayList<Copy>();
 		for (Copy c : copies) {
-			if (isLent == isCopyLent(c)) {
+			if (isLent == isCopyLent(c) && !c.getCondition().equals(Copy.Condition.LOST) && !c.getCondition().equals(Copy.Condition.WASTE)) {
 				retCopies.add(c);
 			}
 		}
