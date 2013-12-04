@@ -287,6 +287,7 @@ public class LoanMasterController extends ComponentController implements Observe
             removeControllerFromMap(loanDetailController);
             masterDetailController.removeDetailController(loanDetailController);
         }
+        updateLabels();
         //Need to call it explicit cause RowFilters on loanTable
         ((AbstractTableModel) loanMaster.getLoanTable().getModel()).fireTableDataChanged();
     }
