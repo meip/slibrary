@@ -166,6 +166,12 @@ public class LoanDetailController extends ValidatableComponentController impleme
                     } else {
                         loanDetail.getLoansOverdueLabel().setForeground(Color.BLACK);
                     }
+                    if (library.getCustomerLoans(customer, true).size() >= 3) {
+                        loanDetail.getLoansCurrentLabel().setForeground(Color.RED);
+                    } else {
+                        loanDetail.getLoansCurrentLabel().setForeground(Color.BLACK);
+                    }
+
                     loanListingController.setCustomer(customer);
                     loanListingController.updateUI();
                 }
