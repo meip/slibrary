@@ -51,7 +51,6 @@ public class BookDetailController extends ValidatableComponentController impleme
 
     @Override
     public void initialize() {
-
         book.addObserver(this);
         initializeUI();
         setValidations();
@@ -253,8 +252,11 @@ public class BookDetailController extends ValidatableComponentController impleme
 
     protected void addCopyPressed() {
         if(book != null) {
+            book.deleteObserver(this);
             Copy copy = library.createAndAddCopy(book);
             copy.setCondition(Copy.Condition.NEW);
+            bookDetail.getCopyTable().updateUI();
+            book.addObserver(this);
         }
     }
 
