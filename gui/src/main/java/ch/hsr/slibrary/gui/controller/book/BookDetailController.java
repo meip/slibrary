@@ -285,4 +285,9 @@ public class BookDetailController extends ValidatableComponentController impleme
     public void escapeComponent() {
         cancelPressed();
     }
+
+    @Override
+    public void setFocus() {
+        bookDetail.getTitleField().requestFocusInWindow();
+    }
 }

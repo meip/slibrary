@@ -319,4 +319,9 @@ public class LoanDetailController extends ValidatableComponentController impleme
      public void escapeComponent() {
         if (getDelegate() != null) getDelegate().detailControllerDidCancel(this);
     }
+
+    @Override
+     public void setFocus() {
+        loanDetail.getCustomerSelect().requestFocusInWindow();
+    }
 }

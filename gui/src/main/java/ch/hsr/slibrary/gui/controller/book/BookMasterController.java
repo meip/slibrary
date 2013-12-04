@@ -91,6 +91,15 @@ public class BookMasterController extends ComponentController implements Observe
                 System.out.println("NEWBOOK action");
             }
         });
+        bookMaster.getTable().getInputMap(JComponent.WHEN_FOCUSED).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+                "SHOWSELECTEDBOOK");
+        bookMaster.getTable().getActionMap().put("SHOWSELECTEDBOOK", new AbstractAction() {
+            public void actionPerformed(ActionEvent evt) {
+                bookMaster.getDisplaySelectedButton().doClick();
+                System.out.println("SHOWSELECTEDBOOK action");
+            }
+        });
 
     }
 
@@ -199,6 +208,8 @@ public class BookMasterController extends ComponentController implements Observe
 
     private void initializeSearchField() {
         bookMaster.getSearchField().addKeyListener(new SearchableTableListener(bookMaster.getTable(), bookMaster.getSearchField()));
+        bookMaster.getSearchField().requestFocusInWindow();
+        bookMaster.getSearchField().requestFocus();
     }
 
     private BookDetailController createControllerForBook(Book book) {
@@ -282,12 +293,11 @@ public class BookMasterController extends ComponentController implements Observe
 
     @Override
     public void willSelectDetailController(ComponentController detailController) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void didSelectDetailController(ComponentController detailController) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        detailController.setFocus();
     }
 
     @Override

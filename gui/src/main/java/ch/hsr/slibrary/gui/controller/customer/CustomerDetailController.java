@@ -123,4 +123,9 @@ public class CustomerDetailController extends ValidatableComponentController imp
     public void escapeComponent() {
         if (getDelegate() != null) getDelegate().detailControllerDidCancel(this);
     }
+
+    @Override
+     public void setFocus() {
+        customerDetail.getFirstnameField().requestFocusInWindow();
+    }
 }

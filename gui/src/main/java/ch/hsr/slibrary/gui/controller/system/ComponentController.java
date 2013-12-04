@@ -58,6 +58,9 @@ public abstract class ComponentController {
 
     public void escapeComponent() {
         return;
-    };
+    }
 
+    public void setFocus() {
+        this.component.getContainer().requestFocusInWindow();
+    }
 }

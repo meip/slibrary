@@ -91,8 +91,6 @@ public class CustomerMasterController extends ComponentController implements Obs
                 System.out.println("NEWCUSTOMER action");
             }
         });
-
-
     }
 
     private void initializeTable() {
@@ -217,12 +215,12 @@ public class CustomerMasterController extends ComponentController implements Obs
 
     @Override
     public void willSelectDetailController(ComponentController detailController) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override
     public void didSelectDetailController(ComponentController detailController) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        detailController.setFocus();
     }
 
     @Override

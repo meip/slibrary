@@ -262,12 +262,12 @@ public class LoanMasterController extends ComponentController implements Observe
 
     @Override
     public void willSelectDetailController(ComponentController detailController) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override
     public void didSelectDetailController(ComponentController detailController) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        detailController.setFocus();
     }
 
     @Override
