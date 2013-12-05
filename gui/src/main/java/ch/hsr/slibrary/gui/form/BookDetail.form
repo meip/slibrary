@@ -160,12 +160,14 @@
                 <constraints/>
                 <properties>
                   <text value="Abbrechen"/>
+                  <toolTipText value="Änderungen verwerfen"/>
                 </properties>
               </component>
               <component id="8026e" class="javax.swing.JButton" binding="saveButton" default-binding="true">
                 <constraints/>
                 <properties>
                   <text value="Fertig"/>
+                  <toolTipText value="Speichern und Schliessen"/>
                 </properties>
               </component>
             </children>
