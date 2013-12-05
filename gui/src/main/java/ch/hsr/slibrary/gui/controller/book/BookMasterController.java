@@ -265,12 +265,14 @@ public class BookMasterController extends ComponentController implements Observe
 
     private void updateTable() {
         bookMaster.getTable().updateUI();
+        ((AbstractTableModel)bookMaster.getTable().getModel()).fireTableDataChanged();
     }
 
     @Override
     public void detailControllerDidCancel(BookDetailController bookDetailController) {
         removeControllerFromMap(bookDetailController);
         masterDetailController.removeDetailController(bookDetailController);
+        updateUI();
     }
 
     @Override
@@ -279,6 +281,7 @@ public class BookMasterController extends ComponentController implements Observe
             removeControllerFromMap(bookDetailController);
             masterDetailController.removeDetailController(bookDetailController);
         }
+        updateUI();
     }
 
     @Override
